@@ -1,0 +1,332 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+
+const etapas = [
+  {
+    titulo: 'Bienvenido a Partners',
+    sticker: '/marca/sticker-1.png',
+    texto: 'Conoce quiénes somos: nuestra identidad, propósito, valores, pilares y la red internacional a la que perteneces.',
+    enlaces: [
+      ['/conoce#que-es', '¿Qué es Partners?'],
+      ['/conoce#red', 'Partners of the Americas'],
+      ['/conoce#valores', 'Conectar, servir y cambiar vidas'],
+    ],
+    pasos: ['Leí qué es Partners y cuál es nuestra misión', 'Entiendo qué es Partners of the Americas', 'Conozco nuestros pilares y valores'],
+  },
+  {
+    titulo: 'Entiende cómo funcionamos',
+    sticker: '/marca/sticker-3.png',
+    texto: 'La estructura del grupo, la Junta Directiva, los comités, las asambleas, los canales de comunicación y las dinámicas internas.',
+    enlaces: [
+      ['/conoce#como-funciona', 'Estructura organizacional'],
+      ['/junta', 'Junta Directiva'],
+      ['/vida-interna#asambleas', 'Asambleas y reuniones'],
+      ['/vida-interna#canales', 'Canales oficiales'],
+    ],
+    pasos: ['Sé quién es la Junta y a quién acudir', 'Entiendo cómo funcionan las asambleas', 'Estoy en los canales oficiales del grupo y de mi comité'],
+  },
+  {
+    titulo: 'Conoce nuestros eventos',
+    sticker: '/marca/sticker-7.png',
+    texto: 'La Noche Internacional, Voluntarios por un Día, Hono y las demás actividades: sus objetivos y el papel de cada equipo.',
+    enlaces: [
+      ['/eventos/la-noche-internacional', 'La Noche Internacional'],
+      ['/eventos/voluntarios-por-un-dia', 'Voluntarios por un Día'],
+      ['/eventos/hono', 'Hono'],
+      ['/calendario', 'Calendario'],
+    ],
+    pasos: ['Conozco los tres macroeventos', 'Sé cómo funciona mi participación en Hono (Hono groups)', 'Revisé el calendario del semestre'],
+  },
+  {
+    titulo: 'Encuentra tu lugar',
+    sticker: '/marca/sticker-4.png',
+    texto: 'Los comités, las responsabilidades de sus integrantes, las oportunidades de aprendizaje y cómo participar en proyectos.',
+    enlaces: [
+      ['/comites', 'Comités'],
+      ['/comites/internacional', 'Comité Internacional'],
+      ['/comites/social', 'Comité Social'],
+    ],
+    pasos: ['Me uní a Internacional y/o Social (mínimo seis meses)', 'Conozco a la dirección de mi comité', 'Asistí a mi primera reunión de comité'],
+  },
+  {
+    titulo: 'Conoce tus compromisos',
+    sticker: '/marca/sticker-2.png',
+    texto: 'Un resumen de los Estatutos, el Reglamento Interno, la permanencia y la participación en actividades.',
+    enlaces: [
+      ['/vida-interna#permanencia', 'Permanencia y participación'],
+      ['/vida-interna#documentos', 'Documentos oficiales'],
+      ['/documentos/estatutos-2026.pdf', 'Estatutos 2026 (PDF)'],
+    ],
+    pasos: [
+      'Entiendo la tabla de permanencia y cómo se evalúa',
+      'Sé cómo presentar una excusa válida a tiempo',
+      'Conozco mi periodo de prueba y el Proyecto de nuevos',
+    ],
+  },
+  {
+    titulo: 'Explora tus oportunidades',
+    sticker: '/marca/sticker-5.png',
+    texto: 'Liderazgo, voluntariado, formación, intercambios culturales, proyectos y participación en la red internacional.',
+    enlaces: [
+      ['/oportunidades', 'Oportunidades'],
+      ['/capitulos', 'Red de capítulos'],
+      ['/contacto', 'Proponer una idea'],
+    ],
+    pasos: ['Revisé las convocatorias abiertas', 'Identifiqué un rol que me gustaría asumir', 'Conozco cómo proponer una idea a la Junta'],
+  },
+];
+const total = etapas.reduce((n, e) => n + e.pasos.length, 0);
+---
+
+<Layout title="Ruta del nuevo Partner" description="Tu guía de integración a Partners Campus EAFIT en seis etapas.">
+  <PageHero
+    eyebrow="Ruta del nuevo Partner"
+    title="Tus primeras semanas en Partners"
+    lead="Avanza a tu ritmo por estas seis etapas. Marca cada paso cuando lo completes: tu progreso se guarda en este dispositivo."
+    sticker="/marca/sticker-5.png"
+  >
+    <div class="progreso" aria-live="polite">
+      <div class="progreso__barra"><span id="barra" style="width:0%"></span></div>
+      <span id="progreso-texto">0 de {total} pasos completados</span>
+    </div>
+  </PageHero>
+
+  <section class="seccion">
+    <div class="contenedor">
+      <ol class="ruta">
+        {
+          etapas.map((e, i) => (
+            <li class="etapa" data-etapa={i}>
+              <div class="etapa__marca">
+                <span class="etapa__num">{i + 1}</span>
+              </div>
+              <div class="tarjeta etapa__tarjeta">
+                <div class="etapa__cabeza">
+                  <div>
+                    <span class="eyebrow">Etapa {i + 1}</span>
+                    <h2>{e.titulo}</h2>
+                  </div>
+                  <img class="sticker" src={e.sticker} alt="" width="64" height="64" loading="lazy" />
+                </div>
+                <p>{e.texto}</p>
+                <div class="etapa__enlaces">
+                  {e.enlaces.map(([href, t]) => (
+                    <a href={href}>{t} →</a>
+                  ))}
+                </div>
+                <fieldset class="pasos">
+                  <legend>Lista de pasos</legend>
+                  {e.pasos.map((p, j) => (
+                    <label class="paso">
+                      <input type="checkbox" data-paso={`${i}-${j}`} />
+                      <span>{p}</span>
+                    </label>
+                  ))}
+                </fieldset>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="final tarjeta">
+        <img src="/marca/isotipo.png" alt="" width="60" height="72" />
+        <div>
+          <h2>¿Te quedó alguna duda?</h2>
+          <p>Habla con la dirección de tu comité o con Gestión Humana, o revisa las preguntas frecuentes.</p>
+        </div>
+        <a class="btn btn--primario" href="/vida-interna#faq">Preguntas frecuentes</a>
+        <button type="button" class="btn btn--borde" id="reiniciar">Reiniciar mi progreso</button>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const CLAVE = 'pce-ruta-v1';
+  const cajas = [...document.querySelectorAll<HTMLInputElement>('[data-paso]')];
+  const barra = document.getElementById('barra')!;
+  const texto = document.getElementById('progreso-texto')!;
+
+  let estado: Record<string, boolean> = {};
+  try {
+    estado = JSON.parse(localStorage.getItem(CLAVE) || '{}');
+  } catch {}
+
+  function actualizar() {
+    const hechos = cajas.filter((c) => c.checked).length;
+    barra.style.width = `${Math.round((hechos / cajas.length) * 100)}%`;
+    texto.textContent = `${hechos} de ${cajas.length} pasos completados`;
+    document.querySelectorAll<HTMLElement>('.etapa').forEach((et) => {
+      const propias = [...et.querySelectorAll<HTMLInputElement>('[data-paso]')];
+      et.classList.toggle('etapa--completa', propias.every((c) => c.checked));
+    });
+  }
+
+  cajas.forEach((c) => {
+    c.checked = !!estado[c.dataset.paso!];
+    c.addEventListener('change', () => {
+      estado[c.dataset.paso!] = c.checked;
+      try {
+        localStorage.setItem(CLAVE, JSON.stringify(estado));
+      } catch {}
+      actualizar();
+    });
+  });
+  document.getElementById('reiniciar')!.addEventListener('click', () => {
+    estado = {};
+    cajas.forEach((c) => (c.checked = false));
+    try {
+      localStorage.removeItem(CLAVE);
+    } catch {}
+    actualizar();
+  });
+  actualizar();
+</script>
+
+<style>
+  .progreso {
+    margin-top: 20px;
+    max-width: 480px;
+    font-size: 0.9rem;
+    color: var(--tinta-suave);
+  }
+  .progreso__barra {
+    height: 10px;
+    background: #fff;
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .progreso__barra span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--confianza), var(--salmon));
+    transition: width 0.3s ease;
+  }
+  .ruta {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 40px;
+  }
+  .etapa {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 16px;
+    position: relative;
+    padding-bottom: 24px;
+  }
+  .etapa::before {
+    content: '';
+    position: absolute;
+    left: 27px;
+    top: 56px;
+    bottom: 0;
+    width: 2px;
+    background: var(--borde);
+  }
+  .etapa:last-child::before {
+    display: none;
+  }
+  .etapa__num {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 1.3rem;
+    background: var(--inspiracion-claro);
+    color: var(--confianza);
+    border: 2px solid var(--inspiracion);
+  }
+  .etapa--completa .etapa__num {
+    background: var(--confianza);
+    color: #fff;
+    border-color: var(--confianza);
+  }
+  .etapa__cabeza {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .etapa__cabeza .eyebrow {
+    margin-bottom: 0;
+  }
+  .etapa__tarjeta > p {
+    color: var(--tinta-suave);
+  }
+  .etapa__enlaces {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin-bottom: 16px;
+    font-weight: 500;
+    font-size: 0.93rem;
+  }
+  .pasos {
+    border: 0;
+    margin: 0;
+    padding: 14px 16px;
+    background: var(--fondo-alt);
+    border-radius: var(--radio-sm);
+    display: grid;
+    gap: 8px;
+  }
+  .pasos legend {
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0;
+    float: left;
+    margin-bottom: 4px;
+  }
+  .paso {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    cursor: pointer;
+    clear: both;
+  }
+  .paso input {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    accent-color: var(--confianza);
+    flex-shrink: 0;
+  }
+  .paso input:checked + span {
+    color: var(--tinta-suave);
+    text-decoration: line-through;
+  }
+  .final {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+  }
+  .final > div {
+    flex: 1 1 280px;
+  }
+  .final h2 {
+    font-size: 1.3rem;
+    margin: 0;
+  }
+  .final p {
+    margin: 0;
+    color: var(--tinta-suave);
+  }
+  @media (max-width: 560px) {
+    .etapa {
+      grid-template-columns: 1fr;
+    }
+    .etapa::before,
+    .etapa__marca {
+      display: none;
+    }
+    .etapa__cabeza .sticker {
+      width: 48px;
+      height: 48px;
+    }
+  }
+</style>

@@ -1,0 +1,369 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import documentos from '../data/documentos.json';
+import faq from '../data/faq.json';
+import canales from '../data/canales.json';
+
+const tiposMiembro = [
+  ['Nuevo en periodo de prueba', 'Ingresa por primera vez. Durante su semestre de ingreso cumple los parámetros que anuncia la Junta y hace el Proyecto de nuevos.'],
+  ['Activo', 'Estudiante de pregrado que superó el periodo de prueba, se identifica con los pilares y cumplió la tabla de permanencia del semestre anterior (70%, u 80% si venía de periodo de prueba).'],
+  ['Honorario', 'Miembro con mínimo tres años, que ocupó un cargo directivo u honorífico o dirigió al menos cinco eventos. Lo solicita por carta y la Junta decide. Para votar debe pertenecer a un comité y cumplir el 60% de la tabla.'],
+  ['En licencia', 'Miembro que se ausenta seis meses o un año (por ejemplo, por intercambio). Lo solicita por carta y debe pedir el reintegro al terminar.'],
+  ['En práctica', 'Miembro en práctica profesional. Avisa el semestre anterior y notifica su reintegro al terminar.'],
+  ['En periodo de prueba', 'Miembro que no cumplió la tabla de permanencia o tuvo problemas de convivencia. Debe alcanzar los parámetros que fije la Junta para recuperar el estado activo.'],
+];
+---
+
+<Layout title="Vida interna" description="Documentos oficiales, permanencia, asambleas, preguntas frecuentes y canales de Partners Campus EAFIT.">
+  <PageHero
+    eyebrow="Vida interna y funcionamiento"
+    title="Lo práctico de ser Partner"
+    lead="Documentos vigentes, reglas de permanencia, asambleas, preguntas frecuentes y canales oficiales: todo lo que necesitas para desenvolverte en el grupo."
+    sticker="/marca/sticker-1.png"
+  />
+
+  <nav class="contenedor indice" aria-label="En esta página">
+    <a href="#documentos">Documentos</a>
+    <a href="#permanencia">Permanencia</a>
+    <a href="#asambleas">Asambleas</a>
+    <a href="#faq">Preguntas frecuentes</a>
+    <a href="#canales">Canales</a>
+  </nav>
+
+  <section id="documentos" class="seccion">
+    <div class="contenedor">
+      <h2>Documentos oficiales</h2>
+      <p class="lead">Consulta siempre la versión vigente. Los documentos de circulación restringida están en el área privada.</p>
+      <div class="grid grid--2">
+        {
+          documentos.items.map((d) => (
+            <article class="tarjeta doc">
+              <div class="doc__cabeza">
+                <h3>{d.titulo}</h3>
+                {d.vigente && <span class="etiqueta">Vigente</span>}
+              </div>
+              <p>{d.descripcion}</p>
+              <p class="doc__version">{d.version}</p>
+              {d.publico && d.archivo ? (
+                <a class="btn btn--primario" href={d.archivo} target="_blank" rel="noopener">
+                  Consultar versión oficial
+                </a>
+              ) : (
+                <a class="btn btn--borde" href="/miembros/biblioteca">
+                  Ver en el área privada
+                </a>
+              )}
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="permanencia" class="seccion seccion--alt">
+    <div class="contenedor">
+      <h2>Permanencia y participación</h2>
+      <p class="lead">
+        Cada semestre la Junta lleva una <strong>tabla de permanencia</strong> con tu participación en comités, eventos,
+        asambleas y reuniones. Así funciona:
+      </p>
+      <div class="grid grid--3 reglas">
+        <div class="tarjeta">
+          <span class="regla__icono" aria-hidden="true">+</span>
+          <h3>Participación activa</h3>
+          <p>Suma puntos: asistir y cumplir en comités, eventos, asambleas y reuniones.</p>
+        </div>
+        <div class="tarjeta">
+          <span class="regla__icono" aria-hidden="true">=</span>
+          <h3>Participación pasiva</h3>
+          <p>Si no puedes asistir por una razón válida del Reglamento Interno, avisada a tiempo, no suma ni resta.</p>
+        </div>
+        <div class="tarjeta">
+          <span class="regla__icono regla__icono--menos" aria-hidden="true">−</span>
+          <h3>Sin excusa</h3>
+          <p>Resta puntos (puede quedar en negativo) y se procesa según el Reglamento Interno.</p>
+        </div>
+      </div>
+
+      <div class="umbrales">
+        <div><strong>70%</strong><span>para seguir como miembro activo</span></div>
+        <div><strong>80%</strong><span>si vienes de periodo de prueba</span></div>
+        <div><strong>65–79%</strong><span>la Junta puede extender tu periodo de prueba</span></div>
+        <div><strong>&lt; 40%</strong><span>tu continuidad se somete a consideración de la Junta</span></div>
+      </div>
+
+      <h3>Tipos de miembro</h3>
+      {
+        tiposMiembro.map(([t, d]) => (
+          <details class="desplegable">
+            <summary>{t}</summary>
+            <div class="desplegable__cuerpo">
+              <p>{d}</p>
+            </div>
+          </details>
+        ))
+      }
+      <details class="desplegable">
+        <summary>¿Cuándo se pierde la membresía?</summary>
+        <div class="desplegable__cuerpo">
+          <ul>
+            <li>Al dejar de ser estudiante activo de pregrado de EAFIT.</li>
+            <li>Por renuncia voluntaria por escrito.</li>
+            <li>Al acumular tres faltas graves por inasistencias sin justificación.</li>
+            <li>Por reiterados problemas de convivencia.</li>
+            <li>Si un miembro nuevo o en periodo de prueba no alcanza los parámetros de la Junta.</li>
+            <li>Si al terminar una licencia, práctica o intercambio no se solicita el reintegro.</li>
+          </ul>
+        </div>
+      </details>
+      <p class="fuente">
+        Fuente: <a href="/documentos/estatutos-2026.pdf">Estatutos 2026</a>, Capítulos IV y V. El Reglamento Interno detalla
+        faltas leves y graves. ¿Dudas sobre tu caso? Escribe a Gestión Humana.
+      </p>
+    </div>
+  </section>
+
+  <section id="asambleas" class="seccion">
+    <div class="contenedor dos">
+      <div>
+        <h2>Asambleas y reuniones</h2>
+        <ul>
+          <li><strong>Asamblea General:</strong> mínimo una al mes, abierta a todos los miembros. La asistencia es obligatoria.</li>
+          <li><strong>Asamblea de elecciones:</strong> una vez al año, para elegir a la Junta Directiva.</li>
+          <li><strong>Asambleas extraordinarias:</strong> las convoca Presidencia, el asesor o el 20% de los miembros por escrito, con el tema anunciado.</li>
+          <li><strong>Quórum:</strong> un tercio de los miembros activos.</li>
+          <li><strong>Convocatoria:</strong> con suficiente antelación, por los canales oficiales y en el <a href="/calendario">calendario</a>.</li>
+        </ul>
+        <p>Las actas que puedan compartirse internamente están en el <a href="/miembros/biblioteca">área privada</a>.</p>
+      </div>
+      <div class="tarjeta robert">
+        <h3>Reglas de orden de Robert</h3>
+        <dl>
+          <dt>Moción</dt>
+          <dd>Propuesta formal: “Yo propongo que…”.</dd>
+          <dt>Secundar</dt>
+          <dd>Apoyar que la moción se considere: “Secundo la moción”.</dd>
+          <dt>Enmienda</dt>
+          <dd>Modificar la moción antes de votar: quitar, agregar o sustituir palabras.</dd>
+        </dl>
+        <p class="robert__principios">
+          Todos tenemos los mismos derechos. Nada de comentarios personales en el debate. Decide la mayoría. El silencio
+          funciona como consentimiento. Quien preside es imparcial.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="seccion seccion--azul">
+    <div class="contenedor">
+      <h2>Preguntas frecuentes</h2>
+      <div class="campo buscador">
+        <label for="buscar-faq">Busca tu pregunta</label>
+        <input id="buscar-faq" type="search" placeholder="Ej.: licencia, calendario, comités…" autocomplete="off" />
+      </div>
+      <div id="lista-faq">
+        {
+          faq.items.map((f) => (
+            <details class="desplegable" data-texto={(f.pregunta + ' ' + f.respuesta).toLowerCase()}>
+              <summary>{f.pregunta}</summary>
+              <div class="desplegable__cuerpo">
+                <p>{f.respuesta}</p>
+              </div>
+            </details>
+          ))
+        }
+      </div>
+      <p id="faq-vacio" hidden>No encontramos esa pregunta. <a href="/contacto">Escríbenos</a>.</p>
+    </div>
+  </section>
+
+  <section id="canales" class="seccion">
+    <div class="contenedor">
+      <h2>Canales oficiales</h2>
+      <p class="lead">Para qué sirve cada canal y qué información debe compartirse en él.</p>
+      <div class="tabla-wrap">
+        <table class="tabla">
+          <thead>
+            <tr><th>Canal</th><th>Tipo</th><th>¿Para qué se usa?</th></tr>
+          </thead>
+          <tbody>
+            {
+              canales.items.map((c) => (
+                <tr>
+                  <td>
+                    {c.enlace && c.publico ? <a href={c.enlace}>{c.nombre}</a> : c.nombre}
+                    {!c.publico && <span class="etiqueta">Interno</span>}
+                  </td>
+                  <td>{c.tipo}</td>
+                  <td>{c.uso}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="fuente">Los enlaces de los grupos internos están en el <a href="/miembros/directorio">directorio del área privada</a>.</p>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const input = document.getElementById('buscar-faq') as HTMLInputElement;
+  const items = [...document.querySelectorAll<HTMLDetailsElement>('#lista-faq details')];
+  const vacio = document.getElementById('faq-vacio')!;
+  const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  input.addEventListener('input', () => {
+    const q = norm(input.value.trim());
+    let n = 0;
+    items.forEach((d) => {
+      const ok = !q || norm(d.dataset.texto!).includes(q);
+      d.hidden = !ok;
+      if (ok) n++;
+    });
+    vacio.hidden = n > 0;
+  });
+</script>
+
+<style>
+  .indice {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-block: 16px;
+  }
+  .indice a {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--borde);
+    text-decoration: none;
+    font-size: 0.88rem;
+    color: var(--tinta);
+  }
+  .doc {
+    display: flex;
+    flex-direction: column;
+  }
+  .doc__cabeza {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .doc p {
+    color: var(--tinta-suave);
+  }
+  .doc__version {
+    font-size: 0.85rem;
+  }
+  .doc .btn {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  .reglas {
+    margin-bottom: 24px;
+  }
+  .regla__icono {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--confianza);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.3rem;
+  }
+  .regla__icono--menos {
+    background: var(--rojo);
+  }
+  .reglas h3 {
+    margin-top: 12px;
+  }
+  .reglas p {
+    color: var(--tinta-suave);
+  }
+  .umbrales {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .umbrales div {
+    background: #fff;
+    border-radius: var(--radio-sm);
+    padding: 16px;
+    border-left: 5px solid var(--salmon);
+    display: grid;
+  }
+  .umbrales strong {
+    font-size: 1.6rem;
+    color: var(--confianza);
+  }
+  .umbrales span {
+    font-size: 0.9rem;
+    color: var(--tinta-suave);
+  }
+  .fuente {
+    font-size: 0.88rem;
+    color: var(--tinta-suave);
+    margin-top: 16px;
+  }
+  .dos {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: clamp(24px, 5vw, 56px);
+    align-items: start;
+  }
+  .dos li {
+    margin-bottom: 8px;
+  }
+  .robert dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 12px;
+  }
+  .robert dt {
+    font-weight: 600;
+  }
+  .robert dd {
+    margin: 0;
+    color: var(--tinta-suave);
+  }
+  .robert__principios {
+    font-size: 0.9rem;
+    color: var(--tinta-suave);
+    border-top: 1px solid var(--borde);
+    padding-top: 12px;
+  }
+  .buscador {
+    max-width: 480px;
+  }
+  .tabla-wrap {
+    overflow-x: auto;
+  }
+  .tabla {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 560px;
+  }
+  .tabla th,
+  .tabla td {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid var(--borde);
+    vertical-align: top;
+  }
+  .tabla th {
+    background: var(--inspiracion-claro);
+  }
+  .tabla td .etiqueta {
+    margin-left: 8px;
+  }
+  @media (max-width: 800px) {
+    .dos {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

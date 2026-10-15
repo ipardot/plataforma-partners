@@ -1,0 +1,264 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import EventoItem from '../components/EventoItem.astro';
+import sitio from '../data/sitio.json';
+
+const ahora = new Date();
+const proximos = (await getCollection('agenda'))
+  .filter((e) => (e.data.fin ?? e.data.inicio) >= ahora)
+  .sort((a, b) => +a.data.inicio - +b.data.inicio)
+  .slice(0, 4);
+
+const macro = (await getCollection('eventos', (e) => e.data.tipo === 'macroevento')).sort(
+  (a, b) => a.data.orden - b.data.orden,
+);
+
+const accesos = [
+  { href: '/ruta', titulo: 'Ruta del nuevo Partner', texto: 'Tus primeras semanas, en seis etapas.', sticker: '/marca/sticker-5.png' },
+  { href: '/eventos', titulo: 'Eventos', texto: 'LANI, Voluntarios por un Día, Hono y más.', sticker: '/marca/sticker-7.png' },
+  { href: '/comites', titulo: 'Comités', texto: 'Qué hace cada uno y cómo unirte.', sticker: '/marca/sticker-3.png' },
+  { href: '/calendario', titulo: 'Calendario', texto: 'Asambleas, reuniones y fechas límite.', sticker: '/marca/sticker-4.png' },
+];
+
+const pilares = [
+  { nombre: 'Conectar', sticker: '/marca/sticker-8.png', texto: 'Alianzas con capítulos de toda América y acompañamiento a estudiantes de intercambio.' },
+  { nombre: 'Servir', sticker: '/marca/sticker-6.png', texto: 'Iniciativas sociales que transforman comunidades desde la empatía y el trabajo conjunto.' },
+  { nombre: 'Cambiar vidas', sticker: '/marca/sticker-2.png', texto: 'Liderazgo y habilidades que nos forman, dentro y fuera de Partners.' },
+];
+---
+
+<Layout title="Inicio">
+  <section class="portada">
+    <img class="portada__foto" src="/uploads/eventos/lani-2026.jpg" alt="Integrantes de Partners Campus EAFIT en el escenario de La Noche Internacional" width="1119" height="839" />
+    <div class="contenedor portada__texto">
+      <img class="portada__isotipo" src="/marca/isotipo.png" alt="" width="72" height="87" />
+      <h1>{sitio.frase}</h1>
+      <p>{sitio.subfrase}</p>
+      <div class="portada__acciones">
+        <a class="btn btn--acento" href="/ruta">Empieza tu ruta</a>
+        <a class="btn btn--claro" href="/conoce">Conoce Partners</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="contenedor accesos" aria-label="Accesos directos">
+    <div class="grid grid--4">
+      {
+        accesos.map((a) => (
+          <a class="tarjeta acceso" href={a.href}>
+            <img class="sticker" src={a.sticker} alt="" width="64" height="64" loading="lazy" />
+            <h2 class="acceso__titulo">{a.titulo}</h2>
+            <p>{a.texto}</p>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="seccion">
+    <div class="contenedor">
+      <span class="eyebrow">Nuestros pilares</span>
+      <h2>Conectar, servir y cambiar vidas</h2>
+      <p class="lead">
+        Somos el capítulo estudiantil de Partners of the Americas en EAFIT. Promovemos las relaciones internacionales y el
+        voluntariado para fomentar el bienestar social y la internacionalización.
+      </p>
+      <div class="grid grid--3 pilares">
+        {
+          pilares.map((p) => (
+            <div class="pilar">
+              <img class="sticker" src={p.sticker} alt="" width="64" height="64" loading="lazy" />
+              <div>
+                <h3>{p.nombre}</h3>
+                <p>{p.texto}</p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+      <a href="/conoce" class="btn btn--borde">Lee más sobre Partners</a>
+    </div>
+  </section>
+
+  <section class="seccion seccion--azul">
+    <div class="contenedor dos-col">
+      <div>
+        <span class="eyebrow">Agenda</span>
+        <h2>Próximos eventos</h2>
+        <p class="lead">Todo lo que pasa en Partners, en un solo calendario.</p>
+        <a href="/calendario" class="btn btn--primario">Ver calendario completo</a>
+      </div>
+      <div class="lista-eventos">
+        {proximos.length ? proximos.map((e) => <EventoItem evento={e} compacto />) : <p>No hay eventos próximos publicados.</p>}
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion">
+    <div class="contenedor">
+      <span class="eyebrow">Macroeventos</span>
+      <h2>Lo que construimos juntos</h2>
+      <div class="grid grid--3">
+        {
+          macro.map((m) => (
+            <a class="tarjeta macro" href={`/eventos/${m.id}`}>
+              <div class="macro__img" style={m.data.portada ? `background-image:url(${m.data.portada})` : undefined}>
+                {!m.data.portada && <span>{m.data.sigla ?? m.data.nombre}</span>}
+              </div>
+              {m.data.pilar && <span class="etiqueta etiqueta--salmon">{m.data.pilar}</span>}
+              <h3>{m.data.nombre}</h3>
+              <p>{m.data.resumen}</p>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion seccion--alt">
+    <div class="contenedor cta">
+      <img src="/marca/sticker-1.png" alt="" width="96" height="73" loading="lazy" />
+      <div>
+        <h2>¿Tienes una idea o una pregunta?</h2>
+        <p>Escríbele a la Junta, propón un proyecto o cuéntanos cómo te fue en el último evento.</p>
+      </div>
+      <a class="btn btn--primario" href="/contacto">Ir a contacto</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .portada {
+    position: relative;
+    min-height: min(78vh, 680px);
+    display: flex;
+    align-items: flex-end;
+    color: #fff;
+    overflow: hidden;
+  }
+  .portada__foto {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .portada::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      linear-gradient(0deg, rgb(22 33 58 / 0.92) 0%, rgb(22 33 58 / 0.55) 45%, rgb(22 33 58 / 0.1) 100%),
+      linear-gradient(90deg, rgb(78 104 155 / 0.55), transparent 70%);
+  }
+  .portada__texto {
+    position: relative;
+    z-index: 2;
+    padding-block: 120px 96px;
+  }
+  .portada__isotipo {
+    width: 56px;
+    margin-bottom: 16px;
+  }
+  .portada h1 {
+    max-width: 18ch;
+    color: #fff;
+  }
+  .portada p {
+    max-width: 58ch;
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    color: #e6ecf6;
+  }
+  .portada__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .accesos {
+    position: relative;
+    z-index: 3;
+    margin-top: -56px;
+  }
+  .acceso__titulo {
+    font-size: 1.1rem;
+    margin: 12px 0 4px;
+  }
+  .acceso p {
+    color: var(--tinta-suave);
+    font-size: 0.93rem;
+  }
+  .pilares {
+    margin: 32px 0;
+  }
+  .pilar {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .pilar p {
+    color: var(--tinta-suave);
+  }
+  .dos-col {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: clamp(24px, 5vw, 64px);
+    align-items: start;
+  }
+  .lista-eventos {
+    display: grid;
+    gap: 12px;
+  }
+  .macro {
+    padding: 0 0 24px;
+    overflow: hidden;
+  }
+  .macro > :not(.macro__img) {
+    margin-inline: 24px;
+  }
+  .macro__img {
+    aspect-ratio: 16 / 9;
+    background: var(--degradado);
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 18px;
+    display: grid;
+    place-items: center;
+  }
+  .macro__img span {
+    color: #fff;
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+  .macro p {
+    color: var(--tinta-suave);
+    font-size: 0.95rem;
+  }
+  .cta {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .cta > div {
+    flex: 1 1 320px;
+  }
+  .cta h2 {
+    margin-bottom: 0.25em;
+  }
+  .cta p {
+    margin: 0;
+    color: var(--tinta-suave);
+  }
+  @media (max-width: 800px) {
+    .dos-col {
+      grid-template-columns: 1fr;
+    }
+    .portada__texto {
+      padding-block: 96px 88px;
+    }
+  }
+</style>

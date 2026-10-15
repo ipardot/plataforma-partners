@@ -1,0 +1,166 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+
+export async function getStaticPaths() {
+  const eventos = await getCollection('eventos');
+  return eventos.map((e) => ({ params: { id: e.id }, props: { evento: e } }));
+}
+
+const { evento } = Astro.props;
+const { Content } = await render(evento);
+const d = evento.data;
+const titulo = d.nombre + (d.sigla ? ` (${d.sigla})` : '');
+---
+
+<Layout title={titulo} description={d.resumen} image={d.portada || undefined}>
+  <PageHero
+    eyebrow={d.tipo === 'macroevento' ? 'Macroevento' : 'Actividad'}
+    title={titulo}
+    lead={d.resumen}
+    sticker={d.tipo === 'macroevento' ? '/marca/sticker-7.png' : undefined}
+    tono="salmon"
+  />
+
+  {
+    d.portada && (
+      <div class="contenedor">
+        <img class="portada" src={d.portada} alt={`Fotografía de ${d.nombre}`} width="1400" height="788" />
+      </div>
+    )
+  }
+
+  <section class="seccion">
+    <div class="contenedor ficha">
+      <article class="prosa">
+        <Content />
+      </article>
+      <aside class="lateral">
+        <dl class="tarjeta datos">
+          {d.pilar && (<><dt>Pilar</dt><dd>{d.pilar}</dd></>)}
+          {d.organiza && (<><dt>¿Quién lo organiza?</dt><dd>{d.organiza}</dd></>)}
+          {d.dirigidoA && (<><dt>¿A quién está dirigido?</dt><dd>{d.dirigidoA}</dd></>)}
+        </dl>
+        {
+          d.comoParticipar && (
+            <div class="tarjeta participa">
+              <h2>¿Cómo puede participar un Partner?</h2>
+              <p>{d.comoParticipar}</p>
+              <a class="btn btn--primario" href="/calendario">Ver fechas en el calendario</a>
+            </div>
+          )
+        }
+      </aside>
+    </div>
+  </section>
+
+  {
+    d.ediciones.length > 0 && (
+      <section class="seccion seccion--alt">
+        <div class="contenedor">
+          <h2>Ediciones</h2>
+          <div class="grid grid--3">
+            {d.ediciones.map((e) => (
+              <div class="tarjeta">
+                <span class="etiqueta">{e.anio}</span>
+                <h3>{e.tema}</h3>
+                {e.resultado && <p>{e.resultado}</p>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    d.galeria.length > 0 && (
+      <section class="seccion">
+        <div class="contenedor">
+          <h2>Galería</h2>
+          <div class="galeria">
+            {d.galeria.map((g) => (
+              <figure>
+                <img src={g.imagen} alt={g.pie ?? d.nombre} loading="lazy" width="600" height="450" />
+                {g.pie && <figcaption>{g.pie}</figcaption>}
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <div class="contenedor volver"><a href="/eventos">← Todos los eventos</a></div>
+</Layout>
+
+<style>
+  .portada {
+    width: 100%;
+    max-height: 480px;
+    object-fit: cover;
+    border-radius: var(--radio);
+    margin-top: 32px;
+  }
+  .ficha {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: clamp(24px, 4vw, 56px);
+    align-items: start;
+  }
+  .lateral {
+    display: grid;
+    gap: 16px;
+    position: sticky;
+    top: 88px;
+  }
+  .datos {
+    margin: 0;
+  }
+  .datos dt {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--tinta-suave);
+  }
+  .datos dd {
+    margin: 0 0 12px;
+  }
+  .participa {
+    background: var(--salmon-claro);
+    border-color: transparent;
+  }
+  .participa h2 {
+    font-size: 1.1rem;
+  }
+  .galeria {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+    gap: 16px;
+  }
+  .galeria figure {
+    margin: 0;
+  }
+  .galeria img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radio-sm);
+  }
+  .galeria figcaption {
+    font-size: 0.85rem;
+    color: var(--tinta-suave);
+    margin-top: 6px;
+  }
+  .volver {
+    padding-bottom: 48px;
+  }
+  @media (max-width: 900px) {
+    .ficha {
+      grid-template-columns: 1fr;
+    }
+    .lateral {
+      position: static;
+    }
+  }
+</style>

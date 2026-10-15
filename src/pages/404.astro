@@ -1,0 +1,26 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Página no encontrada" noindex>
+  <section class="seccion">
+    <div class="contenedor no-encontrada">
+      <img src="/marca/sticker-4.png" alt="" width="110" height="140" />
+      <h1>Esta página no existe</h1>
+      <p class="lead">Puede que el enlace haya cambiado. Prueba desde el inicio o busca en las preguntas frecuentes.</p>
+      <div>
+        <a class="btn btn--primario" href="/">Ir al inicio</a>
+        <a class="btn btn--borde" href="/vida-interna#faq">Preguntas frecuentes</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .no-encontrada {
+    text-align: center;
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+  }
+</style>

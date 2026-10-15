@@ -1,0 +1,244 @@
+---
+import MiembrosLayout from '../../layouts/MiembrosLayout.astro';
+import { COMITE_LABEL } from '../../lib/nav';
+---
+
+<MiembrosLayout title="Administrar" lead="Herramientas de la Junta: miembros autorizados y registro de participación. El contenido público del sitio se edita en el CMS.">
+  <p><a class="btn btn--borde" href="/admin/">Abrir el CMS del sitio público</a></p>
+
+  <div class="grid grid--2 paneles">
+    <section class="tarjeta">
+      <h2>Agregar o actualizar miembro</h2>
+      <p class="ayuda">Solo los correos activos de esta lista pueden entrar al área privada. Si el correo ya existe, se actualizan sus datos.</p>
+      <form id="form-miembro">
+        <div class="campo"><label for="m-email">Correo</label><input id="m-email" name="email" type="email" required /></div>
+        <div class="campo"><label for="m-nombre">Nombre completo</label><input id="m-nombre" name="nombre" required /></div>
+        <div class="grid grid--2">
+          <div class="campo">
+            <label for="m-comite">Comité principal</label>
+            <select id="m-comite" name="comite"><option value="">—</option>{Object.entries(COMITE_LABEL).map(([k, v]) => <option value={k}>{v}</option>)}</select>
+          </div>
+          <div class="campo">
+            <label for="m-estado">Estado</label>
+            <select id="m-estado" name="estado">
+              <option value="nuevo">Nuevo en periodo de prueba</option>
+              <option value="activo">Activo</option>
+              <option value="honorario">Honorario</option>
+              <option value="licencia">En licencia</option>
+              <option value="practica">En práctica</option>
+              <option value="prueba">En periodo de prueba</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="m-rol">Permisos</label>
+            <select id="m-rol" name="rol">
+              <option value="miembro">Miembro</option>
+              <option value="junta">Junta (puede administrar)</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+          <div class="campo"><label for="m-cargo">Cargo (opcional)</label><input id="m-cargo" name="cargo" /></div>
+        </div>
+        <div class="campo"><label for="m-tel">Teléfono (opcional)</label><input id="m-tel" name="telefono" type="tel" /></div>
+        <button class="btn btn--primario" type="submit">Guardar miembro</button>
+        <p id="m-msg" role="status"></p>
+      </form>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Registrar participación</h2>
+      <p class="ayuda">Registra la misma actividad para varios miembros a la vez (por ejemplo, la asistencia a una asamblea).</p>
+      <form id="form-part">
+        <div class="grid grid--2">
+          <div class="campo"><label for="p-sem">Semestre</label><input id="p-sem" name="semestre" required placeholder="2026-2" /></div>
+          <div class="campo"><label for="p-fecha">Fecha</label><input id="p-fecha" name="fecha" type="date" required /></div>
+        </div>
+        <div class="campo"><label for="p-act">Actividad</label><input id="p-act" name="actividad" required placeholder="Asamblea General de octubre" /></div>
+        <div class="grid grid--2">
+          <div class="campo">
+            <label for="p-tipo">Tipo</label>
+            <select id="p-tipo" name="tipo">
+              <option value="asamblea">Asamblea</option>
+              <option value="comite">Comité</option>
+              <option value="evento">Evento</option>
+              <option value="asistencia">Asistencia</option>
+              <option value="excusa">Excusa válida (0 puntos)</option>
+              <option value="falta">Falta</option>
+            </select>
+          </div>
+          <div class="campo"><label for="p-pts">Puntos</label><input id="p-pts" name="puntos" type="number" step="0.5" value="1" required /></div>
+        </div>
+        <div class="campo">
+          <label for="p-buscar">Miembros</label>
+          <input id="p-buscar" type="search" placeholder="Filtrar por nombre" />
+          <div id="p-lista" class="checklist"></div>
+        </div>
+        <div class="campo"><label for="p-nota">Nota (opcional)</label><input id="p-nota" name="nota" /></div>
+        <button class="btn btn--primario" type="submit">Registrar</button>
+        <p id="p-msg" role="status"></p>
+      </form>
+    </section>
+  </div>
+
+  <section class="tarjeta lista-miembros">
+    <h2>Miembros autorizados</h2>
+    <div class="tabla-wrap">
+      <table class="tabla">
+        <thead><tr><th>Nombre</th><th>Correo</th><th>Estado</th><th>Permisos</th><th>Acceso</th></tr></thead>
+        <tbody id="m-filas"></tbody>
+      </table>
+    </div>
+  </section>
+</MiembrosLayout>
+
+<script>
+  import { supabase, esc, type Perfil } from '../../lib/supabase';
+  import { proteger } from '../../lib/gate';
+
+  (async () => {
+    const s = await proteger({ junta: true });
+    if (!s || !supabase) return;
+    const sb = supabase;
+    let miembros: Perfil[] = [];
+
+    async function cargar() {
+      const { data } = await sb.from('miembros').select('*').order('nombre');
+      miembros = (data ?? []) as Perfil[];
+      document.getElementById('m-filas')!.innerHTML = miembros
+        .map(
+          (m) => `<tr><td>${esc(m.nombre)}</td><td>${esc(m.email)}</td><td>${esc(m.estado)}</td><td>${esc(m.rol)}</td>
+          <td><button class="btn btn--borde btn-sm" data-activo="${esc(m.email)}" data-valor="${!m.activo}">${m.activo ? 'Desactivar' : 'Activar'}</button></td></tr>`,
+        )
+        .join('');
+      pintarChecklist();
+    }
+
+    const buscar = document.getElementById('p-buscar') as HTMLInputElement;
+    function pintarChecklist() {
+      const marcados = new Set([...document.querySelectorAll<HTMLInputElement>('#p-lista input:checked')].map((i) => i.value));
+      const t = buscar.value.trim().toLowerCase();
+      document.getElementById('p-lista')!.innerHTML = miembros
+        .filter((m) => m.activo)
+        .map(
+          (m) =>
+            `<label ${t && !m.nombre.toLowerCase().includes(t) ? 'hidden' : ''}><input type="checkbox" value="${esc(m.email)}" ${marcados.has(m.email) ? 'checked' : ''}> ${esc(m.nombre)}</label>`,
+        )
+        .join('');
+    }
+    buscar.addEventListener('input', pintarChecklist);
+
+    document.addEventListener('click', async (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>('[data-activo]');
+      if (!b) return;
+      if (b.dataset.activo === s.perfil.email) return alert('No puedes desactivar tu propia cuenta.');
+      await sb.from('miembros').update({ activo: b.dataset.valor === 'true' }).eq('email', b.dataset.activo!);
+      cargar();
+    });
+
+    const fm = document.getElementById('form-miembro') as HTMLFormElement;
+    fm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = Object.fromEntries(new FormData(fm)) as Record<string, string>;
+      const { error } = await sb.from('miembros').upsert({
+        email: f.email.trim().toLowerCase(),
+        nombre: f.nombre.trim(),
+        comite: f.comite || null,
+        estado: f.estado,
+        rol: f.rol,
+        cargo: f.cargo || null,
+        telefono: f.telefono || null,
+        activo: true,
+      });
+      document.getElementById('m-msg')!.textContent = error ? 'Error: ' + error.message : 'Miembro guardado.';
+      if (!error) {
+        fm.reset();
+        cargar();
+      }
+    });
+
+    const fp = document.getElementById('form-part') as HTMLFormElement;
+    (fp.elements.namedItem('fecha') as HTMLInputElement).valueAsDate = new Date();
+    const hoy = new Date();
+    (fp.elements.namedItem('semestre') as HTMLInputElement).value = `${hoy.getFullYear()}-${hoy.getMonth() < 6 ? 1 : 2}`;
+    fp.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('p-msg')!;
+      const f = Object.fromEntries(new FormData(fp)) as Record<string, string>;
+      const correos = [...document.querySelectorAll<HTMLInputElement>('#p-lista input:checked')].map((i) => i.value);
+      if (!correos.length) {
+        msg.textContent = 'Selecciona al menos un miembro.';
+        return;
+      }
+      const { error } = await sb.from('participacion').insert(
+        correos.map((email) => ({
+          email,
+          semestre: f.semestre,
+          fecha: f.fecha,
+          actividad: f.actividad,
+          tipo: f.tipo,
+          puntos: f.tipo === 'excusa' ? 0 : Number(f.puntos),
+          nota: f.nota || null,
+        })),
+      );
+      msg.textContent = error ? 'Error: ' + error.message : `Registrado para ${correos.length} miembro(s).`;
+      if (!error) document.querySelectorAll<HTMLInputElement>('#p-lista input').forEach((i) => (i.checked = false));
+    });
+
+    cargar();
+  })();
+</script>
+
+<style>
+  .paneles {
+    align-items: start;
+    margin-bottom: 24px;
+  }
+  .paneles h2,
+  .lista-miembros h2 {
+    font-size: 1.2rem;
+  }
+  .ayuda {
+    font-size: 0.88rem;
+    color: var(--tinta-suave);
+  }
+  .checklist {
+    max-height: 220px;
+    overflow-y: auto;
+    border: 1px solid #c8d1de;
+    border-radius: var(--radio-sm);
+    padding: 8px 12px;
+    display: grid;
+    gap: 4px;
+  }
+  .checklist :global(label) {
+    font-weight: 400;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .checklist :global(label[hidden]) {
+    display: none;
+  }
+  .tabla-wrap {
+    overflow-x: auto;
+  }
+  .tabla {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 620px;
+  }
+  .tabla :global(th),
+  .tabla :global(td) {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--borde);
+    font-size: 0.92rem;
+  }
+  .tabla th {
+    background: var(--inspiracion-claro);
+  }
+  :global(.btn-sm) {
+    padding: 0.45em 0.9em;
+    font-size: 0.82rem;
+  }
+</style>

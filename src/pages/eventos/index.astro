@@ -1,0 +1,148 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+
+const eventos = (await getCollection('eventos')).sort((a, b) => a.data.orden - b.data.orden);
+const macro = eventos.filter((e) => e.data.tipo === 'macroevento');
+const otros = eventos.filter((e) => e.data.tipo === 'actividad');
+---
+
+<Layout title="Eventos" description="Los macroeventos de Partners Campus EAFIT —La Noche Internacional, Voluntarios por un Día y Hono— y las demás actividades del grupo.">
+  <PageHero
+    eyebrow="Nuestros macroeventos"
+    title="Eventos y actividades"
+    lead="Un macroevento involucra a tres o más comités, genera un impacto integral y se alinea con al menos uno de nuestros pilares. Hoy son tres: La Noche Internacional, Voluntarios por un Día y Hono."
+    sticker="/marca/sticker-7.png"
+    tono="salmon"
+  />
+
+  <section class="seccion">
+    <div class="contenedor">
+      <div class="macros">
+        {
+          macro.map((m, i) => (
+            <a class:list={['macro', { 'macro--inv': i % 2 }]} href={`/eventos/${m.id}`}>
+              <div class="macro__img" style={m.data.portada ? `background-image:url(${m.data.portada})` : undefined}>
+                {!m.data.portada && <span>{m.data.sigla ?? m.data.nombre}</span>}
+              </div>
+              <div class="macro__txt">
+                <span class="etiqueta etiqueta--salmon">Pilar: {m.data.pilar}</span>
+                <h2>
+                  {m.data.nombre} {m.data.sigla && <small>({m.data.sigla})</small>}
+                </h2>
+                <p>{m.data.resumen}</p>
+                <span class="btn btn--primario">Conocer {m.data.sigla ?? m.data.nombre}</span>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion seccion--alt">
+    <div class="contenedor">
+      <span class="eyebrow">Otros eventos y actividades</span>
+      <h2>Más formas de participar</h2>
+      <div class="grid grid--3">
+        {
+          otros.map((o) => (
+            <a class="tarjeta actividad" href={`/eventos/${o.id}`}>
+              <h3>{o.data.nombre}</h3>
+              <p>{o.data.resumen}</p>
+              <dl>
+                <dt>Organiza</dt>
+                <dd>{o.data.organiza}</dd>
+                <dt>Para</dt>
+                <dd>{o.data.dirigidoA}</dd>
+              </dl>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .macros {
+    display: grid;
+    gap: 28px;
+  }
+  .macro {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    background: #fff;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    overflow: hidden;
+    box-shadow: var(--sombra);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.18s ease;
+  }
+  .macro:hover {
+    transform: translateY(-3px);
+  }
+  .macro--inv .macro__img {
+    order: 2;
+  }
+  .macro__img {
+    min-height: 260px;
+    background: var(--degradado);
+    background-size: cover;
+    background-position: center;
+    display: grid;
+    place-items: center;
+  }
+  .macro__img span {
+    color: #fff;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 800;
+  }
+  .macro__txt {
+    padding: clamp(24px, 4vw, 40px);
+    align-self: center;
+  }
+  .macro__txt h2 {
+    margin-top: 12px;
+  }
+  .macro__txt small {
+    font-weight: 500;
+    color: var(--tinta-suave);
+    font-size: 0.7em;
+  }
+  .macro__txt p {
+    color: var(--tinta-suave);
+  }
+  .actividad p {
+    color: var(--tinta-suave);
+    font-size: 0.95rem;
+  }
+  .actividad dl {
+    margin: 0;
+    font-size: 0.85rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2px 10px;
+  }
+  .actividad dt {
+    font-weight: 600;
+  }
+  .actividad dd {
+    margin: 0;
+    color: var(--tinta-suave);
+  }
+  @media (max-width: 800px) {
+    .macro {
+      grid-template-columns: 1fr;
+    }
+    .macro--inv .macro__img {
+      order: 0;
+    }
+    .macro__img {
+      min-height: 200px;
+    }
+  }
+</style>

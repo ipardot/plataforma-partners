@@ -1,0 +1,176 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import sitio from '../../data/sitio.json';
+
+const pillars = [
+  { name: 'Connect', sticker: '/marca/sticker-8.png', text: 'We build alliances with Partners of the Americas chapters and support exchange students at EAFIT.' },
+  { name: 'Serve', sticker: '/marca/sticker-6.png', text: 'We create social initiatives that transform communities through empathy and teamwork.' },
+  { name: 'Change lives', sticker: '/marca/sticker-2.png', text: 'We develop leadership and skills for our personal and professional growth.' },
+];
+
+const events = [
+  { name: 'International Night (LANI)', text: 'Our signature cultural exchange: food fair, cultural show and activities that bring local and international students together. Live an international experience without leaving EAFIT.', img: '/uploads/eventos/lani-2026.jpg', href: '/eventos/la-noche-internacional' },
+  { name: 'Volunteers for a Day (VPUD)', text: 'A volunteering experience with partner foundations and their communities, from planning to evaluation.', img: '', href: '/eventos/voluntarios-por-un-dia' },
+  { name: 'Hono', text: 'Our university well-being event and fundraiser. “Hono” means “to connect” in Māori; funds go to specific communities.', img: '', href: '/eventos/hono' },
+];
+---
+
+<Layout title="Partners Campus EAFIT in English" lang="en" description="Partners Campus EAFIT: the student service network of Partners of the Americas at Universidad EAFIT, Medellín.">
+  <section class="hero">
+    <div class="contenedor">
+      <img src="/marca/isotipo.png" alt="" width="56" height="68" />
+      <span class="eyebrow">Partners Campus EAFIT</span>
+      <h1>We connect cultures, serve communities and change lives.</h1>
+      <p class="lead">
+        The student chapter of Partners of the Americas at Universidad EAFIT in Medellín, Colombia. We bring together
+        volunteering, international relations and personal growth.
+      </p>
+      <a class="btn btn--acento" href="#international">New to EAFIT? Start here</a>
+      <a class="btn btn--borde" href="/">Ver en español</a>
+    </div>
+  </section>
+
+  <section id="about" class="seccion">
+    <div class="contenedor dos">
+      <div>
+        <span class="eyebrow">About us</span>
+        <h2>Who we are</h2>
+        <p>
+          Partners Campus EAFIT is a non-profit, non-political student group at Universidad EAFIT and a student chapter of
+          <a href={sitio.partnersAmericas} target="_blank" rel="noopener">Partners of the Americas</a>, an NGO headquartered in
+          Washington, DC that promotes friendship, volunteering and understanding among the people of Latin America, the
+          Caribbean and the United States.
+        </p>
+        <p>
+          Our mission is to promote international relations and volunteering through our own initiatives and projects,
+          developing teamwork, commitment and leadership to foster social well-being and internationalization.
+        </p>
+      </div>
+      <div class="tarjeta">
+        <h3>How we are organized</h3>
+        <ul>
+          <li><strong>General Assembly:</strong> all members, at least once a month.</li>
+          <li><strong>Board of Directors:</strong> seven directors elected every year.</li>
+          <li><strong>Committees:</strong> International, Social, Logistics, Marketing, Public Relations and Human Resources.</li>
+          <li><strong>Flagship events:</strong> LANI, Volunteers for a Day and Hono.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="pillars" class="seccion seccion--alt">
+    <div class="contenedor">
+      <span class="eyebrow">Our pillars</span>
+      <h2>Connect, serve and change lives</h2>
+      <div class="grid grid--3">
+        {
+          pillars.map((p) => (
+            <div class="tarjeta">
+              <img class="sticker" src={p.sticker} alt="" width="64" height="64" loading="lazy" />
+              <h3>{p.name}</h3>
+              <p>{p.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="events" class="seccion">
+    <div class="contenedor">
+      <span class="eyebrow">Flagship events</span>
+      <h2>What we build together</h2>
+      <div class="grid grid--3">
+        {
+          events.map((e) => (
+            <a class="tarjeta evento" href={e.href} hreflang="es">
+              <div class="evento__img" style={e.img ? `background-image:url(${e.img})` : undefined} />
+              <h3>{e.name}</h3>
+              <p>{e.text}</p>
+              <span class="mas">Details (in Spanish) →</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="international" class="seccion seccion--azul">
+    <div class="contenedor dos">
+      <div>
+        <span class="eyebrow">International students</span>
+        <h2>Welcome to EAFIT!</h2>
+        <p>
+          Through our <strong>Buddy Program</strong>, every exchange student can be paired with a Partner who helps them settle
+          in at the university and in Medellín. You are also invited to International Night and our cultural activities.
+        </p>
+        <p>
+          Members of Partners can also join international committees with other Partners Campus chapters and take part in
+          network events such as Partners Connect and Peer Learning Events.
+        </p>
+      </div>
+      <div class="tarjeta" id="contact">
+        <h3>Get in touch</h3>
+        <p>Write to us (English is welcome):</p>
+        <p><a href={`mailto:${sitio.correo}`}>{sitio.correo}</a></p>
+        <ul class="redes">
+          {sitio.redes.map((r) => <li><a href={r.url} target="_blank" rel="noopener">{r.nombre}</a></li>)}
+        </ul>
+        <a class="btn btn--primario" href="/contacto">Contact form (Spanish)</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    padding-block: clamp(48px, 8vw, 96px);
+    background: linear-gradient(180deg, var(--inspiracion-claro), #fff);
+  }
+  .hero img {
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    max-width: 20ch;
+  }
+  .hero .btn {
+    margin: 8px 8px 0 0;
+  }
+  .dos {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: clamp(24px, 5vw, 56px);
+    align-items: start;
+  }
+  .tarjeta p,
+  .tarjeta li {
+    color: var(--tinta-suave);
+  }
+  .evento {
+    padding: 0 0 24px;
+    overflow: hidden;
+  }
+  .evento > :not(.evento__img) {
+    margin-inline: 24px;
+  }
+  .evento__img {
+    aspect-ratio: 16 / 9;
+    background: var(--degradado);
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 16px;
+  }
+  .mas {
+    color: var(--confianza);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .redes {
+    padding-left: 1.2em;
+  }
+  @media (max-width: 800px) {
+    .dos {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

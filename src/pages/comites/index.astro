@@ -1,0 +1,91 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+
+const comites = (await getCollection('comites')).sort((a, b) => a.data.orden - b.data.orden);
+---
+
+<Layout title="Comités" description="Conoce los comités de Partners Campus EAFIT: propósito, funciones, habilidades y cómo unirte.">
+  <PageHero
+    eyebrow="Junta Directiva y comités"
+    title="Conoce nuestros comités"
+    lead="Los comités son donde pasa el trabajo de Partners. Puedes pertenecer a varios, pero mínimo a uno al que puedas asistir. Si eres nuevo, empiezas en Internacional y/o Social."
+    sticker="/marca/sticker-3.png"
+  />
+
+  <section class="seccion">
+    <div class="contenedor grid grid--3">
+      {
+        comites.map((c) => (
+          <a class:list={['tarjeta', 'comite', `comite--${c.data.color}`]} href={`/comites/${c.id}`}>
+            <img class="sticker" src={c.data.icono} alt="" width="64" height="64" loading="lazy" />
+            <h2 class="comite__nombre">
+              {c.data.nombre}
+              {c.data.sigla && <span> ({c.data.sigla})</span>}
+            </h2>
+            <p>{c.data.proposito}</p>
+            <span class="comite__mas">Ver comité →</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="seccion seccion--alt">
+    <div class="contenedor">
+      <h2>Reglas básicas de los comités</h2>
+      <div class="grid grid--3">
+        <div class="tarjeta">
+          <h3>Mínimo uno</h3>
+          <p>Todo miembro pertenece al menos a un comité al que pueda asistir según los horarios, y puede sumarse a otros.</p>
+        </div>
+        <div class="tarjeta">
+          <h3>Seis meses de entrada</h3>
+          <p>Los nuevos integrantes ingresan a Internacional y/o Social por mínimo seis meses, según defina la Junta.</p>
+        </div>
+        <div class="tarjeta">
+          <h3>Cambiar de comité</h3>
+          <p>Si quieres cambiar a mitad de semestre, termina tus actividades pendientes y avisa a tiempo a tu director.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .comite {
+    border-top: 6px solid var(--c);
+    display: flex;
+    flex-direction: column;
+  }
+  .comite--confianza {
+    --c: var(--confianza);
+  }
+  .comite--inspiracion {
+    --c: var(--inspiracion);
+  }
+  .comite--salmon {
+    --c: var(--salmon);
+  }
+  .comite--rojo {
+    --c: var(--rojo);
+  }
+  .comite__nombre {
+    font-size: 1.3rem;
+    margin: 12px 0 6px;
+  }
+  .comite__nombre span {
+    font-weight: 500;
+    color: var(--tinta-suave);
+  }
+  .comite p {
+    color: var(--tinta-suave);
+  }
+  .comite__mas {
+    margin-top: auto;
+    color: var(--confianza);
+    font-weight: 600;
+    font-size: 0.92rem;
+  }
+</style>

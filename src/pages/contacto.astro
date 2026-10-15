@@ -1,0 +1,297 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import sitio from '../data/sitio.json';
+import { COMITE_LABEL } from '../lib/nav';
+
+const junta = (await getCollection('junta')).sort((a, b) => a.data.orden - b.data.orden);
+const eventos = (await getCollection('eventos')).sort((a, b) => a.data.orden - b.data.orden);
+const convocatorias = (await getCollection('oportunidades', (o) => o.data.activa && !!o.data.enlace)).slice(0, 4);
+---
+
+<Layout title="Contacto" description="Escríbele a la Junta, envía propuestas y comparte retroalimentación con Partners Campus EAFIT.">
+  <PageHero
+    eyebrow="Contacto y participación"
+    title="Hablemos"
+    lead="Comunícate con la Junta, envía tus ideas y cuéntanos cómo te fue en los eventos. Cada formulario te dice quién recibe la información y cómo se usará."
+    sticker="/marca/sticker-1.png"
+  />
+
+  <section class="seccion">
+    <div class="contenedor contacto">
+      <aside class="lateral">
+        <div class="tarjeta">
+          <h2 class="t">Correo oficial</h2>
+          <a href={`mailto:${sitio.correo}`}>{sitio.correo}</a>
+          <h2 class="t">Redes sociales</h2>
+          <ul class="redes">
+            {sitio.redes.map((r) => <li><a href={r.url} target="_blank" rel="noopener">{r.nombre}</a> <span>{r.usuario}</span></li>)}
+          </ul>
+        </div>
+        <div class="tarjeta">
+          <h2 class="t">Directorio institucional</h2>
+          <ul class="directorio">
+            {junta.map((j) => <li><strong>{j.data.cargo}</strong><span>{j.data.nombre}</span></li>)}
+          </ul>
+          <a href="/junta">Ver funciones de cada cargo</a>
+        </div>
+        {
+          convocatorias.length > 0 && (
+            <div class="tarjeta">
+              <h2 class="t">Inscripciones y convocatorias activas</h2>
+              <ul class="directorio">
+                {convocatorias.map((c) => <li><a href={c.data.enlace} target="_blank" rel="noopener">{c.data.titulo}</a></li>)}
+              </ul>
+              <a href="/oportunidades">Ver todas</a>
+            </div>
+          )
+        }
+      </aside>
+
+      <div class="formularios">
+        <div class="pestanas" role="tablist" aria-label="Formularios">
+          <button role="tab" id="tab-contacto" aria-controls="p-contacto" aria-selected="true">Contacto</button>
+          <button role="tab" id="tab-ideas" aria-controls="p-ideas" aria-selected="false" tabindex="-1">Ideas y propuestas</button>
+          <button role="tab" id="tab-encuesta" aria-controls="p-encuesta" aria-selected="false" tabindex="-1">Encuesta de eventos</button>
+        </div>
+
+        <div role="tabpanel" id="p-contacto" aria-labelledby="tab-contacto" class="tarjeta panel">
+          <p class="privacidad"><strong>Quién lo recibe:</strong> la Junta Directiva. <strong>Uso:</strong> responder tu mensaje. <strong>Identificable:</strong> sí, necesitamos tu correo para responder.</p>
+          <form name="contacto" method="POST" action="/gracias" data-netlify="true" netlify-honeypot="bot-field">
+            <input type="hidden" name="form-name" value="contacto" />
+            <p hidden><label>No llenar: <input name="bot-field" /></label></p>
+            <div class="campo"><label for="c-nombre">Nombre</label><input id="c-nombre" name="nombre" required autocomplete="name" /></div>
+            <div class="campo"><label for="c-correo">Correo</label><input id="c-correo" name="correo" type="email" required autocomplete="email" /></div>
+            <div class="campo">
+              <label for="c-para">¿Para quién es?</label>
+              <select id="c-para" name="destinatario">
+                <option>Junta Directiva (general)</option>
+                {junta.map((j) => <option>{j.data.cargo}</option>)}
+              </select>
+            </div>
+            <div class="campo"><label for="c-msg">Mensaje</label><textarea id="c-msg" name="mensaje" required></textarea></div>
+            <button class="btn btn--primario" type="submit">Enviar mensaje</button>
+          </form>
+        </div>
+
+        <div role="tabpanel" id="p-ideas" aria-labelledby="tab-ideas" class="tarjeta panel" hidden>
+          <p class="privacidad"><strong>Quién lo recibe:</strong> la Junta Directiva, que la revisa en su reunión quincenal. <strong>Uso:</strong> evaluar la propuesta y, si aplica, llevarla a Asamblea. <strong>Identificable:</strong> tú decides; puedes enviarla de forma anónima.</p>
+          <form name="ideas" method="POST" action="/gracias" data-netlify="true" netlify-honeypot="bot-field">
+            <input type="hidden" name="form-name" value="ideas" />
+            <p hidden><label>No llenar: <input name="bot-field" /></label></p>
+            <div class="campo">
+              <label for="i-tipo">Tipo de propuesta</label>
+              <select id="i-tipo" name="tipo">
+                <option>Idea para un evento o actividad</option>
+                <option>Mejora de un proceso interno</option>
+                <option>Nuevo cargo o comité</option>
+                <option>Alianza o patrocinio</option>
+                <option>Otra</option>
+              </select>
+            </div>
+            <div class="campo">
+              <label for="i-comite">Comité relacionado</label>
+              <select id="i-comite" name="comite">
+                {Object.values(COMITE_LABEL).map((c) => <option>{c}</option>)}
+              </select>
+            </div>
+            <div class="campo"><label for="i-idea">Tu propuesta</label><textarea id="i-idea" name="propuesta" required></textarea></div>
+            <label class="check"><input type="checkbox" name="anonima" value="si" id="i-anon" /> Enviar de forma anónima</label>
+            <div class="campo" id="i-datos">
+              <label for="i-nombre">Nombre y correo (opcional)</label>
+              <input id="i-nombre" name="contacto" autocomplete="email" />
+              <small>Déjalo si quieres que te contactemos para desarrollar la idea.</small>
+            </div>
+            <button class="btn btn--primario" type="submit">Enviar propuesta</button>
+          </form>
+          <p class="nota">Si propones un <strong>nuevo cargo o comité</strong>, los Estatutos piden una propuesta formal de un miembro activo ante la Junta; si la aprueba, se vota en Asamblea General.</p>
+        </div>
+
+        <div role="tabpanel" id="p-encuesta" aria-labelledby="tab-encuesta" class="tarjeta panel" hidden>
+          <p class="privacidad"><strong>Quién lo recibe:</strong> la dirección del evento y la Junta. <strong>Uso:</strong> medir la experiencia y mejorar las siguientes ediciones. <strong>Identificable:</strong> no, la encuesta es anónima.</p>
+          <form name="encuesta-eventos" method="POST" action="/gracias" data-netlify="true" netlify-honeypot="bot-field">
+            <input type="hidden" name="form-name" value="encuesta-eventos" />
+            <p hidden><label>No llenar: <input name="bot-field" /></label></p>
+            <div class="campo">
+              <label for="e-evento">Evento</label>
+              <select id="e-evento" name="evento" required>
+                {eventos.map((e) => <option>{e.data.nombre}</option>)}
+              </select>
+            </div>
+            <div class="campo">
+              <label for="e-rol">Participaste como</label>
+              <select id="e-rol" name="rol">
+                <option>Organizador/a (Partner)</option>
+                <option>Voluntario/a</option>
+                <option>Asistente</option>
+                <option>Aliado o patrocinador</option>
+              </select>
+            </div>
+            <fieldset class="campo escala">
+              <legend>¿Cómo calificas la experiencia?</legend>
+              <div>
+                {[1, 2, 3, 4, 5].map((n) => <label><input type="radio" name="calificacion" value={n} required /> {n}</label>)}
+              </div>
+            </fieldset>
+            <div class="campo"><label for="e-bien">¿Qué funcionó bien?</label><textarea id="e-bien" name="que-funciono"></textarea></div>
+            <div class="campo"><label for="e-mejorar">¿Qué deberíamos mejorar?</label><textarea id="e-mejorar" name="que-mejorar"></textarea></div>
+            <button class="btn btn--primario" type="submit">Enviar encuesta</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('[role=tab]')];
+  function activar(t: HTMLButtonElement) {
+    tabs.forEach((o) => {
+      const sel = o === t;
+      o.setAttribute('aria-selected', String(sel));
+      o.tabIndex = sel ? 0 : -1;
+      document.getElementById(o.getAttribute('aria-controls')!)!.hidden = !sel;
+    });
+    t.focus();
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => activar(t));
+    t.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') activar(tabs[(i + 1) % tabs.length]);
+      if (e.key === 'ArrowLeft') activar(tabs[(i - 1 + tabs.length) % tabs.length]);
+    });
+  });
+  const hash = location.hash.replace('#', '');
+  const inicial = tabs.find((t) => t.id === 'tab-' + hash);
+  if (inicial) activar(inicial);
+
+  const anon = document.getElementById('i-anon') as HTMLInputElement;
+  const datos = document.getElementById('i-datos')!;
+  anon.addEventListener('change', () => {
+    datos.hidden = anon.checked;
+    if (anon.checked) (document.getElementById('i-nombre') as HTMLInputElement).value = '';
+  });
+</script>
+
+<style>
+  .contacto {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: clamp(24px, 4vw, 48px);
+    align-items: start;
+  }
+  .contacto > * {
+    min-width: 0;
+  }
+  .lateral {
+    display: grid;
+    gap: 16px;
+  }
+  .t {
+    font-size: 1rem;
+    margin: 0 0 6px;
+  }
+  .t:not(:first-child) {
+    margin-top: 18px;
+  }
+  .redes,
+  .directorio {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 12px;
+    display: grid;
+    gap: 8px;
+    font-size: 0.92rem;
+  }
+  .redes span {
+    color: var(--tinta-suave);
+    font-size: 0.85rem;
+  }
+  .directorio li {
+    display: grid;
+  }
+  .directorio span {
+    color: var(--tinta-suave);
+    font-size: 0.88rem;
+  }
+  .pestanas {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    margin-bottom: -1px;
+  }
+  .pestanas button {
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.92rem;
+    padding: 12px 18px;
+    border: 1px solid var(--borde);
+    border-bottom: 0;
+    border-radius: 12px 12px 0 0;
+    background: var(--fondo-alt);
+    color: var(--tinta-suave);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .pestanas button[aria-selected='true'] {
+    background: #fff;
+    color: var(--confianza);
+  }
+  .panel {
+    border-top-left-radius: 0;
+  }
+  .privacidad {
+    font-size: 0.88rem;
+    background: var(--inspiracion-claro);
+    padding: 12px 14px;
+    border-radius: var(--radio-sm);
+    margin-bottom: 20px;
+  }
+  .check {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+  .check input,
+  .escala input {
+    accent-color: var(--confianza);
+    width: 18px;
+    height: 18px;
+  }
+  .escala {
+    border: 0;
+    padding: 0;
+  }
+  .escala legend {
+    font-weight: 600;
+    font-size: 0.92rem;
+    margin-bottom: 6px;
+  }
+  .escala div {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .escala label {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    font-weight: 500;
+  }
+  .nota {
+    font-size: 0.88rem;
+    color: var(--tinta-suave);
+    margin-top: 16px;
+  }
+  @media (max-width: 900px) {
+    .contacto {
+      grid-template-columns: 1fr;
+    }
+    .lateral {
+      order: 2;
+    }
+  }
+</style>

@@ -1,0 +1,170 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import { CATEGORIA_OPORTUNIDAD, fecha } from '../lib/nav';
+
+const todas = (await getCollection('oportunidades')).sort(
+  (a, b) => Number(b.data.activa) - Number(a.data.activa) || +(a.data.cierra ?? Infinity) - +(b.data.cierra ?? Infinity),
+);
+const ops = await Promise.all(todas.map(async (o) => ({ o, Content: (await render(o)).Content })));
+const categorias = [...new Set(todas.map((o) => o.data.categoria))];
+---
+
+<Layout title="Oportunidades" description="Convocatorias, liderazgo, formación, voluntariado y oportunidades internacionales para los integrantes de Partners Campus EAFIT.">
+  <PageHero
+    eyebrow="Oportunidades y crecimiento"
+    title="Crece con Partners"
+    lead="Convocatorias para comités y proyectos, cargos de liderazgo, formaciones, voluntariados y oportunidades de la red internacional. Cada una indica quién puede participar, requisitos y fechas."
+    sticker="/marca/sticker-5.png"
+  />
+
+  <section class="seccion">
+    <div class="contenedor">
+      <div class="chips" role="group" aria-label="Filtrar por categoría">
+        <button type="button" class="chip activa" data-cat="" aria-pressed="true">Todas</button>
+        {
+          categorias.map((c) => (
+            <button type="button" class="chip" data-cat={c} aria-pressed="false">
+              {CATEGORIA_OPORTUNIDAD[c]}
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="grid grid--2" id="ops">
+        {
+          ops.map(({ o, Content }) => (
+            <article class:list={['tarjeta', 'op', { 'op--cerrada': !o.data.activa }]} data-cat={o.data.categoria}>
+              <div class="op__cabeza">
+                <span class="etiqueta etiqueta--salmon">{CATEGORIA_OPORTUNIDAD[o.data.categoria]}</span>
+                <span class:list={['etiqueta', o.data.activa ? 'etiqueta--abierta' : 'etiqueta--cerrada']}>
+                  {o.data.activa ? 'Abierta' : 'Próximamente'}
+                </span>
+              </div>
+              <h2 class="op__titulo">{o.data.titulo}</h2>
+              <div class="op__cuerpo">
+                <Content />
+              </div>
+              <dl class="op__datos">
+                <dt>¿Quién puede participar?</dt>
+                <dd>{o.data.quien}</dd>
+                {o.data.requisitos.length > 0 && (
+                  <>
+                    <dt>Requisitos</dt>
+                    <dd>
+                      <ul>
+                        {o.data.requisitos.map((r) => (
+                          <li>{r}</li>
+                        ))}
+                      </ul>
+                    </dd>
+                  </>
+                )}
+                {(o.data.abre || o.data.cierra) && (
+                  <>
+                    <dt>Fechas</dt>
+                    <dd>
+                      {o.data.abre && <>Abre: {fecha(o.data.abre)}. </>}
+                      {o.data.cierra && <strong>Cierra: {fecha(o.data.cierra)}</strong>}
+                    </dd>
+                  </>
+                )}
+              </dl>
+              {o.data.enlace && (
+                <a class="btn btn--primario" href={o.data.enlace} target="_blank" rel="noopener">
+                  Acceder a la convocatoria
+                </a>
+              )}
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>('.chip');
+  const ops = document.querySelectorAll<HTMLElement>('.op');
+  chips.forEach((c) =>
+    c.addEventListener('click', () => {
+      chips.forEach((o) => {
+        o.classList.toggle('activa', o === c);
+        o.setAttribute('aria-pressed', String(o === c));
+      });
+      ops.forEach((op) => (op.hidden = !!c.dataset.cat && op.dataset.cat !== c.dataset.cat));
+    }),
+  );
+</script>
+
+<style>
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .chip {
+    font: inherit;
+    font-size: 0.88rem;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--borde);
+    background: #fff;
+    cursor: pointer;
+    color: var(--tinta);
+  }
+  .chip.activa {
+    background: var(--confianza);
+    color: #fff;
+    border-color: var(--confianza);
+  }
+  .op {
+    display: flex;
+    flex-direction: column;
+  }
+  .op--cerrada {
+    background: var(--fondo-alt);
+  }
+  .op__cabeza {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .op__titulo {
+    font-size: 1.25rem;
+    margin: 12px 0 6px;
+  }
+  .op__cuerpo {
+    color: var(--tinta-suave);
+  }
+  .op__datos {
+    font-size: 0.92rem;
+    margin: 0 0 16px;
+  }
+  .op__datos dt {
+    font-weight: 600;
+    margin-top: 8px;
+  }
+  .op__datos dd {
+    margin: 0;
+    color: var(--tinta-suave);
+  }
+  .op__datos ul {
+    margin: 0;
+    padding-left: 1.2em;
+  }
+  .op .btn {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  .etiqueta--abierta {
+    background: #e3f4ea;
+    color: #1e6b3d;
+  }
+  .etiqueta--cerrada {
+    background: #eceff3;
+    color: var(--tinta-suave);
+  }
+</style>

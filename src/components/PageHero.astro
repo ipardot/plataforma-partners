@@ -1,0 +1,53 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  sticker?: string;
+  tono?: 'azul' | 'salmon';
+}
+const { eyebrow, title, lead, sticker, tono = 'azul' } = Astro.props;
+---
+
+<section class:list={['hero', `hero--${tono}`]}>
+  <div class="contenedor hero__fila">
+    <div>
+      {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+      <h1>{title}</h1>
+      {lead && <p class="lead">{lead}</p>}
+      <slot />
+    </div>
+    {sticker && <img class="hero__sticker" src={sticker} alt="" width="160" height="160" />}
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(40px, 7vw, 72px);
+    border-bottom: 1px solid var(--borde);
+  }
+  .hero--azul {
+    background: linear-gradient(180deg, var(--inspiracion-claro), #fff);
+  }
+  .hero--salmon {
+    background: linear-gradient(180deg, var(--salmon-claro), #fff);
+  }
+  .hero__fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .hero__sticker {
+    width: clamp(96px, 14vw, 160px);
+    height: auto;
+    flex-shrink: 0;
+    transform: rotate(-6deg);
+    filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.12));
+  }
+  @media (max-width: 600px) {
+    .hero__sticker {
+      display: none;
+    }
+  }
+</style>

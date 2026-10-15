@@ -1,0 +1,423 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import hitos from '../data/hitos.json';
+import sitio from '../data/sitio.json';
+
+const indice = [
+  ['que-es', '¿Qué es Partners?'],
+  ['red', 'Partners of the Americas'],
+  ['pilares', 'Pilares'],
+  ['valores', 'Valores'],
+  ['historia', 'Historia e impacto'],
+  ['como-funciona', '¿Cómo funciona?'],
+];
+
+const valores = [
+  {
+    nombre: 'Conectar',
+    sticker: '/marca/sticker-8.png',
+    texto: 'Gestionamos alianzas nacionales e internacionales entre capítulos de Partners of the Americas y acompañamos a los estudiantes de intercambio en EAFIT.',
+    ejemplos: ['El Buddy Program empareja a cada estudiante internacional con un Partner.', 'La Noche Internacional reúne culturas de todo el mundo en el campus.', 'Participamos en comités internacionales con otros capítulos.'],
+  },
+  {
+    nombre: 'Servir',
+    sticker: '/marca/sticker-6.png',
+    texto: 'Creamos iniciativas sociales que impactan a las comunidades, basadas en el trabajo mancomunado, la empatía y la tolerancia.',
+    ejemplos: ['Voluntarios por un Día con fundaciones aliadas.', 'Salidas de voluntariado durante el semestre.', 'Hono destina sus fondos a comunidades concretas.'],
+  },
+  {
+    nombre: 'Cambiar vidas',
+    sticker: '/marca/sticker-2.png',
+    texto: 'Nos formamos en liderazgo y desarrollamos habilidades para la vida profesional y personal, dentro y fuera de Partners.',
+    ejemplos: ['Dirigir un evento o un comité.', 'El Proyecto de nuevos, con presupuesto propio.', 'Talleres, Assessment y empalmes entre Juntas.'],
+  },
+];
+
+const niveles = [
+  { nombre: 'Asamblea General', rol: 'Máxima instancia de decisión', texto: 'Todos los miembros. Se reúne mínimo una vez al mes. Elige la Junta, aprueba nuevos cargos o comités y vota enmiendas. Quórum: un tercio de los miembros activos.' },
+  { nombre: 'Junta Directiva', rol: 'Dirige y coordina', texto: 'Siete directores elegidos por un año calendario. Se reúne mínimo dos veces al mes, planifica el cronograma y mantiene informados a los miembros.' },
+  { nombre: 'Junta Consultiva', rol: 'Orienta', texto: 'La Junta Directiva más un asesor de la facultad. Define metas de largo plazo y apoya la consecución de fondos. Se reúne al menos dos veces al año.' },
+  { nombre: 'Comités', rol: 'Ejecutan', texto: 'Internacional, Social, Gestión Humana, Mercadeo y RRPP (dirigidos por la Junta), además de Logística. Todo miembro pertenece al menos a uno.' },
+  { nombre: 'Equipos de macroeventos', rol: 'Proyectos', texto: 'Direcciones de LANI y VPUD, la mesa directiva de Hono y los Hono groups. Involucran a tres o más comités.' },
+];
+---
+
+<Layout title="¿Qué es Partners?" description="Identidad, propósito, pilares, valores, historia y estructura de Partners Campus EAFIT.">
+  <PageHero
+    eyebrow="Conoce Partners"
+    title="¿Qué es Partners Campus EAFIT?"
+    lead="Un grupo estudiantil sin ánimo de lucro de la Universidad EAFIT y capítulo estudiantil de Partners of the Americas. Unimos el voluntariado, las relaciones internacionales y el desarrollo humano."
+    sticker="/marca/sticker-8.png"
+  />
+
+  <nav class="contenedor indice" aria-label="En esta página">
+    {indice.map(([id, t]) => <a href={`#${id}`}>{t}</a>)}
+  </nav>
+
+  <section id="que-es" class="seccion">
+    <div class="contenedor dos">
+      <div>
+        <span class="eyebrow">Nuestra identidad</span>
+        <h2>Ser Partner</h2>
+        <p>
+          Partners Campus EAFIT (P.C.E) es una organización privada, apolítica, no sectaria y sin fines de lucro, cuyo
+          propósito es promover la amistad, el voluntariado, la comunicación y el entendimiento entre la gente de América
+          Latina, el Caribe y los Estados Unidos.
+        </p>
+        <p>
+          Ser Partner es comprometerse con un grupo que sirve, conecta culturas y forma líderes. Es trabajar en equipo
+          por proyectos propios, con responsabilidades reales y con una red internacional detrás.
+        </p>
+      </div>
+      <blockquote class="mision">
+        <span class="eyebrow">Misión</span>
+        <p>
+          “Promover las relaciones internacionales y el voluntariado por medio de iniciativas y proyectos propios, para
+          que, a través de la potencialización de capacidades y habilidades de trabajo en equipo, compromiso y liderazgo
+          en los voluntarios, se fomente el bienestar social y la internacionalización”.
+        </p>
+        <cite>Estatutos 2026, Capítulo I</cite>
+      </blockquote>
+    </div>
+    <div class="contenedor">
+      <h3 class="subtitulo">Lo que hacemos</h3>
+      <ol class="funciones grid grid--2">
+        <li>Generar impacto social con proyectos de educación, medio ambiente, cultura y más.</li>
+        <li>Fortalecer lazos internacionales entre estudiantes extranjeros y estudiantes de EAFIT.</li>
+        <li>Potenciar las capacidades de los miembros en un ambiente de trabajo real.</li>
+        <li>Trabajar con otros grupos estudiantiles y capítulos de la red en proyectos de interés humano.</li>
+        <li>Fomentar relaciones entre capítulos de Partners of the Americas.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="red" class="seccion seccion--azul">
+    <div class="contenedor dos">
+      <div>
+        <span class="eyebrow">Nuestra red internacional</span>
+        <h2>Partners of the Americas</h2>
+        <p>
+          Partners of the Americas es una organización no gubernamental, apolítica y sin fines de lucro, con oficina
+          internacional en Washington, DC. Opera a través de una red de capítulos que se asocian para promover el
+          desarrollo social y económico en las Américas.
+        </p>
+        <p>
+          Partners Campus EAFIT es un <strong>capítulo afiliado y autosostenible</strong>: llevamos a cabo programas de la
+          red o programas propios, siempre alineados con su misión y con los valores de EAFIT.
+        </p>
+        <a class="btn btn--primario" href={sitio.partnersAmericas} target="_blank" rel="noopener">Visitar partners.net</a>
+        <a class="btn btn--borde" href="/capitulos">Ver la red de capítulos</a>
+      </div>
+      <div class="tarjeta">
+        <h3>¿Qué significa pertenecer a la red?</h3>
+        <ul class="lista-check">
+          <li>Acceso a programas, capacitaciones y oportunidades de Partners of the Americas.</li>
+          <li>Eventos nacionales e internacionales como <strong>Partners Connect</strong> y <strong>Peer Learning Events</strong>.</li>
+          <li>Conexión con líderes, capítulos, organizaciones e instituciones de la red.</li>
+          <li>Comités internacionales con miembros de distintos capítulos de Partners Campus.</li>
+          <li>Posibilidad de acuerdos de asociación con otros capítulos.</li>
+          <li>Orientación de la Oficina Internacional en liderazgo y operación del capítulo.</li>
+        </ul>
+        <p class="nota">
+          Como capítulo, nos comprometemos a usar el logo de la red en nuestras publicaciones, mantener mínimo siete
+          miembros, pagar la cuota anual y presentar un informe anual de actividades.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="pilares" class="seccion">
+    <div class="contenedor">
+      <span class="eyebrow">Nuestros ejes de trabajo</span>
+      <h2>Voluntariado e Internacional</h2>
+      <div class="grid grid--2">
+        <article class="tarjeta pilar pilar--salmon">
+          <img class="sticker" src="/marca/sticker-6.png" alt="" width="64" height="64" />
+          <h3>Voluntariado</h3>
+          <p>
+            Desarrollamos iniciativas de impacto social, generamos experiencias de servicio y construimos relaciones con
+            fundaciones, comunidades y poblaciones beneficiarias. Lo lidera el <a href="/comites/social">Comité Social</a>.
+          </p>
+          <p><a href="/eventos/voluntarios-por-un-dia">Voluntarios por un Día</a> · <a href="/eventos/salidas-fundaciones">Salidas a fundaciones</a></p>
+        </article>
+        <article class="tarjeta pilar pilar--azul">
+          <img class="sticker" src="/marca/sticker-8.png" alt="" width="64" height="64" />
+          <h3>Internacional</h3>
+          <p>
+            Promovemos el intercambio cultural, la integración de estudiantes extranjeros, el aprendizaje intercultural y
+            la conexión con oportunidades globales. Lo lidera el <a href="/comites/internacional">Comité Internacional</a>.
+          </p>
+          <p><a href="/eventos/la-noche-internacional">La Noche Internacional</a> · <a href="/eventos/buddy-program">Buddy Program</a></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="valores" class="seccion seccion--alt">
+    <div class="contenedor">
+      <span class="eyebrow">Nuestros valores</span>
+      <h2>Conectar, servir y cambiar vidas</h2>
+      <p class="lead">No son solo conceptos institucionales: orientan cómo trabajamos, cómo nos relacionamos y cómo generamos impacto.</p>
+      <div class="grid grid--3">
+        {
+          valores.map((v) => (
+            <article class="tarjeta">
+              <img class="sticker" src={v.sticker} alt="" width="64" height="64" loading="lazy" />
+              <h3>{v.nombre}</h3>
+              <p>{v.texto}</p>
+              <p class="ejemplos-titulo">Así se vive:</p>
+              <ul class="ejemplos">
+                {v.ejemplos.map((e) => <li>{e}</li>)}
+              </ul>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="historia" class="seccion">
+    <div class="contenedor">
+      <span class="eyebrow">Nuestra historia e impacto</span>
+      <h2>Línea de tiempo</h2>
+      <ol class="linea">
+        {
+          hitos.items.map((h) => (
+            <li class="hito">
+              <span class="hito__anio">{h.anio}</span>
+              <div class="hito__cuerpo">
+                <h3>{h.titulo}</h3>
+                <p>{h.descripcion}</p>
+                {h.imagen && <img src={h.imagen} alt={h.titulo} loading="lazy" width="480" height="320" />}
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+      <a class="btn btn--borde" href="/memoria">Ver memoria, cifras y reconocimientos</a>
+    </div>
+  </section>
+
+  <section id="como-funciona" class="seccion seccion--azul">
+    <div class="contenedor">
+      <span class="eyebrow">Estructura</span>
+      <h2>¿Cómo funciona Partners?</h2>
+      <p class="lead">Quién decide, cómo se reparten las responsabilidades y cómo se relacionan los niveles del grupo.</p>
+      <div class="organigrama">
+        {
+          niveles.map((n, i) => (
+            <div class:list={['nivel', `nivel--${i}`]}>
+              <span class="nivel__rol">{n.rol}</span>
+              <h3>{n.nombre}</h3>
+              <p>{n.texto}</p>
+            </div>
+          ))
+        }
+      </div>
+      <p>
+        Además, el capítulo cuenta con al menos un <strong>asesor de la facultad</strong>, empleado de tiempo completo de
+        EAFIT, que facilita las actividades y fortalece la relación con la Universidad.
+      </p>
+      <a class="btn btn--primario" href="/junta">Conoce la Junta Directiva</a>
+      <a class="btn btn--borde" href="/comites">Explora los comités</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .indice {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-block: 16px;
+    scrollbar-width: thin;
+  }
+  .indice a {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--borde);
+    text-decoration: none;
+    font-size: 0.88rem;
+    color: var(--tinta);
+  }
+  .indice a:hover {
+    background: var(--inspiracion-claro);
+  }
+  .dos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px, 5vw, 56px);
+    align-items: start;
+  }
+  .dos .btn {
+    margin: 8px 8px 0 0;
+  }
+  .mision {
+    margin: 0;
+    padding: 28px;
+    border-radius: var(--radio);
+    background: var(--degradado);
+    color: #fff;
+  }
+  .mision .eyebrow {
+    color: #fff;
+    opacity: 0.85;
+  }
+  .mision p {
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  .mision cite {
+    font-size: 0.85rem;
+    opacity: 0.85;
+  }
+  .subtitulo {
+    margin-top: 40px;
+  }
+  .funciones {
+    padding: 0;
+    list-style: none;
+    counter-reset: f;
+  }
+  .funciones li {
+    counter-increment: f;
+    padding: 16px 16px 16px 56px;
+    position: relative;
+    background: var(--fondo-alt);
+    border-radius: var(--radio-sm);
+  }
+  .funciones li::before {
+    content: counter(f);
+    position: absolute;
+    left: 16px;
+    top: 14px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--salmon);
+    color: var(--tinta);
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    font-size: 0.85rem;
+  }
+  .lista-check {
+    padding-left: 1.2em;
+  }
+  .lista-check li {
+    margin-bottom: 6px;
+  }
+  .nota {
+    font-size: 0.88rem;
+    color: var(--tinta-suave);
+    border-top: 1px solid var(--borde);
+    padding-top: 12px;
+  }
+  .pilar--salmon {
+    border-top: 6px solid var(--salmon);
+  }
+  .pilar--azul {
+    border-top: 6px solid var(--confianza);
+  }
+  .ejemplos-titulo {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .ejemplos {
+    padding-left: 1.2em;
+    color: var(--tinta-suave);
+    font-size: 0.93rem;
+    margin: 0;
+  }
+  .linea {
+    list-style: none;
+    padding: 0;
+    margin: 24px 0 32px;
+    border-left: 3px solid var(--inspiracion);
+  }
+  .hito {
+    position: relative;
+    padding: 0 0 28px 28px;
+  }
+  .hito::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 4px;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: var(--salmon);
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px var(--salmon);
+  }
+  .hito__anio {
+    font-weight: 700;
+    color: var(--confianza);
+  }
+  .hito h3 {
+    margin: 2px 0 4px;
+  }
+  .hito p {
+    color: var(--tinta-suave);
+    max-width: 65ch;
+  }
+  .hito img {
+    border-radius: var(--radio-sm);
+    max-width: 420px;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+  .organigrama {
+    display: grid;
+    gap: 12px;
+    margin: 24px 0;
+  }
+  .nivel {
+    background: #fff;
+    border-radius: var(--radio-sm);
+    padding: 18px 20px;
+    border-left: 6px solid var(--confianza);
+  }
+  .nivel--1 {
+    margin-left: clamp(0px, 3vw, 32px);
+    border-color: var(--inspiracion);
+  }
+  .nivel--2 {
+    margin-left: clamp(0px, 3vw, 32px);
+    border-color: var(--inspiracion);
+  }
+  .nivel--3 {
+    margin-left: clamp(0px, 6vw, 64px);
+    border-color: var(--salmon);
+  }
+  .nivel--4 {
+    margin-left: clamp(0px, 6vw, 64px);
+    border-color: var(--rojo);
+  }
+  .nivel h3 {
+    margin: 0 0 4px;
+  }
+  .nivel p {
+    margin: 0;
+    color: var(--tinta-suave);
+  }
+  .nivel__rol {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--tinta-suave);
+    font-weight: 600;
+  }
+  #como-funciona .btn {
+    margin: 8px 8px 0 0;
+  }
+  @media (max-width: 800px) {
+    .dos {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

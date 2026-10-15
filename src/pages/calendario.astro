@@ -1,0 +1,344 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import EventoItem from '../components/EventoItem.astro';
+import { COMITE_LABEL, TIPO_LABEL, PARTICIPACION_LABEL } from '../lib/nav';
+
+const agenda = (await getCollection('agenda')).sort((a, b) => +a.data.inicio - +b.data.inicio);
+
+const meses = [...new Set(agenda.map((e) => e.data.inicio.toISOString().slice(0, 7)))];
+const nombreMes = (m: string) =>
+  new Date(m + '-15T12:00:00Z').toLocaleDateString('es-CO', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+const datos = agenda.map((e) => ({
+  id: e.id,
+  titulo: e.data.titulo,
+  inicio: e.data.inicio.toISOString(),
+  fin: (e.data.fin ?? e.data.inicio).toISOString(),
+  comite: e.data.comite,
+  tipo: e.data.tipo,
+  participacion: e.data.participacion,
+}));
+---
+
+<Layout title="Calendario" description="Agenda de Partners Campus EAFIT: asambleas, comités, macroeventos, voluntariados, formaciones y fechas límite.">
+  <PageHero
+    eyebrow="Calendario y agenda"
+    title="Calendario Partners"
+    lead="Todas las actividades del grupo en un solo lugar. Las asambleas y actividades marcadas como obligatorias cuentan para la tabla de permanencia."
+    sticker="/marca/sticker-4.png"
+  />
+
+  <section class="seccion">
+    <div class="contenedor">
+      <form class="filtros" id="filtros" aria-label="Filtrar actividades">
+        <div class="campo">
+          <label for="f-comite">Comité</label>
+          <select id="f-comite" name="comite">
+            <option value="">Todos</option>
+            {Object.entries(COMITE_LABEL).map(([k, v]) => <option value={k}>{v}</option>)}
+          </select>
+        </div>
+        <div class="campo">
+          <label for="f-tipo">Tipo de actividad</label>
+          <select id="f-tipo" name="tipo">
+            <option value="">Todos</option>
+            {Object.entries(TIPO_LABEL).map(([k, v]) => <option value={k}>{v}</option>)}
+          </select>
+        </div>
+        <div class="campo">
+          <label for="f-mes">Mes</label>
+          <select id="f-mes" name="mes">
+            <option value="">Todos</option>
+            {meses.map((m) => <option value={m} class="capital">{nombreMes(m)}</option>)}
+          </select>
+        </div>
+        <div class="vistas" role="group" aria-label="Vista">
+          <button type="button" class="vista activa" data-vista="lista" aria-pressed="true">Próximos</button>
+          <button type="button" class="vista" data-vista="mes" aria-pressed="false">Mes</button>
+          <button type="button" class="vista" data-vista="todos" aria-pressed="false">Todos</button>
+        </div>
+      </form>
+
+      <div class="leyenda">
+        {Object.entries(PARTICIPACION_LABEL).map(([k, v]) => <span class:list={['etiqueta', `etiqueta--${k}`]}>{v}</span>)}
+        <span class="leyenda__nota">Las categorías las define y actualiza la Junta.</span>
+      </div>
+
+      <div id="vista-mes" hidden>
+        <div class="mes__cabecera">
+          <button type="button" class="btn btn--borde" id="mes-ant" aria-label="Mes anterior">←</button>
+          <h2 id="mes-titulo" class="capital" aria-live="polite"></h2>
+          <button type="button" class="btn btn--borde" id="mes-sig" aria-label="Mes siguiente">→</button>
+        </div>
+        <div class="mes" id="mes-grid"></div>
+      </div>
+
+      <div id="vista-lista" class="lista">
+        {agenda.map((e) => <div class="item" data-fin={(e.data.fin ?? e.data.inicio).toISOString()} id={e.id}><EventoItem evento={e} /></div>)}
+        <p id="vacio" class="vacio" hidden>No hay actividades con estos filtros.</p>
+      </div>
+    </div>
+  </section>
+  <script is:inline type="application/json" id="agenda-datos" set:html={JSON.stringify(datos)} />
+</Layout>
+
+
+<script>
+  type Ev = { id: string; titulo: string; inicio: string; fin: string; comite: string; tipo: string; participacion: string };
+  const datos: Ev[] = JSON.parse(document.getElementById('agenda-datos')!.textContent || '[]');
+  const form = document.getElementById('filtros') as HTMLFormElement;
+  const items = [...document.querySelectorAll<HTMLElement>('#vista-lista .item')];
+  const vacio = document.getElementById('vacio')!;
+  const vistaLista = document.getElementById('vista-lista')!;
+  const vistaMes = document.getElementById('vista-mes')!;
+  const grid = document.getElementById('mes-grid')!;
+  const titulo = document.getElementById('mes-titulo')!;
+  const tz = 'America/Bogota';
+  let vista = 'lista';
+  const hoy = new Date();
+  let cursor = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+
+  const ymd = (d: Date) => d.toLocaleDateString('en-CA', { timeZone: tz });
+
+  function filtros() {
+    const f = new FormData(form);
+    return { comite: String(f.get('comite') || ''), tipo: String(f.get('tipo') || ''), mes: String(f.get('mes') || '') };
+  }
+  function coincide(el: { comite: string; tipo: string; mes: string }) {
+    const f = filtros();
+    return (!f.comite || el.comite === f.comite) && (!f.tipo || el.tipo === f.tipo) && (!f.mes || el.mes === f.mes);
+  }
+
+  function pintarLista() {
+    let visibles = 0;
+    for (const it of items) {
+      const art = it.querySelector<HTMLElement>('.evento')!;
+      const ok =
+        coincide({ comite: art.dataset.comite!, tipo: art.dataset.tipo!, mes: art.dataset.mes! }) &&
+        (vista === 'todos' || new Date(it.dataset.fin!) >= hoy);
+      it.hidden = !ok;
+      if (ok) visibles++;
+    }
+    vacio.hidden = visibles > 0;
+  }
+
+  function pintarMes() {
+    const f = filtros();
+    if (f.mes) {
+      const [y, m] = f.mes.split('-').map(Number);
+      cursor = new Date(y, m - 1, 1);
+    }
+    titulo.textContent = cursor.toLocaleDateString('es-CO', { month: 'long', year: 'numeric' });
+    grid.innerHTML = '';
+    ['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom'].forEach((d) => {
+      const c = document.createElement('div');
+      c.className = 'mes__dia-sem';
+      c.textContent = d;
+      grid.append(c);
+    });
+    const offset = (cursor.getDay() + 6) % 7;
+    const diasMes = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
+    for (let i = 0; i < offset; i++) grid.append(Object.assign(document.createElement('div'), { className: 'mes__celda mes__celda--vacia' }));
+    for (let d = 1; d <= diasMes; d++) {
+      const fecha = new Date(cursor.getFullYear(), cursor.getMonth(), d);
+      const clave = ymd(fecha);
+      const celda = document.createElement('div');
+      celda.className = 'mes__celda' + (clave === ymd(hoy) ? ' mes__celda--hoy' : '');
+      celda.innerHTML = `<span class="mes__num">${d}</span>`;
+      datos
+        .filter((e) => ymd(new Date(e.inicio)) === clave && coincide({ comite: e.comite, tipo: e.tipo, mes: f.mes ? clave.slice(0, 7) : '' }))
+        .forEach((e) => {
+          const a = document.createElement('a');
+          a.href = '#' + e.id;
+          a.className = 'mes__ev mes__ev--' + e.participacion;
+          a.textContent = e.titulo;
+          a.addEventListener('click', (ev) => {
+            ev.preventDefault();
+            cambiarVista('todos');
+            document.getElementById(e.id)?.scrollIntoView({ behavior: 'smooth' });
+          });
+          celda.append(a);
+        });
+      grid.append(celda);
+    }
+  }
+
+  function cambiarVista(v: string) {
+    vista = v;
+    document.querySelectorAll<HTMLButtonElement>('.vista').forEach((b) => {
+      const activa = b.dataset.vista === v;
+      b.classList.toggle('activa', activa);
+      b.setAttribute('aria-pressed', String(activa));
+    });
+    vistaMes.hidden = v !== 'mes';
+    vistaLista.hidden = v === 'mes';
+    v === 'mes' ? pintarMes() : pintarLista();
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.vista').forEach((b) => b.addEventListener('click', () => cambiarVista(b.dataset.vista!)));
+  form.addEventListener('change', () => (vista === 'mes' ? pintarMes() : pintarLista()));
+  document.getElementById('mes-ant')!.addEventListener('click', () => {
+    (form.elements.namedItem('mes') as HTMLSelectElement).value = '';
+    cursor = new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1);
+    pintarMes();
+  });
+  document.getElementById('mes-sig')!.addEventListener('click', () => {
+    (form.elements.namedItem('mes') as HTMLSelectElement).value = '';
+    cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
+    pintarMes();
+  });
+  pintarLista();
+</script>
+
+<style>
+  .filtros {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr) auto;
+    gap: 12px 16px;
+    align-items: end;
+    background: var(--fondo-alt);
+    border-radius: var(--radio);
+    padding: 20px;
+  }
+  .filtros .campo {
+    margin: 0;
+  }
+  .vistas {
+    display: flex;
+    background: #fff;
+    border: 1px solid #c8d1de;
+    border-radius: 999px;
+    padding: 4px;
+  }
+  .vista {
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    color: var(--tinta);
+  }
+  .vista.activa {
+    background: var(--confianza);
+    color: #fff;
+  }
+  .leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin: 16px 0 24px;
+  }
+  .leyenda__nota {
+    font-size: 0.82rem;
+    color: var(--tinta-suave);
+  }
+  .lista {
+    display: grid;
+    gap: 12px;
+  }
+  .vacio {
+    color: var(--tinta-suave);
+  }
+  .capital {
+    text-transform: capitalize;
+  }
+  .mes__cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .mes__cabecera h2 {
+    margin: 0;
+    font-size: 1.4rem;
+  }
+  .mes__cabecera .btn {
+    padding: 0.4em 1em;
+  }
+  .mes {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+  }
+  :global(.mes__dia-sem) {
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--tinta-suave);
+    padding: 4px 0;
+  }
+  :global(.mes__celda) {
+    min-height: 96px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    background: #fff;
+    min-width: 0;
+  }
+  :global(.mes__celda--vacia) {
+    background: transparent;
+    border-style: dashed;
+  }
+  :global(.mes__celda--hoy) {
+    border: 2px solid var(--salmon);
+  }
+  :global(.mes__num) {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--tinta-suave);
+  }
+  :global(.mes__ev) {
+    font-size: 0.72rem;
+    line-height: 1.25;
+    padding: 3px 5px;
+    border-radius: 5px;
+    text-decoration: none;
+    background: var(--inspiracion-claro);
+    color: var(--confianza-osc);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  :global(.mes__ev--obligatoria) {
+    background: var(--rojo);
+    color: #fff;
+  }
+  :global(.mes__ev--equipos) {
+    background: #fff4d6;
+    color: #7a5600;
+  }
+  @media (max-width: 860px) {
+    .filtros {
+      grid-template-columns: 1fr 1fr;
+    }
+    .vistas {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+  }
+  @media (max-width: 560px) {
+    .filtros {
+      grid-template-columns: 1fr;
+    }
+    :global(.mes__celda) {
+      min-height: 60px;
+    }
+    :global(.mes__ev) {
+      font-size: 0;
+      height: 8px;
+      padding: 0;
+    }
+  }
+</style>

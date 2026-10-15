@@ -1,0 +1,54 @@
+{
+  "items": [
+    {
+      "pregunta": "¿A quién contacto si tengo una duda?",
+      "respuesta": "Primero, al director de tu comité. Si la duda es sobre tu proceso como nuevo integrante, a Gestión Humana o a la Vicepresidencia Financiera, que acompañan a los miembros en periodo de prueba. Para temas formales, escribe a partnerscampus@eafit.edu.co. En la sección Junta Directiva puedes ver quién se encarga de qué.",
+      "categoria": "general"
+    },
+    {
+      "pregunta": "¿Dónde encuentro el calendario?",
+      "respuesta": "En la sección Calendario de esta plataforma. Ahí están las asambleas, reuniones de comité, macroeventos, voluntariados y fechas límite. Puedes filtrar por comité, tipo de actividad y mes.",
+      "categoria": "general"
+    },
+    {
+      "pregunta": "¿Cómo me inscribo a una actividad?",
+      "respuesta": "Cada actividad del calendario que requiera inscripción tiene su botón de inscripción. Si no lo tiene, pregunta al comité responsable que aparece en la ficha.",
+      "categoria": "actividades"
+    },
+    {
+      "pregunta": "¿Cómo funcionan los comités?",
+      "respuesta": "Hay comités base (Internacional, Social, Gestión Humana, Mercadeo y Relaciones Públicas), cada uno dirigido por un integrante de la Junta, además de Logística. Puedes pertenecer a varios, pero mínimo a uno al que puedas asistir. Los nuevos integrantes entran a Internacional y/o Social durante al menos seis meses.",
+      "categoria": "comites"
+    },
+    {
+      "pregunta": "¿Dónde consulto las reglas de permanencia?",
+      "respuesta": "En Vida interna → Permanencia y participación encontrarás un resumen. La fuente oficial son los Estatutos (Capítulo IV y V) y el Reglamento Interno.",
+      "categoria": "permanencia"
+    },
+    {
+      "pregunta": "¿Cómo presento una propuesta?",
+      "respuesta": "Usa el formulario de ideas y propuestas en Contacto. Si tu propuesta es crear un nuevo cargo o comité, debes presentarla formalmente a la Junta Directiva; si la aprueba, se vota en Asamblea General.",
+      "categoria": "general"
+    },
+    {
+      "pregunta": "¿Qué pasa si no puedo asistir a una asamblea o actividad?",
+      "respuesta": "Avisa con anticipación y con una razón válida según el Reglamento Interno: así tu participación cuenta como pasiva y no resta puntos en la tabla de permanencia. Las inasistencias sin excusa restan puntos y pueden generar faltas.",
+      "categoria": "permanencia"
+    },
+    {
+      "pregunta": "¿Cuánto dura el periodo de prueba?",
+      "respuesta": "Un semestre académico desde tu ingreso. Para pasar a miembro activo debes cumplir los parámetros que anuncia la Junta y superar la tabla de permanencia. Si cumples entre el 65% y el 79%, la Junta puede considerar extender el periodo un semestre más.",
+      "categoria": "permanencia"
+    },
+    {
+      "pregunta": "¿Puedo pedir una licencia?",
+      "respuesta": "Sí. Si vas a estar ausente (por ejemplo, por intercambio), envía una carta formal a la Junta explicando las razones. La licencia dura máximo seis meses o un año, y al terminar debes solicitar el reintegro a tiempo.",
+      "categoria": "permanencia"
+    },
+    {
+      "pregunta": "¿Cómo me postulo a la Junta Directiva?",
+      "respuesta": "Envía tu candidatura al correo oficial en las fechas que defina la Junta, junto con tu hoja de vida en el grupo (logros relevantes para el cargo). La elección se hace en Asamblea General por mayoría simple. Revisa los requisitos de cada cargo en los Estatutos.",
+      "categoria": "oportunidades"
+    }
+  ]
+}

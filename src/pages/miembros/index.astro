@@ -1,0 +1,96 @@
+---
+import MiembrosLayout from '../../layouts/MiembrosLayout.astro';
+---
+
+<MiembrosLayout title="Área privada" lead="Biblioteca interna, directorio y seguimiento de tu participación.">
+  <p class="saludo">Hola, <strong id="nombre"></strong>.</p>
+  <div class="grid grid--3">
+    <a class="tarjeta" href="/miembros/biblioteca">
+      <img class="sticker" src="/marca/sticker-5.png" alt="" width="64" height="64" />
+      <h2 class="t">Biblioteca interna</h2>
+      <p>Formatos de empalme, plantillas, manuales, cronogramas, manual de marca y memorias de eventos.</p>
+    </a>
+    <a class="tarjeta" href="/miembros/directorio">
+      <img class="sticker" src="/marca/sticker-1.png" alt="" width="64" height="64" />
+      <h2 class="t">Directorio interno</h2>
+      <p>Contactos de los integrantes y enlaces a los grupos de cada comité.</p>
+    </a>
+    <a class="tarjeta" href="/miembros/participacion">
+      <img class="sticker" src="/marca/sticker-2.png" alt="" width="64" height="64" />
+      <h2 class="t">Mi participación</h2>
+      <p>Tus registros de la tabla de permanencia del semestre.</p>
+    </a>
+    <a class="tarjeta" href="/miembros/admin" data-solo-junta hidden>
+      <img class="sticker" src="/marca/sticker-3.png" alt="" width="64" height="64" />
+      <h2 class="t">Administrar</h2>
+      <p>Miembros autorizados, documentos y registros de participación.</p>
+    </a>
+    <a class="tarjeta" href="/admin/" data-solo-junta hidden>
+      <img class="sticker" src="/marca/sticker-7.png" alt="" width="64" height="64" />
+      <h2 class="t">Editar el sitio público</h2>
+      <p>Junta, comités, eventos, calendario, oportunidades y textos (CMS).</p>
+    </a>
+  </div>
+</MiembrosLayout>
+
+<script>
+  import { obtenerSesion, supabase, esc } from '../../lib/supabase';
+  import { proteger } from '../../lib/gate';
+
+  (async () => {
+  const gate = document.getElementById('gate')!;
+  const s = await obtenerSesion();
+
+  if (s.estado === 'anonimo' && supabase) {
+    const volver = new URLSearchParams(location.search).get('volver') || '/miembros';
+    gate.innerHTML = `
+      <div class="tarjeta login">
+        <h2>Ingresa con tu correo</h2>
+        <p>Te enviaremos un enlace de acceso. Usa el correo con el que te registró Gestión Humana (normalmente el institucional).</p>
+        <form id="form-login">
+          <div class="campo"><label for="correo">Correo</label><input id="correo" type="email" required autocomplete="email" placeholder="usuario@eafit.edu.co"></div>
+          <button class="btn btn--primario" type="submit">Enviarme el enlace</button>
+        </form>
+        <p id="login-msg" role="status"></p>
+      </div>`;
+    const form = document.getElementById('form-login') as HTMLFormElement;
+    const msg = document.getElementById('login-msg')!;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const correo = (document.getElementById('correo') as HTMLInputElement).value.trim().toLowerCase();
+      msg.textContent = 'Enviando…';
+      const { error } = await supabase!.auth.signInWithOtp({
+        email: correo,
+        options: { emailRedirectTo: location.origin + (volver.startsWith('/') ? volver : '/miembros') },
+      });
+      msg.innerHTML = error
+        ? `No pudimos enviar el enlace: ${esc(error.message)}`
+        : `Listo. Revisa <strong>${esc(correo)}</strong> y abre el enlace desde este dispositivo.`;
+    });
+  } else {
+    const ok = await proteger();
+    if (ok) document.getElementById('nombre')!.textContent = ok.perfil.nombre;
+  }
+  })();
+</script>
+
+<style>
+  .saludo {
+    font-size: 1.15rem;
+    margin-bottom: 24px;
+  }
+  .t {
+    font-size: 1.15rem;
+    margin: 12px 0 4px;
+  }
+  a.tarjeta p {
+    color: var(--tinta-suave);
+    font-size: 0.93rem;
+  }
+  a.tarjeta[hidden] {
+    display: none;
+  }
+  :global(.login) {
+    max-width: 460px;
+  }
+</style>

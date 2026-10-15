@@ -1,0 +1,325 @@
+# Decap CMS — panel de contenido para la Junta (https://decapcms.org)
+# Los campos deben coincidir con src/content.config.ts.
+# Cada cambio guardado se convierte en un commit en GitHub y Netlify
+# vuelve a publicar el sitio en 1-2 minutos.
+
+backend:
+  name: github
+  repo: ipardot/plataforma-partners
+  branch: main
+  commit_messages:
+    create: 'Crear {{collection}} “{{slug}}”'
+    update: 'Actualizar {{collection}} “{{slug}}”'
+    delete: 'Eliminar {{collection}} “{{slug}}”'
+    uploadMedia: 'Subir “{{path}}”'
+    deleteMedia: 'Eliminar “{{path}}”'
+
+# Para probar el CMS en local: `npx decap-server` y `npm run dev`.
+local_backend: true
+
+locale: es
+site_url: https://plataforma-partners.netlify.app
+logo_url: /marca/isotipo.png
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  # ───────────── Calendario ─────────────
+  - name: agenda
+    label: Calendario
+    label_singular: Actividad
+    description: Cada actividad del calendario. Las pasadas siguen visibles en la vista “Todos”.
+    folder: src/content/agenda
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    summary: '{{inicio | date("YYYY-MM-DD")}} · {{titulo}}'
+    sortable_fields: [inicio, titulo]
+    fields:
+      - { label: Título, name: titulo, widget: string }
+      - { label: Inicio, name: inicio, widget: datetime }
+      - { label: Fin, name: fin, widget: datetime, required: false }
+      - { label: Lugar o enlace, name: lugar, widget: string, required: false }
+      - label: Modalidad
+        name: modalidad
+        widget: select
+        default: presencial
+        options: [{ label: Presencial, value: presencial }, { label: Virtual, value: virtual }, { label: Híbrida, value: hibrida }]
+      - { label: Comité responsable, name: comite, widget: select, default: general, options: &comites [{ label: Internacional, value: internacional }, { label: Social, value: social }, { label: Logística, value: logistica }, { label: Mercadeo, value: mercadeo }, { label: RRPP, value: rrpp }, { label: Gestión Humana, value: gh }, { label: Junta Directiva, value: junta }, { label: Todo el grupo, value: general }] }
+      - label: Tipo de actividad
+        name: tipo
+        widget: select
+        options:
+          - { label: Asamblea, value: asamblea }
+          - { label: Reunión de comité, value: comite }
+          - { label: Macroevento, value: macroevento }
+          - { label: Voluntariado, value: voluntariado }
+          - { label: Integración, value: integracion }
+          - { label: Formación, value: formacion }
+          - { label: Convocatoria / fecha límite, value: convocatoria }
+          - { label: Red internacional, value: red-internacional }
+      - label: Participación
+        name: participacion
+        widget: select
+        default: opcional
+        options: [{ label: Obligatoria, value: obligatoria }, { label: Opcional, value: opcional }, { label: Solo equipos asignados, value: equipos }]
+      - { label: Enlace de inscripción, name: inscripcion, widget: string, required: false }
+      - { label: Descripción, name: body, widget: markdown, required: false }
+
+  # ───────────── Junta ─────────────
+  - name: junta
+    label: Junta Directiva
+    label_singular: Integrante de Junta
+    folder: src/content/junta
+    create: true
+    slug: '{{cargo}}'
+    summary: '{{orden}}. {{cargo}} — {{nombre}}'
+    sortable_fields: [orden]
+    fields:
+      - { label: Nombre, name: nombre, widget: string }
+      - { label: Cargo, name: cargo, widget: string }
+      - { label: Comité que dirige, name: comite, widget: select, options: *comites, required: false }
+      - { label: Foto, name: foto, widget: image, required: false }
+      - { label: Correo, name: correo, widget: string, required: false }
+      - { label: Resumen de responsabilidades, name: resumen, widget: text }
+      - { label: Trabaja con, name: trabajaCon, widget: list, required: false }
+      - { label: Orden, name: orden, widget: number, value_type: int, default: 99 }
+      - { label: Funciones y a quién acudir, name: body, widget: markdown }
+
+  # ───────────── Comités ─────────────
+  - name: comites
+    label: Comités
+    label_singular: Comité
+    folder: src/content/comites
+    create: true
+    slug: '{{nombre}}'
+    summary: '{{nombre}}'
+    fields:
+      - { label: Nombre, name: nombre, widget: string }
+      - { label: Sigla, name: sigla, widget: string, required: false }
+      - { label: Propósito, name: proposito, widget: text }
+      - label: Ícono (sticker)
+        name: icono
+        widget: select
+        default: /marca/sticker-1.png
+        options:
+          - { label: Globo de diálogo, value: /marca/sticker-1.png }
+          - { label: Estrella, value: /marca/sticker-2.png }
+          - { label: Apretón de manos, value: /marca/sticker-3.png }
+          - { label: Ubicación, value: /marca/sticker-4.png }
+          - { label: Avión de papel, value: /marca/sticker-5.png }
+          - { label: Corazón, value: /marca/sticker-6.png }
+          - { label: Cámara, value: /marca/sticker-7.png }
+          - { label: Mundo, value: /marca/sticker-8.png }
+      - label: Color
+        name: color
+        widget: select
+        default: confianza
+        options: [{ label: Azul Confianza, value: confianza }, { label: Azul Inspiración, value: inspiracion }, { label: Salmón, value: salmon }, { label: Rojo, value: rojo }]
+      - { label: Dirección vigente, name: director, widget: string, required: false }
+      - { label: Funciones, name: funciones, widget: list, required: false }
+      - { label: Responsabilidades de sus integrantes, name: responsabilidades, widget: list, required: false }
+      - { label: Proyectos y eventos, name: eventos, widget: list, required: false }
+      - { label: Habilidades que se desarrollan, name: habilidades, widget: list, required: false }
+      - { label: Relación con otros comités, name: relaciones, widget: text, required: false }
+      - { label: Canales de comunicación, name: canales, widget: text, required: false }
+      - { label: Proceso de ingreso y requisitos, name: ingreso, widget: text, required: false }
+      - { label: Orden, name: orden, widget: number, value_type: int, default: 99 }
+      - { label: Introducción, name: body, widget: markdown }
+
+  # ───────────── Eventos ─────────────
+  - name: eventos
+    label: Eventos y actividades
+    label_singular: Evento
+    folder: src/content/eventos
+    create: true
+    slug: '{{nombre}}'
+    summary: '{{tipo}} · {{nombre}}'
+    fields:
+      - { label: Nombre, name: nombre, widget: string }
+      - { label: Sigla, name: sigla, widget: string, required: false }
+      - label: Tipo
+        name: tipo
+        widget: select
+        default: actividad
+        options: [{ label: Macroevento, value: macroevento }, { label: Otra actividad, value: actividad }]
+      - { label: Resumen, name: resumen, widget: text }
+      - { label: Foto de portada, name: portada, widget: image, required: false }
+      - { label: Pilar, name: pilar, widget: string, required: false }
+      - { label: '¿Quién lo organiza?', name: organiza, widget: string, required: false }
+      - { label: '¿A quién está dirigido?', name: dirigidoA, widget: string, required: false }
+      - { label: '¿Cómo participar?', name: comoParticipar, widget: text, required: false }
+      - label: Galería
+        name: galeria
+        widget: list
+        required: false
+        fields:
+          - { label: Imagen, name: imagen, widget: image }
+          - { label: Pie de foto, name: pie, widget: string, required: false }
+      - label: Ediciones
+        name: ediciones
+        widget: list
+        required: false
+        summary: '{{anio}} · {{tema}}'
+        fields:
+          - { label: Año, name: anio, widget: number, value_type: int }
+          - { label: Tema o concepto, name: tema, widget: string }
+          - { label: Resultados verificados, name: resultado, widget: text, required: false }
+      - { label: Orden, name: orden, widget: number, value_type: int, default: 99 }
+      - { label: Contenido, name: body, widget: markdown }
+
+  # ───────────── Oportunidades ─────────────
+  - name: oportunidades
+    label: Oportunidades
+    label_singular: Oportunidad
+    folder: src/content/oportunidades
+    create: true
+    slug: '{{titulo}}'
+    summary: '{{titulo}}'
+    fields:
+      - { label: Título, name: titulo, widget: string }
+      - label: Categoría
+        name: categoria
+        widget: select
+        options:
+          - { label: Ingreso a comités, value: comites }
+          - { label: Selección y Assessment, value: assessment }
+          - { label: Liderazgo, value: liderazgo }
+          - { label: Formación, value: formacion }
+          - { label: Voluntariado, value: voluntariado }
+          - { label: Internacional, value: internacional }
+          - { label: Travel Grants, value: travel-grant }
+          - { label: Red de capítulos, value: capitulos }
+          - { label: Reconocimientos, value: reconocimiento }
+      - { label: '¿Quién puede participar?', name: quien, widget: string }
+      - { label: Requisitos, name: requisitos, widget: list, required: false }
+      - { label: Abre, name: abre, widget: datetime, time_format: false, format: 'YYYY-MM-DD', required: false }
+      - { label: Cierra, name: cierra, widget: datetime, time_format: false, format: 'YYYY-MM-DD', required: false }
+      - { label: Enlace a la convocatoria, name: enlace, widget: string, required: false }
+      - { label: Convocatoria abierta, name: activa, widget: boolean, default: true }
+      - { label: Descripción, name: body, widget: markdown }
+
+  # ───────────── Datos generales ─────────────
+  - name: datos
+    label: Datos generales
+    files:
+      - label: Sitio (frase, correo, redes)
+        name: sitio
+        file: src/data/sitio.json
+        fields:
+          - { label: Nombre, name: nombre, widget: string }
+          - { label: Frase principal, name: frase, widget: string }
+          - { label: Texto de bienvenida, name: subfrase, widget: text }
+          - { label: Correo oficial, name: correo, widget: string }
+          - { label: Ubicación, name: ubicacion, widget: string }
+          - { label: Sitio de Partners of the Americas, name: partnersAmericas, widget: string }
+          - label: Redes sociales
+            name: redes
+            widget: list
+            fields:
+              - { label: Red, name: nombre, widget: string }
+              - { label: URL, name: url, widget: string }
+              - { label: Usuario, name: usuario, widget: string }
+
+      - label: Preguntas frecuentes
+        name: faq
+        file: src/data/faq.json
+        fields:
+          - label: Preguntas
+            name: items
+            widget: list
+            summary: '{{pregunta}}'
+            fields:
+              - { label: Pregunta, name: pregunta, widget: string }
+              - { label: Respuesta, name: respuesta, widget: text }
+              - { label: Categoría, name: categoria, widget: select, options: [general, actividades, comites, permanencia, oportunidades] }
+
+      - label: Canales oficiales
+        name: canales
+        file: src/data/canales.json
+        fields:
+          - label: Canales
+            name: items
+            widget: list
+            summary: '{{nombre}}'
+            fields:
+              - { label: Nombre, name: nombre, widget: string }
+              - { label: Tipo, name: tipo, widget: string }
+              - { label: Enlace, name: enlace, widget: string, required: false, hint: 'Los enlaces de canales internos solo se muestran en el área privada.' }
+              - { label: '¿Para qué se usa?', name: uso, widget: text }
+              - { label: Público, name: publico, widget: boolean, default: true }
+
+      - label: Documentos oficiales
+        name: documentos
+        file: src/data/documentos.json
+        fields:
+          - label: Documentos
+            name: items
+            widget: list
+            summary: '{{titulo}}'
+            fields:
+              - { label: Título, name: titulo, widget: string }
+              - { label: Descripción, name: descripcion, widget: text }
+              - { label: Archivo público (PDF), name: archivo, widget: file, required: false, hint: 'Solo para documentos públicos. Los internos van en la biblioteca del área privada.' }
+              - { label: Versión, name: version, widget: string }
+              - { label: Vigente, name: vigente, widget: boolean, default: true }
+              - { label: Público, name: publico, widget: boolean, default: false }
+
+      - label: Historia (línea de tiempo)
+        name: hitos
+        file: src/data/hitos.json
+        fields:
+          - label: Hitos
+            name: items
+            widget: list
+            summary: '{{anio}} · {{titulo}}'
+            fields:
+              - { label: Año, name: anio, widget: string }
+              - { label: Título, name: titulo, widget: string }
+              - { label: Descripción, name: descripcion, widget: text }
+              - { label: Imagen, name: imagen, widget: image, required: false }
+
+      - label: Red de capítulos
+        name: capitulos
+        file: src/data/capitulos.json
+        fields:
+          - label: Capítulos
+            name: items
+            widget: list
+            summary: '{{nombre}}'
+            fields:
+              - { label: Nombre, name: nombre, widget: string }
+              - { label: País, name: pais, widget: string }
+              - { label: Ciudad, name: ciudad, widget: string, required: false }
+              - { label: Tipo, name: tipo, widget: string }
+              - { label: Sitio web, name: enlace, widget: string, required: false }
+              - { label: Contacto, name: contacto, widget: string, required: false }
+              - { label: Descripción, name: descripcion, widget: text }
+
+      - label: Memoria, cifras y reconocimientos
+        name: reconocimientos
+        file: src/data/reconocimientos.json
+        fields:
+          - label: Cifras
+            name: cifras
+            widget: list
+            hint: Publica solo cifras verificadas y autorizadas.
+            fields:
+              - { label: Valor, name: valor, widget: string }
+              - { label: Etiqueta, name: etiqueta, widget: string }
+              - { label: Verificada, name: verificada, widget: boolean, default: false }
+          - label: Reconocimientos
+            name: items
+            widget: list
+            fields:
+              - { label: Título, name: titulo, widget: string }
+              - { label: Año, name: anio, widget: string, required: false }
+              - { label: Otorgado por, name: otorgado, widget: string, required: false }
+              - { label: Descripción, name: descripcion, widget: text }
+              - { label: Imagen, name: imagen, widget: image, required: false }
+          - label: Testimonios
+            name: testimonios
+            widget: list
+            fields:
+              - { label: Testimonio, name: texto, widget: text }
+              - { label: Autor, name: autor, widget: string, required: false }
+              - { label: Rol, name: rol, widget: string, required: false }

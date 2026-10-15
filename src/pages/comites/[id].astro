@@ -1,0 +1,124 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+
+export async function getStaticPaths() {
+  const comites = await getCollection('comites');
+  return comites.map((c) => ({ params: { id: c.id }, props: { comite: c } }));
+}
+
+const { comite } = Astro.props;
+const { Content } = await render(comite);
+const d = comite.data;
+
+const bloques = [
+  { titulo: 'Funciones', items: d.funciones },
+  { titulo: 'Responsabilidades de sus integrantes', items: d.responsabilidades },
+  { titulo: 'Proyectos y eventos', items: d.eventos },
+  { titulo: 'Habilidades que desarrollas', items: d.habilidades },
+].filter((b) => b.items.length);
+---
+
+<Layout title={`Comité ${d.nombre}`} description={d.proposito}>
+  <PageHero eyebrow="Comité" title={d.nombre + (d.sigla ? ` (${d.sigla})` : '')} lead={d.proposito} sticker={d.icono} />
+
+  <section class="seccion">
+    <div class="contenedor ficha">
+      <div>
+        <div class="prosa"><Content /></div>
+        <div class="grid grid--2 bloques">
+          {
+            bloques.map((b) => (
+              <div class="tarjeta">
+                <h2 class="bloque__titulo">{b.titulo}</h2>
+                <ul>
+                  {b.items.map((i) => (
+                    <li>{i}</li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+      <aside class="lateral">
+        <div class="tarjeta">
+          <h2 class="bloque__titulo">Dirección vigente</h2>
+          <p>{d.director}</p>
+          <a href="/junta">Ver Junta Directiva</a>
+        </div>
+        {
+          d.relaciones && (
+            <div class="tarjeta">
+              <h2 class="bloque__titulo">Relación con otros comités</h2>
+              <p>{d.relaciones}</p>
+            </div>
+          )
+        }
+        {
+          d.canales && (
+            <div class="tarjeta">
+              <h2 class="bloque__titulo">Canales</h2>
+              <p>{d.canales}</p>
+            </div>
+          )
+        }
+        {
+          d.ingreso && (
+            <div class="tarjeta tarjeta--acento">
+              <h2 class="bloque__titulo">¿Cómo me uno?</h2>
+              <p>{d.ingreso}</p>
+              <a class="btn btn--primario" href="/oportunidades">Ver convocatorias</a>
+            </div>
+          )
+        }
+      </aside>
+    </div>
+    <div class="contenedor">
+      <a href="/comites">← Todos los comités</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .ficha {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: clamp(24px, 4vw, 48px);
+    align-items: start;
+    margin-bottom: 32px;
+  }
+  .bloques {
+    margin-top: 24px;
+  }
+  .bloque__titulo {
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+  }
+  .bloques ul {
+    padding-left: 1.2em;
+    margin: 0;
+    color: var(--tinta-suave);
+  }
+  .bloques li {
+    margin-bottom: 4px;
+  }
+  .lateral {
+    display: grid;
+    gap: 16px;
+  }
+  .lateral p {
+    color: var(--tinta-suave);
+    font-size: 0.95rem;
+  }
+  .tarjeta--acento {
+    background: var(--salmon-claro);
+    border-color: transparent;
+  }
+  @media (max-width: 900px) {
+    .ficha {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

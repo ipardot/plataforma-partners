@@ -1,0 +1,105 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { COMITE_LABEL, TIPO_LABEL, PARTICIPACION_LABEL, hora } from '../lib/nav';
+
+interface Props {
+  evento: CollectionEntry<'agenda'>;
+  compacto?: boolean;
+}
+const { evento, compacto = false } = Astro.props;
+const d = evento.data;
+const tz = { timeZone: 'America/Bogota' } as const;
+const dia = d.inicio.toLocaleDateString('es-CO', { ...tz, day: 'numeric' });
+const mes = d.inicio.toLocaleDateString('es-CO', { ...tz, month: 'short' }).replace('.', '');
+const diaSemana = d.inicio.toLocaleDateString('es-CO', { ...tz, weekday: 'long' });
+const descripcion = evento.body?.trim();
+---
+
+<article class="evento" data-comite={d.comite} data-tipo={d.tipo} data-mes={d.inicio.toISOString().slice(0, 7)}>
+  <div class="evento__fecha" aria-hidden="true">
+    <span class="evento__dia">{dia}</span>
+    <span class="evento__mes">{mes}</span>
+  </div>
+  <div class="evento__info">
+    <h3 class="evento__titulo">{d.titulo}</h3>
+    <p class="evento__meta">
+      <span class="sr-only">{d.inicio.toLocaleDateString('es-CO', { ...tz, dateStyle: 'full' })}. </span>
+      <span class="capital">{diaSemana}</span> · {hora(d.inicio)}{d.fin && ` – ${hora(d.fin)}`}
+      {d.lugar && <> · {d.lugar}</>}
+      {d.modalidad !== 'presencial' && <> · {d.modalidad === 'virtual' ? 'Virtual' : 'Híbrida'}</>}
+    </p>
+    <div class="evento__etiquetas">
+      <span class:list={['etiqueta', `etiqueta--${d.participacion}`]}>{PARTICIPACION_LABEL[d.participacion]}</span>
+      <span class="etiqueta">{COMITE_LABEL[d.comite]}</span>
+      {!compacto && <span class="etiqueta">{TIPO_LABEL[d.tipo]}</span>}
+    </div>
+    {!compacto && descripcion && <p class="evento__desc">{descripcion}</p>}
+    {
+      !compacto && d.inscripcion && (
+        <a class="btn btn--primario evento__btn" href={d.inscripcion} target="_blank" rel="noopener">
+          Inscribirme
+        </a>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .evento {
+    display: flex;
+    gap: 16px;
+    background: #fff;
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .evento__fecha {
+    flex: 0 0 60px;
+    height: 64px;
+    border-radius: 12px;
+    background: var(--confianza);
+    color: #fff;
+    display: grid;
+    place-content: center;
+    text-align: center;
+    line-height: 1.05;
+  }
+  .evento__dia {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  .evento__mes {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .evento__info {
+    min-width: 0;
+  }
+  .evento__titulo {
+    font-size: 1.05rem;
+    margin: 0 0 2px;
+  }
+  .evento__meta {
+    font-size: 0.88rem;
+    color: var(--tinta-suave);
+    margin: 0 0 8px;
+  }
+  .capital {
+    text-transform: capitalize;
+  }
+  .evento__etiquetas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .evento__desc {
+    margin: 10px 0 0;
+    font-size: 0.93rem;
+  }
+  .evento__btn {
+    margin-top: 12px;
+    padding: 0.5em 1.1em;
+    font-size: 0.88rem;
+  }
+</style>

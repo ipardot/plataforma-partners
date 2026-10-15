@@ -1,0 +1,112 @@
+---
+import sitio from '../data/sitio.json';
+import { NAV } from '../lib/nav';
+---
+
+<footer class="pie">
+  <div class="contenedor pie__grid">
+    <div class="pie__marca">
+      <img src="/marca/logo-partners-eafit-blanco.png" alt="Partners Campus, la red de servicio estudiantil de Partners of the Americas | Universidad EAFIT" width="360" height="46" loading="lazy" />
+      <p>{sitio.frase}</p>
+      <p>
+        <a href={`mailto:${sitio.correo}`}>{sitio.correo}</a><br />
+        {sitio.ubicacion}
+      </p>
+    </div>
+    {
+      NAV.map((g) => (
+        <div>
+          <h2 class="pie__titulo">{g.label}</h2>
+          <ul>
+            {g.links.map((l) => (
+              <li>
+                <a href={l.href}>{l.label}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+    <div>
+      <h2 class="pie__titulo">Síguenos</h2>
+      <ul>
+        {
+          sitio.redes.map((r) => (
+            <li>
+              <a href={r.url} rel="noopener" target="_blank">
+                {r.nombre}
+              </a>
+            </li>
+          ))
+        }
+        <li><a href="/contacto">Contacto</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="contenedor pie__legal">
+    <span>© {new Date().getFullYear()} Partners Campus EAFIT · Capítulo estudiantil de Partners of the Americas</span>
+    <a href="/admin/">Administrar contenido</a>
+  </div>
+</footer>
+
+<style>
+  .pie {
+    background: var(--tinta);
+    color: #c9d2e3;
+    padding-top: 56px;
+    margin-top: 0;
+  }
+  .pie a {
+    color: #fff;
+    text-decoration: none;
+  }
+  .pie a:hover {
+    text-decoration: underline;
+  }
+  .pie__grid {
+    display: grid;
+    grid-template-columns: 1.6fr repeat(4, 1fr);
+    gap: 32px;
+  }
+  .pie__marca img {
+    width: 320px;
+    max-width: 100%;
+    margin-bottom: 16px;
+  }
+  .pie__titulo {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--inspiracion);
+    margin-bottom: 12px;
+  }
+  .pie ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+    font-size: 0.93rem;
+  }
+  .pie__legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.82rem;
+    border-top: 1px solid rgb(255 255 255 / 0.12);
+    margin-top: 40px;
+    padding-block: 20px 28px;
+  }
+  .pie__legal a {
+    color: #c9d2e3;
+  }
+  @media (max-width: 900px) {
+    .pie__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .pie__marca {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

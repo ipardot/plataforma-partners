@@ -1,0 +1,14 @@
+{
+  "cifras": [
+    { "valor": "3", "etiqueta": "macroeventos al año", "verificada": true },
+    { "valor": "6", "etiqueta": "comités de trabajo", "verificada": true },
+    { "valor": "[PENDIENTE]", "etiqueta": "voluntarios vinculados", "verificada": false },
+    { "valor": "[PENDIENTE]", "etiqueta": "personas beneficiadas", "verificada": false }
+  ],
+  "items": [
+    { "titulo": "[PENDIENTE: reconocimiento]", "anio": "", "otorgado": "", "descripcion": "Registra aquí premios, menciones y experiencias destacadas del grupo o de sus integrantes, de acuerdo con los criterios que defina la Junta.", "imagen": "" }
+  ],
+  "testimonios": [
+    { "texto": "[PENDIENTE: testimonio autorizado de un integrante]", "autor": "", "rol": "" }
+  ]
+}

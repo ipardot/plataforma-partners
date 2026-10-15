@@ -1,0 +1,145 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+
+const junta = (await getCollection('junta')).sort((a, b) => a.data.orden - b.data.orden);
+const miembros = await Promise.all(junta.map(async (m) => ({ m, Content: (await render(m)).Content })));
+const iniciales = (n: string) =>
+  n.startsWith('[') ? '?' : n.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('');
+---
+
+<Layout title="Junta Directiva" description="Integrantes de la Junta Directiva vigente de Partners Campus EAFIT, sus cargos y responsabilidades.">
+  <PageHero
+    eyebrow="Junta Directiva y comités"
+    title="La Junta Directiva"
+    lead="Siete directores elegidos por los miembros para un año calendario. Aquí sabes quién hace qué y a quién acudir con tus preguntas, propuestas o necesidades."
+    sticker="/marca/sticker-3.png"
+  />
+
+  <section class="seccion">
+    <div class="contenedor">
+      <div class="grid grid--3">
+        {
+          miembros.map(({ m, Content }) => (
+            <article class="tarjeta persona" id={m.id}>
+              <div class="persona__cabeza">
+                {m.data.foto ? (
+                  <img class="persona__foto" src={m.data.foto} alt={`Foto de ${m.data.nombre}`} width="80" height="80" loading="lazy" />
+                ) : (
+                  <span class="persona__foto persona__foto--vacia" aria-hidden="true">{iniciales(m.data.nombre)}</span>
+                )}
+                <div>
+                  <span class="etiqueta">{m.data.cargo}</span>
+                  <h2 class="persona__nombre">{m.data.nombre}</h2>
+                </div>
+              </div>
+              <p>{m.data.resumen}</p>
+              <details class="desplegable">
+                <summary>Funciones y a quién acudir</summary>
+                <div class="desplegable__cuerpo prosa">
+                  <Content />
+                  {m.data.trabajaCon.length > 0 && (
+                    <p>
+                      <strong>Trabaja con:</strong> {m.data.trabajaCon.join(' · ')}
+                    </p>
+                  )}
+                </div>
+              </details>
+              {m.data.correo && (
+                <a class="persona__correo" href={`mailto:${m.data.correo}`}>
+                  {m.data.correo}
+                </a>
+              )}
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion seccion--alt">
+    <div class="contenedor dos">
+      <div>
+        <span class="eyebrow">Cómo trabaja la Junta</span>
+        <h2>Decisiones y seguimiento</h2>
+        <ul>
+          <li>Se reúne <strong>mínimo dos veces al mes</strong> para planificar y ejecutar el cronograma del capítulo.</li>
+          <li>Debe mantener informados a los miembros sobre las decisiones tomadas, especialmente en las asambleas.</li>
+          <li>Las reuniones siguen las <strong>Reglas de orden de Robert</strong>: moción, secundar, enmienda y votación.</li>
+          <li>En empates o si un directivo está inhabilitado, el voto de Presidencia es doble.</li>
+          <li>Una persona solo puede ocupar un cargo a la vez.</li>
+        </ul>
+      </div>
+      <div>
+        <span class="eyebrow">Elecciones</span>
+        <h2>¿Cómo se elige?</h2>
+        <ol>
+          <li>La Junta anuncia fechas y requisitos de cada cargo.</li>
+          <li>Los candidatos envían su candidatura y su hoja de vida en el grupo al correo oficial.</li>
+          <li>La hoja de vida se comparte dos días antes de la asamblea.</li>
+          <li>Se vota en Asamblea General por mayoría simple, sin votos delegados ni en ausencia.</li>
+          <li>En diciembre, la Junta electa y la saliente hacen el empalme. El periodo inicia el 1 de enero.</li>
+        </ol>
+        <a class="btn btn--primario" href="/oportunidades">Ver convocatorias</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .persona {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .persona__cabeza {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .persona__foto {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .persona__foto--vacia {
+    display: grid;
+    place-items: center;
+    background: var(--degradado);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.4rem;
+  }
+  .persona__nombre {
+    font-size: 1.1rem;
+    margin: 6px 0 0;
+  }
+  .persona > p {
+    color: var(--tinta-suave);
+    font-size: 0.95rem;
+  }
+  .persona .desplegable {
+    margin-top: auto;
+  }
+  .persona__correo {
+    font-size: 0.88rem;
+    word-break: break-all;
+  }
+  .dos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px, 5vw, 56px);
+  }
+  .dos li {
+    margin-bottom: 8px;
+  }
+  @media (max-width: 800px) {
+    .dos {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,13 @@
+{
+  "nombre": "Partners Campus EAFIT",
+  "frase": "Conectamos culturas, servimos a comunidades y cambiamos vidas.",
+  "subfrase": "La red de servicio estudiantil de Partners of the Americas en la Universidad EAFIT. Aquí encuentras todo lo que necesitas para conocer, vivir y construir Partners.",
+  "correo": "partnerscampus@eafit.edu.co",
+  "ubicacion": "Universidad EAFIT, Medellín, Colombia",
+  "redes": [
+    { "nombre": "Instagram", "url": "https://www.instagram.com/", "usuario": "[PENDIENTE: usuario de Instagram]" },
+    { "nombre": "TikTok", "url": "https://www.tiktok.com/", "usuario": "[PENDIENTE: usuario de TikTok]" },
+    { "nombre": "LinkedIn", "url": "https://www.linkedin.com/", "usuario": "[PENDIENTE: página de LinkedIn]" }
+  ],
+  "partnersAmericas": "https://partners.net"
+}

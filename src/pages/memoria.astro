@@ -1,0 +1,181 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import rec from '../data/reconocimientos.json';
+import hitos from '../data/hitos.json';
+
+const eventos = await getCollection('eventos');
+const fotos = [
+  ...eventos.flatMap((e) => e.data.galeria.map((g) => ({ ...g, evento: e.data.nombre, id: e.id }))),
+  ...hitos.items.filter((h) => h.imagen).map((h) => ({ imagen: h.imagen, pie: h.titulo, evento: '', id: '' })),
+].filter((f, i, arr) => arr.findIndex((x) => x.imagen === f.imagen) === i);
+---
+
+<Layout title="Memoria e impacto" description="Galerías, cifras verificadas, testimonios y reconocimientos de Partners Campus EAFIT.">
+  <PageHero
+    eyebrow="Memoria, impacto y reconocimientos"
+    title="Lo que hemos construido"
+    lead="Conservamos la historia del grupo y visibilizamos el trabajo de sus integrantes. Solo publicamos cifras verificadas y contenido con autorización."
+    sticker="/marca/sticker-7.png"
+    tono="salmon"
+  />
+
+  <section class="seccion">
+    <div class="contenedor">
+      <h2>Partners en cifras</h2>
+      <div class="cifras">
+        {
+          rec.cifras.map((c) => (
+            <div class="cifra">
+              <strong>{c.valor}</strong>
+              <span>{c.etiqueta}</span>
+              {!c.verificada && <small>Pendiente de verificación</small>}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion seccion--alt">
+    <div class="contenedor">
+      <h2>Galería</h2>
+      <div class="galeria">
+        {
+          fotos.map((f) => (
+            <figure>
+              <img src={f.imagen} alt={f.pie ?? f.evento} loading="lazy" width="600" height="450" />
+              <figcaption>
+                {f.pie}
+                {f.id && (
+                  <>
+                    {' '}· <a href={`/eventos/${f.id}`}>{f.evento}</a>
+                  </>
+                )}
+              </figcaption>
+            </figure>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion">
+    <div class="contenedor dos">
+      <div>
+        <h2>Reconocimientos</h2>
+        {
+          rec.items.map((r) => (
+            <article class="tarjeta reco">
+              <img class="sticker" src="/marca/sticker-2.png" alt="" width="48" height="48" />
+              <div>
+                <h3>{r.titulo}</h3>
+                {(r.anio || r.otorgado) && <p class="reco__meta">{[r.anio, r.otorgado].filter(Boolean).join(' · ')}</p>}
+                <p>{r.descripcion}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+      <div>
+        <h2>Testimonios</h2>
+        {
+          rec.testimonios.map((t) => (
+            <blockquote class="testimonio">
+              <p>“{t.texto}”</p>
+              {t.autor && (
+                <cite>
+                  {t.autor}
+                  {t.rol && `, ${t.rol}`}
+                </cite>
+              )}
+            </blockquote>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .cifras {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+    gap: 16px;
+  }
+  .cifra {
+    display: grid;
+    gap: 2px;
+    padding: 24px;
+    border-radius: var(--radio);
+    background: var(--degradado);
+    color: #fff;
+  }
+  .cifra strong {
+    font-size: 2.4rem;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+  .cifra small {
+    opacity: 0.85;
+    font-size: 0.78rem;
+  }
+  .galeria {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+    gap: 16px;
+  }
+  .galeria figure {
+    margin: 0;
+  }
+  .galeria img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radio-sm);
+  }
+  .galeria figcaption {
+    font-size: 0.85rem;
+    color: var(--tinta-suave);
+    margin-top: 6px;
+  }
+  .dos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px, 5vw, 56px);
+    align-items: start;
+  }
+  .reco {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  .reco p {
+    color: var(--tinta-suave);
+  }
+  .reco__meta {
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+  }
+  .testimonio {
+    margin: 0 0 16px;
+    padding: 24px;
+    border-radius: var(--radio);
+    background: var(--inspiracion-claro);
+    border-left: 5px solid var(--confianza);
+  }
+  .testimonio p {
+    font-size: 1.05rem;
+    font-weight: 500;
+  }
+  .testimonio cite {
+    font-size: 0.9rem;
+    color: var(--tinta-suave);
+  }
+  @media (max-width: 800px) {
+    .dos {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

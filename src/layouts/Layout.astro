@@ -1,0 +1,74 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  lang?: 'es' | 'en';
+  image?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = 'La plataforma para conocer, vivir y construir Partners Campus EAFIT.',
+  lang = 'es',
+  image = '/uploads/eventos/lani-2026.jpg',
+  noindex = false,
+} = Astro.props;
+
+const tituloCompleto = title === 'Inicio' ? 'Partners Campus EAFIT' : `${title} · Partners Campus EAFIT`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloCompleto}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/icon-180.png" />
+    <meta name="theme-color" content="#4e689b" />
+    <meta property="og:title" content={tituloCompleto} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.site)} />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <a class="saltar" href="#contenido">{lang === 'en' ? 'Skip to content' : 'Saltar al contenido'}</a>
+    <Header lang={lang} />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      // Resalta los textos marcados como [PENDIENTE ...] para que la Junta los complete.
+      const walker = document.createTreeWalker(document.getElementById('contenido')!, NodeFilter.SHOW_TEXT);
+      const nodos: Text[] = [];
+      while (walker.nextNode()) {
+        const n = walker.currentNode as Text;
+        if (n.nodeValue && /\[(PENDIENTE|EJEMPLO)[^\]]*\]/.test(n.nodeValue)) nodos.push(n);
+      }
+      for (const n of nodos) {
+        const span = document.createElement('span');
+        span.innerHTML = n.nodeValue!
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/\[(PENDIENTE|EJEMPLO)([^\]]*)\]/g, '<mark class="pendiente" title="Contenido por completar desde el CMS">[$1$2]</mark>');
+        n.replaceWith(...span.childNodes);
+      }
+    </script>
+  </body>
+</html>

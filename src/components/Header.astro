@@ -1,0 +1,283 @@
+---
+import { NAV } from '../lib/nav';
+
+interface Props {
+  lang?: 'es' | 'en';
+}
+const { lang = 'es' } = Astro.props;
+const actual = Astro.url.pathname.replace(/\/$/, '') || '/';
+const NAV_EN = [
+  ['/en#about', 'About us'],
+  ['/en#pillars', 'What we do'],
+  ['/en#events', 'Events'],
+  ['/en#international', 'International students'],
+  ['/en#contact', 'Contact'],
+];
+const activo = (href: string) => actual === href || actual.startsWith(href + '/');
+---
+
+<header class="cabecera">
+  <div class="contenedor cabecera__fila">
+    <a href={lang === 'en' ? '/en' : '/'} class="cabecera__logo" aria-label="Partners Campus EAFIT, inicio">
+      <img src="/marca/logo-partners.png" alt="Partners Campus" width="180" height="36" />
+    </a>
+
+    <button class="cabecera__menu" type="button" aria-expanded="false" aria-controls="nav-principal">
+      <span class="sr-only">{lang === 'en' ? 'Open menu' : 'Abrir menú'}</span>
+      <span aria-hidden="true" class="hamburguesa"><span></span></span>
+    </button>
+
+    <nav id="nav-principal" class="nav" aria-label={lang === 'en' ? 'Main' : 'Principal'}>
+      {lang === 'en' && NAV_EN.map(([href, label]) => <a href={href} class="nav__boton nav__directo">{label}</a>)}
+      {
+        lang === 'es' && NAV.map((g) => (
+          <details class="nav__grupo">
+            <summary class:list={['nav__boton', { 'nav__boton--activo': g.links.some((l) => activo(l.href)) }]}>
+              {g.label}
+            </summary>
+            <ul class="nav__panel">
+              {g.links.map((l) => (
+                <li>
+                  <a href={l.href} aria-current={activo(l.href) ? 'page' : undefined}>
+                    <strong>{l.label}</strong>
+                    {l.desc && <span>{l.desc}</span>}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        ))
+      }
+      {lang === 'es' && <a href="/contacto" class:list={['nav__boton', 'nav__directo', { 'nav__boton--activo': activo('/contacto') }]}>Contacto</a>}
+      <a href={lang === 'en' ? '/' : '/en'} class="nav__boton nav__directo nav__idioma" lang={lang === 'en' ? 'es' : 'en'}>
+        {lang === 'en' ? 'ES' : 'EN'}
+      </a>
+      <a href="/miembros" class="btn btn--primario nav__cta">{lang === 'en' ? 'Members' : 'Ingresar'}</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .cabecera {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(255 255 255 / 0.94);
+    backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid var(--borde);
+  }
+  .cabecera__fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 68px;
+    gap: 16px;
+  }
+  .cabecera__logo img {
+    width: 168px;
+    height: auto;
+  }
+  .cabecera__menu {
+    display: none;
+    background: none;
+    border: 0;
+    padding: 10px;
+    margin-right: -10px;
+    cursor: pointer;
+  }
+  .hamburguesa,
+  .hamburguesa::before,
+  .hamburguesa::after,
+  .hamburguesa span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--tinta);
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .hamburguesa {
+    position: relative;
+    background: transparent;
+  }
+  .hamburguesa::before,
+  .hamburguesa::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+  .hamburguesa::before {
+    top: -7px;
+  }
+  .hamburguesa::after {
+    top: 7px;
+  }
+  [aria-expanded='true'] .hamburguesa span {
+    opacity: 0;
+  }
+  [aria-expanded='true'] .hamburguesa::before {
+    transform: translateY(7px) rotate(45deg);
+  }
+  [aria-expanded='true'] .hamburguesa::after {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .nav__grupo {
+    position: relative;
+  }
+  .nav__boton {
+    list-style: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-weight: 500;
+    font-size: 0.93rem;
+    color: var(--tinta);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .nav__boton::-webkit-details-marker {
+    display: none;
+  }
+  summary.nav__boton::after {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    opacity: 0.6;
+  }
+  .nav__boton:hover,
+  details[open] > .nav__boton {
+    background: var(--inspiracion-claro);
+    color: var(--tinta);
+  }
+  .nav__boton--activo {
+    color: var(--confianza);
+    font-weight: 600;
+  }
+  .nav__panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 290px;
+    list-style: none;
+    margin: 0;
+    padding: 8px;
+    background: #fff;
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    box-shadow: var(--sombra);
+  }
+  .nav__panel a {
+    display: grid;
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--tinta);
+  }
+  .nav__panel a:hover,
+  .nav__panel a[aria-current='page'] {
+    background: var(--inspiracion-claro);
+  }
+  .nav__panel strong {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .nav__panel span {
+    font-size: 0.82rem;
+    color: var(--tinta-suave);
+  }
+  .nav__idioma {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--tinta-suave);
+  }
+  .nav__cta {
+    margin-left: 8px;
+    padding: 0.6em 1.2em;
+  }
+
+  @media (max-width: 1020px) {
+    .cabecera__menu {
+      display: block;
+    }
+    .nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding: 8px var(--gutter) 20px;
+      background: #fff;
+      border-bottom: 1px solid var(--borde);
+      box-shadow: 0 16px 24px rgb(22 33 58 / 0.1);
+      max-height: calc(100dvh - 68px);
+      overflow-y: auto;
+    }
+    .nav.abierto {
+      display: flex;
+    }
+    .nav__boton {
+      justify-content: space-between;
+      padding: 14px 4px;
+      border-radius: 0;
+      border-bottom: 1px solid var(--borde);
+      font-size: 1rem;
+    }
+    .nav__boton:hover,
+    details[open] > .nav__boton {
+      background: transparent;
+    }
+    .nav__panel {
+      position: static;
+      box-shadow: none;
+      border: 0;
+      padding: 4px 0 8px;
+      min-width: 0;
+    }
+    .nav__cta {
+      margin: 16px 0 0;
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  const boton = document.querySelector<HTMLButtonElement>('.cabecera__menu');
+  const nav = document.getElementById('nav-principal');
+  const grupos = document.querySelectorAll<HTMLDetailsElement>('.nav__grupo');
+  const escritorio = window.matchMedia('(min-width: 1021px)');
+
+  boton?.addEventListener('click', () => {
+    const abierto = boton.getAttribute('aria-expanded') === 'true';
+    boton.setAttribute('aria-expanded', String(!abierto));
+    nav?.classList.toggle('abierto', !abierto);
+  });
+
+  // En escritorio, solo un grupo abierto a la vez.
+  grupos.forEach((g) =>
+    g.addEventListener('toggle', () => {
+      if (g.open && escritorio.matches) grupos.forEach((o) => o !== g && (o.open = false));
+    }),
+  );
+  document.addEventListener('click', (e) => {
+    if (!escritorio.matches) return;
+    if (!(e.target as Element).closest('.nav__grupo')) grupos.forEach((g) => (g.open = false));
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') grupos.forEach((g) => (g.open = false));
+  });
+</script>

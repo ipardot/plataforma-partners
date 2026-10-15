@@ -1,0 +1,114 @@
+---
+import MiembrosLayout from '../../layouts/MiembrosLayout.astro';
+import canales from '../../data/canales.json';
+import { COMITE_LABEL } from '../../lib/nav';
+---
+
+<MiembrosLayout title="Directorio interno" lead="Contactos de los integrantes y canales internos. Esta información es confidencial: no la compartas fuera del grupo.">
+  <h2>Canales internos</h2>
+  <div class="grid grid--3 canales">
+    {
+      canales.items.map((c) => (
+        <div class="tarjeta">
+          <span class="etiqueta">{c.tipo}</span>
+          <h3>{c.nombre}</h3>
+          <p>{c.uso}</p>
+          {c.enlace ? <a href={c.enlace} target="_blank" rel="noopener">Abrir</a> : <p class="pendiente-txt">[PENDIENTE: enlace de invitación]</p>}
+        </div>
+      ))
+    }
+  </div>
+
+  <h2>Integrantes</h2>
+  <div class="herramientas">
+    <div class="campo"><label for="q">Buscar</label><input id="q" type="search" placeholder="Nombre, correo o cargo" /></div>
+    <div class="campo">
+      <label for="com">Comité</label>
+      <select id="com"><option value="">Todos</option>{Object.entries(COMITE_LABEL).map(([k, v]) => <option value={k}>{v}</option>)}</select>
+    </div>
+  </div>
+  <div class="tabla-wrap">
+    <table class="tabla">
+      <thead><tr><th>Nombre</th><th>Cargo / comité</th><th>Correo</th><th>Teléfono</th></tr></thead>
+      <tbody id="filas"><tr><td colspan="4">Cargando…</td></tr></tbody>
+    </table>
+  </div>
+</MiembrosLayout>
+
+<script>
+  import { supabase, esc, type Perfil } from '../../lib/supabase';
+  import { proteger } from '../../lib/gate';
+  import { COMITE_LABEL } from '../../lib/nav';
+
+  (async () => {
+    const s = await proteger();
+    if (!s || !supabase) return;
+    const { data, error } = await supabase.from('miembros').select('*').eq('activo', true).order('nombre');
+    const filas = document.getElementById('filas')!;
+    if (error) {
+      filas.innerHTML = `<tr><td colspan="4">Error: ${esc(error.message)}</td></tr>`;
+      return;
+    }
+    const miembros = data as Perfil[];
+    const q = document.getElementById('q') as HTMLInputElement;
+    const com = document.getElementById('com') as HTMLSelectElement;
+    const pintar = () => {
+      const t = q.value.trim().toLowerCase();
+      const lista = miembros.filter(
+        (m) => (!com.value || m.comite === com.value) && (!t || `${m.nombre} ${m.email} ${m.cargo ?? ''}`.toLowerCase().includes(t)),
+      );
+      filas.innerHTML = lista.length
+        ? lista
+            .map(
+              (m) => `<tr><td>${esc(m.nombre)}</td><td>${esc([m.cargo, m.comite ? COMITE_LABEL[m.comite] ?? m.comite : ''].filter(Boolean).join(' · '))}</td>
+              <td><a href="mailto:${esc(m.email)}">${esc(m.email)}</a></td><td>${esc(m.telefono ?? '')}</td></tr>`,
+            )
+            .join('')
+        : '<tr><td colspan="4">Sin resultados.</td></tr>';
+    };
+    q.addEventListener('input', pintar);
+    com.addEventListener('change', pintar);
+    pintar();
+  })();
+</script>
+
+<style>
+  h2 {
+    margin-top: 8px;
+  }
+  .canales {
+    margin-bottom: 40px;
+  }
+  .canales p {
+    color: var(--tinta-suave);
+    font-size: 0.92rem;
+  }
+  .herramientas {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+  }
+  .tabla-wrap {
+    overflow-x: auto;
+  }
+  .tabla {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 620px;
+  }
+  .tabla :global(th),
+  .tabla :global(td) {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--borde);
+    font-size: 0.93rem;
+  }
+  .tabla th {
+    background: var(--inspiracion-claro);
+  }
+  @media (max-width: 640px) {
+    .herramientas {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

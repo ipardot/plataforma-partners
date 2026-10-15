@@ -1,0 +1,95 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import capitulos from '../data/capitulos.json';
+---
+
+<Layout title="Red de capítulos" description="Directorio de capítulos y aliados de la red Partners of the Americas.">
+  <PageHero
+    eyebrow="Integración y crecimiento"
+    title="Red de capítulos"
+    lead="Partners of the Americas opera a través de capítulos que se asocian entre sí. Aquí encuentras los capítulos y oficinas con los que nos conectamos."
+    sticker="/marca/sticker-8.png"
+  />
+
+  <section class="seccion">
+    <div class="contenedor">
+      <div class="campo buscador">
+        <label for="buscar-cap">Buscar por nombre, país o ciudad</label>
+        <input id="buscar-cap" type="search" autocomplete="off" />
+      </div>
+      <div class="grid grid--3" id="caps">
+        {
+          capitulos.items.map((c) => (
+            <article class="tarjeta cap" data-texto={`${c.nombre} ${c.pais} ${c.ciudad}`.toLowerCase()}>
+              <span class="etiqueta">{c.tipo}</span>
+              <h2 class="cap__nombre">{c.nombre}</h2>
+              <p class="cap__lugar">{[c.ciudad, c.pais].filter(Boolean).join(', ')}</p>
+              <p>{c.descripcion}</p>
+              {c.enlace && (
+                <a href={c.enlace} target="_blank" rel="noopener">
+                  Sitio web →
+                </a>
+              )}
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion seccion--azul">
+    <div class="contenedor dos">
+      <div>
+        <h2>Asociaciones entre capítulos</h2>
+        <p>
+          Un capítulo de Partners Campus puede asociarse con otro. La alianza requiere el voto de dos tercios de los
+          miembros de ambos capítulos y un Acuerdo de Asociación firmado y renovado cada año por Presidencia y
+          Vicepresidencia. La renovación no requiere nueva votación.
+        </p>
+      </div>
+      <div>
+        <h2>¿Quieres conectar con otro capítulo?</h2>
+        <p>Relaciones Públicas mantiene el contacto con otros capítulos y con la oficina de la red.</p>
+        <a class="btn btn--primario" href="/comites/rrpp">Habla con RRPP</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const input = document.getElementById('buscar-cap') as HTMLInputElement;
+  const caps = document.querySelectorAll<HTMLElement>('.cap');
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    caps.forEach((c) => (c.hidden = !!q && !c.dataset.texto!.includes(q)));
+  });
+</script>
+
+<style>
+  .buscador {
+    max-width: 420px;
+  }
+  .cap__nombre {
+    font-size: 1.15rem;
+    margin: 10px 0 2px;
+  }
+  .cap__lugar {
+    font-size: 0.88rem;
+    color: var(--tinta-suave);
+    margin-bottom: 8px;
+  }
+  .cap p {
+    font-size: 0.93rem;
+  }
+  .dos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px, 5vw, 56px);
+  }
+  @media (max-width: 800px) {
+    .dos {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

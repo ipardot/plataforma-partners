@@ -1,0 +1,9 @@
+{
+  "items": [
+    { "nombre": "Correo oficial", "tipo": "Correo", "enlace": "mailto:partnerscampus@eafit.edu.co", "uso": "Comunicaciones formales: candidaturas a la Junta, cartas (licencia, honorario, renuncia), propuestas formales y contacto con aliados.", "publico": true },
+    { "nombre": "Grupo general de WhatsApp", "tipo": "WhatsApp", "enlace": "", "uso": "Anuncios generales de la Junta y recordatorios de asambleas. Evitar conversaciones largas: las dudas van al director del comité.", "publico": false },
+    { "nombre": "Grupos de comité", "tipo": "WhatsApp", "enlace": "", "uso": "Coordinación del día a día de cada comité. El director comparte tareas, reuniones y responsables.", "publico": false },
+    { "nombre": "Instagram", "tipo": "Red social", "enlace": "https://www.instagram.com/", "uso": "Comunicación pública del grupo: eventos, convocatorias y resultados. Lo gestiona Mercadeo.", "publico": true },
+    { "nombre": "Esta plataforma", "tipo": "Web", "enlace": "/", "uso": "Fuente oficial de calendario, documentos vigentes, comités y procesos. Si algo cambia, se actualiza aquí.", "publico": true }
+  ]
+}

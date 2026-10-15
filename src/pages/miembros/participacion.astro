@@ -1,0 +1,122 @@
+---
+import MiembrosLayout from '../../layouts/MiembrosLayout.astro';
+---
+
+<MiembrosLayout title="Mi participación" lead="Tus registros en la tabla de permanencia. Si ves un error, escríbele a Gestión Humana.">
+  <div class="campo semestre">
+    <label for="sem">Semestre</label>
+    <select id="sem"></select>
+  </div>
+  <div class="resumen" id="resumen"></div>
+  <div class="tabla-wrap">
+    <table class="tabla">
+      <thead><tr><th>Fecha</th><th>Actividad</th><th>Tipo</th><th>Puntos</th><th>Nota</th></tr></thead>
+      <tbody id="filas"><tr><td colspan="5">Cargando…</td></tr></tbody>
+    </table>
+  </div>
+  <p class="nota">
+    La Junta fija los puntos de cada actividad y el porcentaje mínimo del semestre. Las excusas válidas presentadas a tiempo
+    cuentan como participación pasiva (0 puntos). <a href="/vida-interna#permanencia">¿Cómo funciona la permanencia?</a>
+  </p>
+</MiembrosLayout>
+
+<script>
+  import { supabase, esc } from '../../lib/supabase';
+  import { proteger } from '../../lib/gate';
+
+  type Reg = { fecha: string; actividad: string; tipo: string; puntos: number; nota: string | null; semestre: string };
+
+  (async () => {
+    const s = await proteger();
+    if (!s || !supabase) return;
+    const { data, error } = await supabase
+      .from('participacion')
+      .select('fecha, actividad, tipo, puntos, nota, semestre')
+      .eq('email', s.perfil.email)
+      .order('fecha', { ascending: false });
+    const filas = document.getElementById('filas')!;
+    if (error) {
+      filas.innerHTML = `<tr><td colspan="5">Error: ${esc(error.message)}</td></tr>`;
+      return;
+    }
+    const regs = data as Reg[];
+    const sel = document.getElementById('sem') as HTMLSelectElement;
+    const semestres = [...new Set(regs.map((r) => r.semestre))].sort().reverse();
+    sel.innerHTML = semestres.length ? semestres.map((x) => `<option>${esc(x)}</option>`).join('') : '<option>—</option>';
+
+    const pintar = () => {
+      const lista = regs.filter((r) => r.semestre === sel.value);
+      const total = lista.reduce((n, r) => n + Number(r.puntos), 0);
+      const faltas = lista.filter((r) => r.tipo === 'falta').length;
+      document.getElementById('resumen')!.innerHTML = `
+        <div><strong>${lista.length}</strong><span>registros</span></div>
+        <div><strong>${total}</strong><span>puntos acumulados</span></div>
+        <div><strong>${faltas}</strong><span>faltas</span></div>
+        <div><strong>${esc(s.perfil.estado)}</strong><span>estado de membresía</span></div>`;
+      filas.innerHTML = lista.length
+        ? lista
+            .map(
+              (r) => `<tr><td>${esc(r.fecha)}</td><td>${esc(r.actividad)}</td><td>${esc(r.tipo)}</td>
+              <td class="${r.puntos < 0 ? 'neg' : ''}">${esc(r.puntos)}</td><td>${esc(r.nota ?? '')}</td></tr>`,
+            )
+            .join('')
+        : '<tr><td colspan="5">Aún no tienes registros este semestre.</td></tr>';
+    };
+    sel.addEventListener('change', pintar);
+    pintar();
+  })();
+</script>
+
+<style>
+  .semestre {
+    max-width: 220px;
+  }
+  .resumen {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .resumen :global(div) {
+    background: var(--inspiracion-claro);
+    border-radius: var(--radio-sm);
+    padding: 16px;
+    display: grid;
+  }
+  .resumen :global(strong) {
+    font-size: 1.6rem;
+    color: var(--confianza);
+    text-transform: capitalize;
+  }
+  .resumen :global(span) {
+    font-size: 0.85rem;
+    color: var(--tinta-suave);
+  }
+  .tabla-wrap {
+    overflow-x: auto;
+  }
+  .tabla {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 560px;
+  }
+  .tabla :global(th),
+  .tabla :global(td) {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--borde);
+    font-size: 0.93rem;
+  }
+  .tabla th {
+    background: var(--inspiracion-claro);
+  }
+  .tabla :global(.neg) {
+    color: var(--rojo-osc);
+    font-weight: 600;
+  }
+  .nota {
+    font-size: 0.88rem;
+    color: var(--tinta-suave);
+    margin-top: 16px;
+  }
+</style>
