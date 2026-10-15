@@ -1,7 +1,7 @@
 ---
 nombre: Logística
 proposito: Planear y coordinar la operación de actividades y eventos, incluyendo cronogramas, montaje, recursos, espacios y equipos.
-icono: /marca/sticker-4.png
+icono: /marca/sticker-4.webp
 color: rojo
 director: "[PENDIENTE: confirmar quién dirige Logística]"
 funciones:

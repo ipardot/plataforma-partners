@@ -1,7 +1,7 @@
 ---
 nombre: Internacional
 proposito: Promover el intercambio cultural, acompañar la integración de estudiantes extranjeros y desarrollar experiencias internacionales.
-icono: /marca/sticker-8.png
+icono: /marca/sticker-8.webp
 color: inspiracion
 director: Dirección del Comité Internacional
 funciones:

@@ -1,4 +1,5 @@
 ---
+import { cdn, srcset } from '../../lib/img';
 import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import PageHero from '../../components/PageHero.astro';
@@ -19,14 +20,14 @@ const titulo = d.nombre + (d.sigla ? ` (${d.sigla})` : '');
     eyebrow={d.tipo === 'macroevento' ? 'Macroevento' : 'Actividad'}
     title={titulo}
     lead={d.resumen}
-    sticker={d.tipo === 'macroevento' ? '/marca/sticker-7.png' : undefined}
+    sticker={d.tipo === 'macroevento' ? '/marca/sticker-7.webp' : undefined}
     tono="salmon"
   />
 
   {
     d.portada && (
       <div class="contenedor">
-        <img class="portada" src={d.portada} alt={`Fotografía de ${d.nombre}`} width="1400" height="788" />
+        <img class="portada" src={cdn(d.portada, 1200)} srcset={srcset(d.portada)} sizes="(min-width: 1160px) 1100px, 100vw" fetchpriority="high" alt={`Fotografía de ${d.nombre}`} width="1400" height="788" />
       </div>
     )
   }
@@ -82,7 +83,7 @@ const titulo = d.nombre + (d.sigla ? ` (${d.sigla})` : '');
           <div class="galeria">
             {d.galeria.map((g) => (
               <figure>
-                <img src={g.imagen} alt={g.pie ?? d.nombre} loading="lazy" width="600" height="450" />
+                <img src={cdn(g.imagen, 600)} srcset={srcset(g.imagen, [400, 600, 900])} sizes="(min-width: 900px) 360px, 100vw" alt={g.pie ?? d.nombre} loading="lazy" width="600" height="450" />
                 {g.pie && <figcaption>{g.pie}</figcaption>}
               </figure>
             ))}

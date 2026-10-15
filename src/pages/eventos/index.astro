@@ -1,4 +1,5 @@
 ---
+import { fondo } from '../../lib/img';
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import PageHero from '../../components/PageHero.astro';
@@ -13,7 +14,7 @@ const otros = eventos.filter((e) => e.data.tipo === 'actividad');
     eyebrow="Nuestros macroeventos"
     title="Eventos y actividades"
     lead="Un macroevento involucra a tres o más comités, genera un impacto integral y se alinea con al menos uno de nuestros pilares. Hoy son tres: La Noche Internacional, Voluntarios por un Día y Hono."
-    sticker="/marca/sticker-7.png"
+    sticker="/marca/sticker-7.webp"
     tono="salmon"
   />
 
@@ -23,7 +24,7 @@ const otros = eventos.filter((e) => e.data.tipo === 'actividad');
         {
           macro.map((m, i) => (
             <a class:list={['macro', { 'macro--inv': i % 2 }]} href={`/eventos/${m.id}`}>
-              <div class="macro__img" style={m.data.portada ? `background-image:url(${m.data.portada})` : undefined}>
+              <div class="macro__img" style={m.data.portada ? fondo(m.data.portada, 900) : undefined}>
                 {!m.data.portada && <span>{m.data.sigla ?? m.data.nombre}</span>}
               </div>
               <div class="macro__txt">

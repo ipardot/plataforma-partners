@@ -2,7 +2,7 @@
 nombre: Relaciones Públicas
 sigla: RRPP
 proposito: Construir y mantener relaciones con aliados, patrocinadores, organizaciones externas y actores estratégicos.
-icono: /marca/sticker-3.png
+icono: /marca/sticker-3.webp
 color: confianza
 director: Dirección de Relaciones Públicas
 funciones:

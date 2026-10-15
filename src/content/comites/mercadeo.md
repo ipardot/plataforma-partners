@@ -1,7 +1,7 @@
 ---
 nombre: Mercadeo
 proposito: Encargarse de la comunicación visual y estratégica, la creación de contenido, la promoción de actividades y el posicionamiento de Partners.
-icono: /marca/sticker-7.png
+icono: /marca/sticker-7.webp
 color: confianza
 director: Dirección de Mercadeo
 funciones:

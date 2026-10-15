@@ -2,7 +2,7 @@
 nombre: Gestión Humana
 sigla: GH
 proposito: Acompañar a los integrantes, integrar a los nuevos miembros y fortalecer el bienestar y la cultura organizacional.
-icono: /marca/sticker-2.png
+icono: /marca/sticker-2.webp
 color: salmon
 director: Dirección de Gestión Humana
 funciones:

@@ -16,6 +16,18 @@
   [headers.values]
     X-Robots-Tag = "noindex"
 
+# Archivos con hash en el nombre (CSS, JS, fuentes): nunca cambian, caché de 1 año.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Recursos de marca: caché de 1 semana; se revalidan en segundo plano.
+[[headers]]
+  for = "/marca/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
 [[headers]]
   for = "/*"
   [headers.values]

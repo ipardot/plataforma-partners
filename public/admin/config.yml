@@ -19,7 +19,7 @@ local_backend: true
 
 locale: es
 site_url: https://plataforma-partners.netlify.app
-logo_url: /marca/isotipo.png
+logo_url: /marca/isotipo.webp
 media_folder: public/uploads
 public_folder: /uploads
 
@@ -100,16 +100,16 @@ collections:
       - label: Ícono (sticker)
         name: icono
         widget: select
-        default: /marca/sticker-1.png
+        default: /marca/sticker-1.webp
         options:
-          - { label: Globo de diálogo, value: /marca/sticker-1.png }
-          - { label: Estrella, value: /marca/sticker-2.png }
-          - { label: Apretón de manos, value: /marca/sticker-3.png }
-          - { label: Ubicación, value: /marca/sticker-4.png }
-          - { label: Avión de papel, value: /marca/sticker-5.png }
-          - { label: Corazón, value: /marca/sticker-6.png }
-          - { label: Cámara, value: /marca/sticker-7.png }
-          - { label: Mundo, value: /marca/sticker-8.png }
+          - { label: Globo de diálogo, value: /marca/sticker-1.webp }
+          - { label: Estrella, value: /marca/sticker-2.webp }
+          - { label: Apretón de manos, value: /marca/sticker-3.webp }
+          - { label: Ubicación, value: /marca/sticker-4.webp }
+          - { label: Avión de papel, value: /marca/sticker-5.webp }
+          - { label: Corazón, value: /marca/sticker-6.webp }
+          - { label: Cámara, value: /marca/sticker-7.webp }
+          - { label: Mundo, value: /marca/sticker-8.webp }
       - label: Color
         name: color
         widget: select

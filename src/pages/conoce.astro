@@ -1,4 +1,5 @@
 ---
+import { cdn } from '../lib/img';
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
 import hitos from '../data/hitos.json';
@@ -16,19 +17,19 @@ const indice = [
 const valores = [
   {
     nombre: 'Conectar',
-    sticker: '/marca/sticker-8.png',
+    sticker: '/marca/sticker-8.webp',
     texto: 'Gestionamos alianzas nacionales e internacionales entre capítulos de Partners of the Americas y acompañamos a los estudiantes de intercambio en EAFIT.',
     ejemplos: ['El Buddy Program empareja a cada estudiante internacional con un Partner.', 'La Noche Internacional reúne culturas de todo el mundo en el campus.', 'Participamos en comités internacionales con otros capítulos.'],
   },
   {
     nombre: 'Servir',
-    sticker: '/marca/sticker-6.png',
+    sticker: '/marca/sticker-6.webp',
     texto: 'Creamos iniciativas sociales que impactan a las comunidades, basadas en el trabajo mancomunado, la empatía y la tolerancia.',
     ejemplos: ['Voluntarios por un Día con fundaciones aliadas.', 'Salidas de voluntariado durante el semestre.', 'Hono destina sus fondos a comunidades concretas.'],
   },
   {
     nombre: 'Cambiar vidas',
-    sticker: '/marca/sticker-2.png',
+    sticker: '/marca/sticker-2.webp',
     texto: 'Nos formamos en liderazgo y desarrollamos habilidades para la vida profesional y personal, dentro y fuera de Partners.',
     ejemplos: ['Dirigir un evento o un comité.', 'El Proyecto de nuevos, con presupuesto propio.', 'Talleres, Assessment y empalmes entre Juntas.'],
   },
@@ -48,7 +49,7 @@ const niveles = [
     eyebrow="Conoce Partners"
     title="¿Qué es Partners Campus EAFIT?"
     lead="Un grupo estudiantil sin ánimo de lucro de la Universidad EAFIT y capítulo estudiantil de Partners of the Americas. Unimos el voluntariado, las relaciones internacionales y el desarrollo humano."
-    sticker="/marca/sticker-8.png"
+    sticker="/marca/sticker-8.webp"
   />
 
   <nav class="contenedor indice" aria-label="En esta página">
@@ -133,7 +134,7 @@ const niveles = [
       <h2>Voluntariado e Internacional</h2>
       <div class="grid grid--2">
         <article class="tarjeta pilar pilar--salmon">
-          <img class="sticker" src="/marca/sticker-6.png" alt="" width="64" height="64" />
+          <img class="sticker" src="/marca/sticker-6.webp" alt="" width="64" height="64" />
           <h3>Voluntariado</h3>
           <p>
             Desarrollamos iniciativas de impacto social, generamos experiencias de servicio y construimos relaciones con
@@ -142,7 +143,7 @@ const niveles = [
           <p><a href="/eventos/voluntarios-por-un-dia">Voluntarios por un Día</a> · <a href="/eventos/salidas-fundaciones">Salidas a fundaciones</a></p>
         </article>
         <article class="tarjeta pilar pilar--azul">
-          <img class="sticker" src="/marca/sticker-8.png" alt="" width="64" height="64" />
+          <img class="sticker" src="/marca/sticker-8.webp" alt="" width="64" height="64" />
           <h3>Internacional</h3>
           <p>
             Promovemos el intercambio cultural, la integración de estudiantes extranjeros, el aprendizaje intercultural y
@@ -189,7 +190,7 @@ const niveles = [
               <div class="hito__cuerpo">
                 <h3>{h.titulo}</h3>
                 <p>{h.descripcion}</p>
-                {h.imagen && <img src={h.imagen} alt={h.titulo} loading="lazy" width="480" height="320" />}
+                {h.imagen && <img src={cdn(h.imagen, 840)} alt={h.titulo} loading="lazy" width="480" height="320" />}
               </div>
             </li>
           ))

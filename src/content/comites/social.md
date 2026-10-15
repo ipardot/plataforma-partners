@@ -1,7 +1,7 @@
 ---
 nombre: Social
 proposito: Construir comunidad y desarrollar experiencias de voluntariado que fortalezcan el impacto social del grupo.
-icono: /marca/sticker-6.png
+icono: /marca/sticker-6.webp
 color: salmon
 director: Dirección del Comité Social
 funciones:

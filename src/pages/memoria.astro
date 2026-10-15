@@ -1,4 +1,5 @@
 ---
+import { cdn, srcset } from '../lib/img';
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
@@ -17,7 +18,7 @@ const fotos = [
     eyebrow="Memoria, impacto y reconocimientos"
     title="Lo que hemos construido"
     lead="Conservamos la historia del grupo y visibilizamos el trabajo de sus integrantes. Solo publicamos cifras verificadas y contenido con autorización."
-    sticker="/marca/sticker-7.png"
+    sticker="/marca/sticker-7.webp"
     tono="salmon"
   />
 
@@ -45,7 +46,7 @@ const fotos = [
         {
           fotos.map((f) => (
             <figure>
-              <img src={f.imagen} alt={f.pie ?? f.evento} loading="lazy" width="600" height="450" />
+              <img src={cdn(f.imagen, 600)} srcset={srcset(f.imagen, [400, 600, 900])} sizes="(min-width: 900px) 360px, 100vw" alt={f.pie ?? f.evento} loading="lazy" width="600" height="450" />
               <figcaption>
                 {f.pie}
                 {f.id && (
@@ -68,7 +69,7 @@ const fotos = [
         {
           rec.items.map((r) => (
             <article class="tarjeta reco">
-              <img class="sticker" src="/marca/sticker-2.png" alt="" width="48" height="48" />
+              <img class="sticker" src="/marca/sticker-2.webp" alt="" width="48" height="48" />
               <div>
                 <h3>{r.titulo}</h3>
                 {(r.anio || r.otorgado) && <p class="reco__meta">{[r.anio, r.otorgado].filter(Boolean).join(' · ')}</p>}

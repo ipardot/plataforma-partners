@@ -27,7 +27,7 @@ const comites = defineCollection({
     nombre: z.string(),
     sigla: z.string().optional(),
     proposito: z.string(),
-    icono: z.string().default('/marca/sticker-1.png'),
+    icono: z.string().default('/marca/sticker-1.webp'),
     color: z.enum(['confianza', 'inspiracion', 'salmon', 'rojo']).default('confianza'),
     director: z.string().optional(),
     funciones: z.array(z.string()).default([]),

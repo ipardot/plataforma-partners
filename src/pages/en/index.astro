@@ -1,11 +1,12 @@
 ---
+import { fondo } from '../../lib/img';
 import Layout from '../../layouts/Layout.astro';
 import sitio from '../../data/sitio.json';
 
 const pillars = [
-  { name: 'Connect', sticker: '/marca/sticker-8.png', text: 'We build alliances with Partners of the Americas chapters and support exchange students at EAFIT.' },
-  { name: 'Serve', sticker: '/marca/sticker-6.png', text: 'We create social initiatives that transform communities through empathy and teamwork.' },
-  { name: 'Change lives', sticker: '/marca/sticker-2.png', text: 'We develop leadership and skills for our personal and professional growth.' },
+  { name: 'Connect', sticker: '/marca/sticker-8.webp', text: 'We build alliances with Partners of the Americas chapters and support exchange students at EAFIT.' },
+  { name: 'Serve', sticker: '/marca/sticker-6.webp', text: 'We create social initiatives that transform communities through empathy and teamwork.' },
+  { name: 'Change lives', sticker: '/marca/sticker-2.webp', text: 'We develop leadership and skills for our personal and professional growth.' },
 ];
 
 const events = [
@@ -18,7 +19,7 @@ const events = [
 <Layout title="Partners Campus EAFIT in English" lang="en" description="Partners Campus EAFIT: the student service network of Partners of the Americas at Universidad EAFIT, Medellín.">
   <section class="hero">
     <div class="contenedor">
-      <img src="/marca/isotipo.png" alt="" width="56" height="68" />
+      <img src="/marca/isotipo.webp" alt="" width="56" height="68" />
       <span class="eyebrow">Partners Campus EAFIT</span>
       <h1>We connect cultures, serve communities and change lives.</h1>
       <p class="lead">
@@ -84,7 +85,7 @@ const events = [
         {
           events.map((e) => (
             <a class="tarjeta evento" href={e.href} hreflang="es">
-              <div class="evento__img" style={e.img ? `background-image:url(${e.img})` : undefined} />
+              <div class="evento__img" style={e.img ? fondo(e.img, 720) : undefined} />
               <h3>{e.name}</h3>
               <p>{e.text}</p>
               <span class="mas">Details (in Spanish) →</span>
