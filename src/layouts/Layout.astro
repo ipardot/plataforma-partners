@@ -54,20 +54,23 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     </main>
     <Footer />
     <script>
-      // Resalta los textos marcados como [PENDIENTE ...] para que la Junta los complete.
-      const walker = document.createTreeWalker(document.getElementById('contenido')!, NodeFilter.SHOW_TEXT);
-      const nodos: Text[] = [];
-      while (walker.nextNode()) {
-        const n = walker.currentNode as Text;
-        if (n.nodeValue && /\[(PENDIENTE|EJEMPLO)[^\]]*\]/.test(n.nodeValue)) nodos.push(n);
-      }
-      for (const n of nodos) {
-        const span = document.createElement('span');
-        span.innerHTML = n.nodeValue!
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/\[(PENDIENTE|EJEMPLO)([^\]]*)\]/g, '<mark class="pendiente" title="Contenido por completar desde el CMS">[$1$2]</mark>');
-        n.replaceWith(...span.childNodes);
+      // Solo en desarrollo (npm run dev): resalta los textos marcados como [PENDIENTE ...] o [EJEMPLO]
+      // para que la Junta los complete. En la página publicada se muestran como texto normal.
+      if (import.meta.env.DEV) {
+        const walker = document.createTreeWalker(document.getElementById('contenido')!, NodeFilter.SHOW_TEXT);
+        const nodos: Text[] = [];
+        while (walker.nextNode()) {
+          const n = walker.currentNode as Text;
+          if (n.nodeValue && /\[(PENDIENTE|EJEMPLO)[^\]]*\]/.test(n.nodeValue)) nodos.push(n);
+        }
+        for (const n of nodos) {
+          const span = document.createElement('span');
+          span.innerHTML = n.nodeValue!
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/\[(PENDIENTE|EJEMPLO)([^\]]*)\]/g, '<mark class="pendiente" title="Contenido por completar desde el CMS">[$1$2]</mark>');
+          n.replaceWith(...span.childNodes);
+        }
       }
     </script>
   </body>

@@ -55,7 +55,7 @@ public/
 supabase/schema.sql  ← base de datos y permisos del área privada
 ```
 
-Los textos marcados como **`[PENDIENTE: …]`** o **`[EJEMPLO]`** aparecen resaltados en amarillo en el sitio: son los que la Junta debe completar o reemplazar.
+Los textos marcados como **`[PENDIENTE: …]`** o **`[EJEMPLO]`** aparecen resaltados en amarillo al trabajar en local (`npm run dev`): son los que la Junta debe completar o reemplazar.
 
 ## 3. Publicar en Netlify (una sola vez)
 
