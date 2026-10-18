@@ -3,15 +3,27 @@ nombre: Voluntarios por un Día
 sigla: VPUD
 tipo: macroevento
 resumen: Un macroevento social para vivir experiencias de servicio y conexión con comunidades beneficiarias a través del voluntariado.
-portada: ""
+portada: /uploads/galeria/vpud-4.jpg
 pilar: Servir
 organiza: Dirección de VPUD con el Comité Social y el apoyo de Logística, RRPP, Mercadeo y Gestión Humana
 dirigidoA: Integrantes de Partners, voluntarios de la comunidad EAFIT y comunidades beneficiarias de las fundaciones aliadas
-comoParticipar: Inscríbete en la convocatoria interna, asiste a las reuniones de preparación y participa en la jornada. También puedes postularte para liderar un equipo.
-galeria: []
+comoParticipar: "Postúlate a un rol de liderazgo (la elección de líderes empieza en la segunda semana de febrero y se eligen en la última semana de febrero), asiste a las reuniones de preparación y participa en la jornada."
+galeria:
+  - imagen: /uploads/galeria/vpud-4.jpg
+    pie: "Voluntarios por un Día"
+  - imagen: /uploads/galeria/vpud-1.jpg
+    pie: "Compartiendo con los niños de la comunidad"
+  - imagen: /uploads/galeria/vpud-2.jpg
+    pie: "Voluntariado con fundaciones aliadas"
+  - imagen: /uploads/galeria/vpud-3.jpg
+    pie: "Equipo de voluntarios"
+  - imagen: /uploads/galeria/vpud-5.jpg
+    pie: "Voluntarios por un Día"
+  - imagen: /uploads/galeria/vpud-6.jpg
+    pie: "Voluntarios por un Día"
 ediciones:
   - anio: 2026
-    tema: "[PENDIENTE: concepto de la edición]"
+    tema: "Edición 2026 (16 y 17 de abril)"
     resultado: "[PENDIENTE: resultados verificados]"
 orden: 2
 ---
@@ -34,6 +46,12 @@ No consiste solo en una actividad de un día: es una experiencia de voluntariado
 - **Fundaciones y organizaciones aliadas:** orientan sobre las necesidades reales de la comunidad.
 - **Comunidades beneficiarias:** son el centro de la experiencia.
 - **Voluntarios:** integrantes de Partners y comunidad EAFIT.
+
+## Fechas clave
+
+- **Segunda semana de febrero:** empieza la elección de líderes de Voluntarios por un Día.
+- **Última semana de febrero:** se eligen los líderes.
+- **Abril:** se realiza Voluntarios por un Día (en 2026, el 16 y 17 de abril).
 
 | Comité | Rol en VPUD |
 | --- | --- |

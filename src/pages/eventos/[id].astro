@@ -17,7 +17,7 @@ const titulo = d.nombre + (d.sigla ? ` (${d.sigla})` : '');
 
 <Layout title={titulo} description={d.resumen} image={d.portada || undefined}>
   <PageHero
-    eyebrow={d.tipo === 'macroevento' ? 'Macroevento' : 'Actividad'}
+    eyebrow={d.tipo === 'macroevento' ? 'Macroevento' : d.tipo === 'evento' ? 'Evento' : 'Actividad'}
     title={titulo}
     lead={d.resumen}
     sticker={d.tipo === 'macroevento' ? '/marca/sticker-7.webp' : undefined}

@@ -3,32 +3,98 @@
    Secundarios: negro y blanco. Tipografía: Poppins. */
 
 :root {
+  /* Paleta de marca (no cambia con el tema) */
   --confianza: #4e689b;
   --confianza-osc: #3b5079;
   --inspiracion: #90aed1;
-  --inspiracion-claro: #e9f0f8;
   --salmon: #fd7c5e;
-  --salmon-claro: #fff0eb;
   --rojo: #cf6b5b;
   --rojo-osc: #a84d3f;
   --negro: #000000;
   --blanco: #ffffff;
+  --profundo: #16213a; /* fondos oscuros fijos: pie de página, cabecera privada */
 
+  /* Tokens de tema — modo claro */
+  color-scheme: light;
   --tinta: #16213a;
   --tinta-suave: #4a5468;
-  --borde: #dfe5ee;
   --fondo: #ffffff;
   --fondo-alt: #f6f8fb;
+  --superficie: #ffffff;
+  --borde: #dfe5ee;
+  --borde-fuerte: #c8d1de;
+  --enlace: #4e689b;
+  --enlace-hover: #3b5079;
+  --inspiracion-claro: #e9f0f8;
+  --salmon-claro: #fff0eb;
+  --amarillo-claro: #fff4d6;
+  --amarillo-texto: #7a5600;
+  --verde-claro: #e3f4ea;
+  --verde-texto: #1e6b3d;
+  --gris-claro: #eceff3;
+  --eyebrow: #a84d3f;
+  --cabecera: rgb(255 255 255 / 0.9);
 
   --degradado: linear-gradient(160deg, var(--confianza) 0%, #8a6f8a 55%, var(--salmon) 100%);
 
   --radio: 18px;
   --radio-sm: 10px;
   --sombra: 0 1px 2px rgb(22 33 58 / 0.06), 0 8px 24px rgb(22 33 58 / 0.08);
+  --sombra-fuerte: 0 2px 4px rgb(22 33 58 / 0.06), 0 16px 32px rgb(22 33 58 / 0.12);
   --ancho: 1160px;
   --gutter: clamp(16px, 4vw, 32px);
 
   --fuente: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* Modo oscuro: sigue al sistema salvo que la persona elija un tema con el botón */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --tinta: #e8edf6;
+    --tinta-suave: #a9b4c8;
+    --fondo: #0f1626;
+    --fondo-alt: #141d31;
+    --superficie: #19233a;
+    --borde: #2a3652;
+    --borde-fuerte: #3a4867;
+    --enlace: #a9c3e4;
+    --enlace-hover: #cddcf0;
+    --inspiracion-claro: #1d2a45;
+    --salmon-claro: #2e2027;
+    --amarillo-claro: #3a3016;
+    --amarillo-texto: #f4d58a;
+    --verde-claro: #16332a;
+    --verde-texto: #8fd8ae;
+    --gris-claro: #222c42;
+    --eyebrow: #ff9f86;
+    --cabecera: rgb(15 22 38 / 0.88);
+    --sombra: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.25);
+    --sombra-fuerte: 0 2px 4px rgb(0 0 0 / 0.3), 0 16px 32px rgb(0 0 0 / 0.35);
+  }
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --tinta: #e8edf6;
+  --tinta-suave: #a9b4c8;
+  --fondo: #0f1626;
+  --fondo-alt: #141d31;
+  --superficie: #19233a;
+  --borde: #2a3652;
+  --borde-fuerte: #3a4867;
+  --enlace: #a9c3e4;
+  --enlace-hover: #cddcf0;
+  --inspiracion-claro: #1d2a45;
+  --salmon-claro: #2e2027;
+  --amarillo-claro: #3a3016;
+  --amarillo-texto: #f4d58a;
+  --verde-claro: #16332a;
+  --verde-texto: #8fd8ae;
+  --gris-claro: #222c42;
+  --eyebrow: #ff9f86;
+  --cabecera: rgb(15 22 38 / 0.88);
+  --sombra: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.25);
+  --sombra-fuerte: 0 2px 4px rgb(0 0 0 / 0.3), 0 16px 32px rgb(0 0 0 / 0.35);
 }
 
 *,
@@ -85,11 +151,11 @@ p {
 }
 
 a {
-  color: var(--confianza);
+  color: var(--enlace);
   text-underline-offset: 3px;
 }
 a:hover {
-  color: var(--confianza-osc);
+  color: var(--enlace-hover);
 }
 
 :focus-visible {
@@ -121,7 +187,7 @@ a:hover {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--rojo-osc);
+  color: var(--eyebrow);
   margin-bottom: 0.6rem;
 }
 
@@ -136,7 +202,7 @@ a:hover {
   left: -9999px;
   top: 8px;
   z-index: 100;
-  background: var(--tinta);
+  background: var(--profundo);
   color: #fff;
   padding: 8px 14px;
   border-radius: 8px;
@@ -174,20 +240,20 @@ a:hover {
 }
 .btn--acento {
   background: var(--salmon);
-  color: var(--tinta);
+  color: var(--profundo);
 }
 .btn--acento:hover {
   background: #ff906f;
-  color: var(--tinta);
+  color: var(--profundo);
 }
 .btn--borde {
   border-color: currentColor;
-  color: var(--confianza);
+  color: var(--enlace);
   background: transparent;
 }
 .btn--claro {
   background: #fff;
-  color: var(--tinta);
+  color: var(--profundo);
 }
 
 /* Tarjetas */
@@ -206,7 +272,7 @@ a:hover {
 }
 
 .tarjeta {
-  background: #fff;
+  background: var(--superficie);
   border: 1px solid var(--borde);
   border-radius: var(--radio);
   padding: clamp(20px, 3vw, 28px);
@@ -227,7 +293,7 @@ a.tarjeta {
 }
 a.tarjeta:hover {
   transform: translateY(-3px);
-  box-shadow: 0 2px 4px rgb(22 33 58 / 0.06), 0 16px 32px rgb(22 33 58 / 0.12);
+  box-shadow: var(--sombra-fuerte);
 }
 
 .sticker {
@@ -244,12 +310,12 @@ a.tarjeta:hover {
   padding: 0.25em 0.75em;
   border-radius: 999px;
   background: var(--inspiracion-claro);
-  color: var(--confianza-osc);
+  color: var(--enlace-hover);
   white-space: nowrap;
 }
 .etiqueta--salmon {
   background: var(--salmon-claro);
-  color: var(--rojo-osc);
+  color: var(--eyebrow);
 }
 .etiqueta--obligatoria {
   background: var(--rojo);
@@ -257,11 +323,11 @@ a.tarjeta:hover {
 }
 .etiqueta--opcional {
   background: var(--inspiracion-claro);
-  color: var(--confianza-osc);
+  color: var(--enlace-hover);
 }
 .etiqueta--equipos {
-  background: #fff4d6;
-  color: #7a5600;
+  background: var(--amarillo-claro);
+  color: var(--amarillo-texto);
 }
 
 /* Prosa de markdown */
@@ -306,7 +372,7 @@ a.tarjeta:hover {
 details.desplegable {
   border: 1px solid var(--borde);
   border-radius: var(--radio-sm);
-  background: #fff;
+  background: var(--superficie);
   margin-bottom: 10px;
 }
 details.desplegable > summary {
@@ -326,7 +392,7 @@ details.desplegable > summary::after {
   top: 50%;
   transform: translateY(-50%);
   font-size: 1.4rem;
-  color: var(--confianza);
+  color: var(--enlace);
   font-weight: 400;
 }
 details.desplegable[open] > summary::after {
@@ -338,7 +404,8 @@ details.desplegable > .desplegable__cuerpo {
 }
 
 .pendiente {
-  background: #fff4d6;
+  background: var(--amarillo-claro);
+  color: var(--amarillo-texto);
   border-radius: 4px;
   padding: 0 4px;
 }
@@ -366,9 +433,9 @@ details.desplegable > .desplegable__cuerpo {
 .campo textarea {
   font: inherit;
   padding: 0.7em 0.9em;
-  border: 1px solid #c8d1de;
+  border: 1px solid var(--borde-fuerte);
   border-radius: var(--radio-sm);
-  background: #fff;
+  background: var(--superficie);
   color: var(--tinta);
   width: 100%;
 }
@@ -389,6 +456,19 @@ details.desplegable > .desplegable__cuerpo {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+/* Aparición al hacer scroll (solo con JS y sin preferencia de movimiento reducido) */
+.por-revelar {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+.por-revelar.visible {
+  opacity: 1;
+  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

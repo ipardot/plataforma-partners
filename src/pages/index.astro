@@ -1,10 +1,11 @@
 ---
-import { cdn, srcset, fondo } from '../lib/img';
-const PORTADA = '/uploads/eventos/lani-2026.jpg';
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import EventoItem from '../components/EventoItem.astro';
 import sitio from '../data/sitio.json';
+import { cdn, srcset } from '../lib/img';
+
+const PORTADA = '/uploads/eventos/lani-2026.jpg';
 
 const ahora = new Date();
 const proximos = (await getCollection('agenda'))
@@ -12,21 +13,30 @@ const proximos = (await getCollection('agenda'))
   .sort((a, b) => +a.data.inicio - +b.data.inicio)
   .slice(0, 4);
 
-const macro = (await getCollection('eventos', (e) => e.data.tipo === 'macroevento')).sort(
-  (a, b) => a.data.orden - b.data.orden,
-);
+const eventos = (await getCollection('eventos')).sort((a, b) => a.data.orden - b.data.orden);
+const macro = eventos.filter((e) => e.data.tipo === 'macroevento');
+const medianos = eventos.filter((e) => e.data.tipo === 'evento');
 
 const accesos = [
-  { href: '/ruta', titulo: 'Ruta del nuevo Partner', texto: 'Tus primeras semanas, en seis etapas.', sticker: '/marca/sticker-5.webp' },
-  { href: '/eventos', titulo: 'Eventos', texto: 'LANI, Voluntarios por un Día, Hono y más.', sticker: '/marca/sticker-7.webp' },
-  { href: '/comites', titulo: 'Comités', texto: 'Qué hace cada uno y cómo unirte.', sticker: '/marca/sticker-3.webp' },
-  { href: '/calendario', titulo: 'Calendario', texto: 'Asambleas, reuniones y fechas límite.', sticker: '/marca/sticker-4.webp' },
+  { href: '/eventos', titulo: 'Eventos', texto: 'La Noche Internacional, Voluntarios por un Día y más.', sticker: '/marca/sticker-7.webp' },
+  { href: '/comites', titulo: 'Comités', texto: 'Qué hace cada uno y dónde encajas tú.', sticker: '/marca/sticker-3.webp' },
+  { href: '/calendario', titulo: 'Calendario', texto: 'Todo el año, mes a mes.', sticker: '/marca/sticker-4.webp' },
+  { href: '/oportunidades', titulo: 'Oportunidades', texto: 'Roles de liderazgo y programas de la red.', sticker: '/marca/sticker-5.webp' },
 ];
 
 const pilares = [
   { nombre: 'Conectar', sticker: '/marca/sticker-8.webp', texto: 'Alianzas con capítulos de toda América y acompañamiento a estudiantes de intercambio.' },
   { nombre: 'Servir', sticker: '/marca/sticker-6.webp', texto: 'Iniciativas sociales que transforman comunidades desde la empatía y el trabajo conjunto.' },
   { nombre: 'Cambiar vidas', sticker: '/marca/sticker-2.webp', texto: 'Liderazgo y habilidades que nos forman, dentro y fuera de Partners.' },
+];
+
+const mosaico = [
+  ['/uploads/galeria/vpud-4.jpg', 'Voluntarios por un Día'],
+  ['/uploads/galeria/lani-2.jpg', 'La Noche Internacional'],
+  ['/uploads/galeria/integracion-3.jpg', 'Integración Partners'],
+  ['/uploads/galeria/vpud-1.jpg', 'Voluntarios por un Día'],
+  ['/uploads/galeria/grupo-2.jpg', 'Partners Campus EAFIT'],
+  ['/uploads/galeria/lani-1.jpg', 'La Noche Internacional'],
 ];
 ---
 
@@ -38,10 +48,16 @@ const pilares = [
       <h1>{sitio.frase}</h1>
       <p>{sitio.subfrase}</p>
       <div class="portada__acciones">
-        <a class="btn btn--acento" href="/ruta">Empieza tu ruta</a>
+        <a class="btn btn--acento" href="/ruta">
+          <img src="/marca/sticker-5.webp" alt="" width="24" height="20" />
+          Empieza la Ruta del nuevo Partner
+        </a>
         <a class="btn btn--claro" href="/conoce">Conoce Partners</a>
       </div>
     </div>
+    <svg class="portada__onda" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 48c160 28 320 32 480 12S800 0 960 14s320 52 480 30v36H0Z"></path>
+    </svg>
   </section>
 
   <section class="contenedor accesos" aria-label="Accesos directos">
@@ -49,9 +65,10 @@ const pilares = [
       {
         accesos.map((a) => (
           <a class="tarjeta acceso" href={a.href}>
-            <img class="sticker" src={a.sticker} alt="" width="64" height="64" loading="lazy" />
+            <img class="sticker" src={a.sticker} alt="" width="64" height="64" />
             <h2 class="acceso__titulo">{a.titulo}</h2>
             <p>{a.texto}</p>
+            <span class="acceso__flecha" aria-hidden="true">→</span>
           </a>
         ))
       }
@@ -59,37 +76,69 @@ const pilares = [
   </section>
 
   <section class="seccion">
-    <div class="contenedor">
-      <span class="eyebrow">Nuestros pilares</span>
-      <h2>Conectar, servir y cambiar vidas</h2>
-      <p class="lead">
-        Somos el capítulo estudiantil de Partners of the Americas en EAFIT. Promovemos las relaciones internacionales y el
-        voluntariado para fomentar el bienestar social y la internacionalización.
-      </p>
-      <div class="grid grid--3 pilares">
-        {
-          pilares.map((p) => (
-            <div class="pilar">
-              <img class="sticker" src={p.sticker} alt="" width="64" height="64" loading="lazy" />
-              <div>
-                <h3>{p.nombre}</h3>
-                <p>{p.texto}</p>
+    <div class="contenedor pilares-bloque">
+      <div>
+        <span class="eyebrow">Nuestros pilares</span>
+        <h2>Conectar, servir y cambiar vidas</h2>
+        <p class="lead">
+          Somos el capítulo estudiantil de Partners of the Americas en EAFIT. Promovemos las relaciones internacionales y el
+          voluntariado para fomentar el bienestar social y la internacionalización.
+        </p>
+        <div class="pilares">
+          {
+            pilares.map((p) => (
+              <div class="pilar">
+                <img class="sticker" src={p.sticker} alt="" width="64" height="64" loading="lazy" />
+                <div>
+                  <h3>{p.nombre}</h3>
+                  <p>{p.texto}</p>
+                </div>
               </div>
-            </div>
-          ))
-        }
+            ))
+          }
+        </div>
+        <a href="/conoce" class="btn btn--borde">Lee más sobre Partners</a>
       </div>
-      <a href="/conoce" class="btn btn--borde">Lee más sobre Partners</a>
+      <figure class="pilares-foto">
+        <img src={cdn('/uploads/galeria/grupo-1.jpg', 800)} srcset={srcset('/uploads/galeria/grupo-1.jpg', [480, 800, 1200])} sizes="(min-width: 900px) 45vw, 100vw" alt="Integrantes de Partners Campus EAFIT" loading="lazy" width="800" height="530" />
+        <img class="pilares-foto__sticker" src="/marca/sticker-6.webp" alt="" width="90" height="75" loading="lazy" />
+      </figure>
     </div>
   </section>
 
   <section class="seccion seccion--azul">
+    <div class="contenedor">
+      <span class="eyebrow">Macroeventos</span>
+      <h2>Lo que construimos juntos</h2>
+      <div class="macros">
+        {
+          macro.map((m) => (
+            <a class="macro" href={`/eventos/${m.id}`}>
+              {m.data.portada && <img src={cdn(m.data.portada, 900)} srcset={srcset(m.data.portada, [480, 900, 1300])} sizes="(min-width: 900px) 50vw, 100vw" alt="" loading="lazy" width="900" height="560" />}
+              <div class="macro__texto">
+                {m.data.pilar && <span class="etiqueta etiqueta--salmon">{m.data.pilar}</span>}
+                <h3>{m.data.nombre}</h3>
+                <p>{m.data.resumen}</p>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+      <div class="tambien">
+        <span>También tenemos:</span>
+        {medianos.map((e) => <a href={`/eventos/${e.id}`}>{e.data.nombre}</a>)}
+        <a href="/eventos">y más actividades →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion">
     <div class="contenedor dos-col">
       <div>
         <span class="eyebrow">Agenda</span>
         <h2>Próximos eventos</h2>
         <p class="lead">Todo lo que pasa en Partners, en un solo calendario.</p>
-        <a href="/calendario" class="btn btn--primario">Ver calendario completo</a>
+        <a href="/calendario" class="btn btn--primario">Ver el calendario del año</a>
       </div>
       <div class="lista-eventos">
         {proximos.length ? proximos.map((e) => <EventoItem evento={e} compacto />) : <p>No hay eventos próximos publicados.</p>}
@@ -97,28 +146,25 @@ const pilares = [
     </div>
   </section>
 
-  <section class="seccion">
+  <section class="seccion seccion--alt galeria-inicio">
     <div class="contenedor">
-      <span class="eyebrow">Macroeventos</span>
-      <h2>Lo que construimos juntos</h2>
-      <div class="grid grid--3">
+      <span class="eyebrow">Galería</span>
+      <h2>Así se vive Partners</h2>
+      <div class="mosaico">
         {
-          macro.map((m) => (
-            <a class="tarjeta macro" href={`/eventos/${m.id}`}>
-              <div class="macro__img" style={m.data.portada ? fondo(m.data.portada, 720) : undefined}>
-                {!m.data.portada && <span>{m.data.sigla ?? m.data.nombre}</span>}
-              </div>
-              {m.data.pilar && <span class="etiqueta etiqueta--salmon">{m.data.pilar}</span>}
-              <h3>{m.data.nombre}</h3>
-              <p>{m.data.resumen}</p>
-            </a>
+          mosaico.map(([src, alt], i) => (
+            <figure class:list={['mosaico__item', `mosaico__item--${i}`]}>
+              <img src={cdn(src, i === 0 ? 900 : 600)} alt={alt} loading="lazy" width="600" height="450" />
+              <figcaption>{alt}</figcaption>
+            </figure>
           ))
         }
       </div>
+      <a class="btn btn--borde" href="/memoria">Ver toda la galería</a>
     </div>
   </section>
 
-  <section class="seccion seccion--alt">
+  <section class="seccion">
     <div class="contenedor cta">
       <img src="/marca/sticker-1.webp" alt="" width="96" height="73" loading="lazy" />
       <div>
@@ -133,7 +179,7 @@ const pilares = [
 <style>
   .portada {
     position: relative;
-    min-height: min(78vh, 680px);
+    min-height: min(80vh, 700px);
     display: flex;
     align-items: flex-end;
     color: #fff;
@@ -155,10 +201,20 @@ const pilares = [
       linear-gradient(0deg, rgb(22 33 58 / 0.92) 0%, rgb(22 33 58 / 0.55) 45%, rgb(22 33 58 / 0.1) 100%),
       linear-gradient(90deg, rgb(78 104 155 / 0.55), transparent 70%);
   }
+  .portada__onda {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    width: 100%;
+    height: 60px;
+    z-index: 2;
+    fill: var(--fondo);
+  }
   .portada__texto {
     position: relative;
-    z-index: 2;
-    padding-block: 120px 96px;
+    z-index: 3;
+    padding-block: 120px 120px;
   }
   .portada__isotipo {
     width: 56px;
@@ -179,10 +235,23 @@ const pilares = [
     gap: 12px;
     margin-top: 24px;
   }
+  .portada__acciones img {
+    width: 24px;
+    height: auto;
+  }
   .accesos {
     position: relative;
     z-index: 3;
-    margin-top: -56px;
+    margin-top: -72px;
+  }
+  .acceso {
+    overflow: hidden;
+  }
+  .acceso .sticker {
+    transition: transform 0.25s ease;
+  }
+  .acceso:hover .sticker {
+    transform: rotate(-10deg) scale(1.1);
   }
   .acceso__titulo {
     font-size: 1.1rem;
@@ -192,16 +261,137 @@ const pilares = [
     color: var(--tinta-suave);
     font-size: 0.93rem;
   }
+  .acceso__flecha {
+    position: absolute;
+    top: 20px;
+    right: 22px;
+    font-size: 1.3rem;
+    color: var(--salmon);
+    transition: transform 0.2s ease;
+  }
+  .acceso:hover .acceso__flecha {
+    transform: translateX(4px);
+  }
+  .pilares-bloque {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: clamp(24px, 5vw, 64px);
+    align-items: center;
+  }
   .pilares {
-    margin: 32px 0;
+    display: grid;
+    gap: 16px;
+    margin: 24px 0 28px;
   }
   .pilar {
     display: flex;
     gap: 16px;
     align-items: flex-start;
   }
+  .pilar h3 {
+    margin-bottom: 2px;
+  }
   .pilar p {
     color: var(--tinta-suave);
+    margin: 0;
+  }
+  .pilares-foto {
+    position: relative;
+    margin: 0;
+  }
+  .pilares-foto img:first-child {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 28px 28px 28px 120px;
+    box-shadow: var(--sombra-fuerte);
+  }
+  .pilares-foto__sticker {
+    position: absolute;
+    left: -24px;
+    bottom: -18px;
+    width: 96px;
+    height: auto;
+    transform: rotate(-12deg);
+    filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.2));
+  }
+  .macros {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(16px, 3vw, 28px);
+    margin-top: 16px;
+  }
+  .macro {
+    position: relative;
+    display: block;
+    min-height: 420px;
+    border-radius: var(--radio);
+    overflow: hidden;
+    color: #fff;
+    text-decoration: none;
+    background: var(--degradado);
+    box-shadow: var(--sombra-fuerte);
+  }
+  .macro img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  .macro:hover img {
+    transform: scale(1.05);
+  }
+  .macro::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgb(22 33 58 / 0.92), rgb(22 33 58 / 0.15) 65%);
+  }
+  .macro__texto {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: clamp(20px, 3vw, 32px);
+  }
+  .macro__texto h3 {
+    color: #fff;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    margin: 10px 0 6px;
+  }
+  .macro__texto p {
+    color: #dfe6f3;
+    margin: 0;
+  }
+  .macro .etiqueta--salmon {
+    background: var(--salmon);
+    color: var(--profundo);
+  }
+  .tambien {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 24px;
+  }
+  .tambien span {
+    font-weight: 600;
+  }
+  .tambien a {
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    text-decoration: none;
+    color: var(--tinta);
+    font-weight: 500;
+    font-size: 0.92rem;
+  }
+  .tambien a:hover {
+    border-color: var(--salmon);
   }
   .dos-col {
     display: grid;
@@ -213,37 +403,61 @@ const pilares = [
     display: grid;
     gap: 12px;
   }
-  .macro {
-    padding: 0 0 24px;
+  .mosaico {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 180px;
+    gap: 12px;
+    margin: 20px 0 28px;
+  }
+  .mosaico__item {
+    position: relative;
+    margin: 0;
+    border-radius: var(--radio-sm);
     overflow: hidden;
   }
-  .macro > :not(.macro__img) {
-    margin-inline: 24px;
+  .mosaico__item--0 {
+    grid-column: span 2;
+    grid-row: span 2;
   }
-  .macro__img {
-    aspect-ratio: 16 / 9;
-    background: var(--degradado);
-    background-size: cover;
-    background-position: center;
-    margin-bottom: 18px;
-    display: grid;
-    place-items: center;
+  .mosaico__item--3 {
+    grid-row: span 2;
   }
-  .macro__img span {
+  .mosaico__item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  .mosaico__item:hover img {
+    transform: scale(1.06);
+  }
+  .mosaico__item figcaption {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgb(22 33 58 / 0.75);
     color: #fff;
-    font-size: 2.4rem;
-    font-weight: 800;
-    letter-spacing: 0.04em;
+    font-size: 0.78rem;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: all 0.25s ease;
   }
-  .macro p {
-    color: var(--tinta-suave);
-    font-size: 0.95rem;
+  .mosaico__item:hover figcaption {
+    opacity: 1;
+    transform: none;
   }
   .cta {
     display: flex;
     align-items: center;
     gap: 24px;
     flex-wrap: wrap;
+    padding: clamp(24px, 4vw, 40px);
+    border-radius: var(--radio);
+    background: var(--salmon-claro);
   }
   .cta > div {
     flex: 1 1 320px;
@@ -255,12 +469,21 @@ const pilares = [
     margin: 0;
     color: var(--tinta-suave);
   }
-  @media (max-width: 800px) {
-    .dos-col {
+  @media (max-width: 900px) {
+    .pilares-bloque,
+    .dos-col,
+    .macros {
       grid-template-columns: 1fr;
     }
-    .portada__texto {
-      padding-block: 96px 88px;
+    .macro {
+      min-height: 320px;
+    }
+    .mosaico {
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: 140px;
+    }
+    .mosaico__item--3 {
+      grid-row: span 1;
     }
   }
 </style>

@@ -13,7 +13,24 @@ import capitulos from '../data/capitulos.json';
   />
 
   <section class="seccion">
+    <div class="contenedor mapa">
+      <div>
+        <h2>Mapa de la red</h2>
+        <p>
+          Aquí están todos los capítulos de Partners of the Americas, la red a la que pertenecemos. Acércate con{" "}
+          <strong>+</strong> y <strong>−</strong> y haz clic en cada punto para ver la información del capítulo.
+        </p>
+        <a class="btn btn--borde" href="https://www.google.com/maps/d/u/0/viewer?mid=1pe0tf44qs4y9IlyYyLl7rSP9YN8ISho&ll=9.980674389919525%2C-78.76104455000001&z=3" target="_blank" rel="noopener">Abrir en pantalla completa</a>
+      </div>
+      <div class="mapa__marco">
+        <iframe src="https://www.google.com/maps/d/embed?mid=1pe0tf44qs4y9IlyYyLl7rSP9YN8ISho&ll=9.980674389919525%2C-78.76104455000001&z=3" title="Mapa de capítulos de Partners of the Americas" loading="lazy"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion seccion--alt">
     <div class="contenedor">
+      <h2>Capítulos y aliados con los que nos conectamos</h2>
       <div class="campo buscador">
         <label for="buscar-cap">Buscar por nombre, país o ciudad</label>
         <input id="buscar-cap" type="search" autocomplete="off" />
@@ -69,6 +86,30 @@ import capitulos from '../data/capitulos.json';
 <style>
   .buscador {
     max-width: 420px;
+  }
+  .mapa {
+    display: grid;
+    grid-template-columns: 1fr 1.7fr;
+    gap: clamp(20px, 4vw, 40px);
+    align-items: center;
+  }
+  .mapa__marco {
+    border-radius: var(--radio);
+    overflow: hidden;
+    box-shadow: var(--sombra-fuerte);
+    border: 6px solid var(--superficie);
+    aspect-ratio: 16 / 10;
+  }
+  .mapa__marco iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+  @media (max-width: 860px) {
+    .mapa {
+      grid-template-columns: 1fr;
+    }
   }
   .cap__nombre {
     font-size: 1.15rem;

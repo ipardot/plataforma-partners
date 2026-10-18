@@ -1,25 +1,34 @@
 ---
-import { fondo } from '../../lib/img';
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import PageHero from '../../components/PageHero.astro';
+import { cdn, fondo } from '../../lib/img';
 
 const eventos = (await getCollection('eventos')).sort((a, b) => a.data.orden - b.data.orden);
 const macro = eventos.filter((e) => e.data.tipo === 'macroevento');
-const otros = eventos.filter((e) => e.data.tipo === 'actividad');
+const medianos = eventos.filter((e) => e.data.tipo === 'evento');
+const actividades = eventos.filter((e) => e.data.tipo === 'actividad');
+const ICONOS: Record<string, string> = {
+  'friends-without-borders': '/marca/sticker-8.webp',
+  cupa: '/marca/sticker-4.webp',
+  premios: '/marca/sticker-2.webp',
+};
+const stickers = ['/marca/sticker-1.webp', '/marca/sticker-6.webp', '/marca/sticker-2.webp', '/marca/sticker-3.webp', '/marca/sticker-4.webp', '/marca/sticker-5.webp', '/marca/sticker-8.webp'];
 ---
 
-<Layout title="Eventos" description="Los macroeventos de Partners Campus EAFIT —La Noche Internacional, Voluntarios por un Día y Hono— y las demás actividades del grupo.">
+<Layout title="Eventos" description="Los macroeventos de Partners Campus EAFIT —La Noche Internacional y Voluntarios por un Día— y nuestros demás eventos y actividades.">
   <PageHero
-    eyebrow="Nuestros macroeventos"
-    title="Eventos y actividades"
-    lead="Un macroevento involucra a tres o más comités, genera un impacto integral y se alinea con al menos uno de nuestros pilares. Hoy son tres: La Noche Internacional, Voluntarios por un Día y Hono."
+    eyebrow="Eventos y actividades"
+    title="Lo que vivimos juntos"
+    lead="Nuestros macroeventos son Voluntarios por un Día y La Noche Internacional. Además tenemos Friends Without Borders, CUPA, Premios y actividades durante todo el semestre."
     sticker="/marca/sticker-7.webp"
     tono="salmon"
   />
 
   <section class="seccion">
     <div class="contenedor">
+      <span class="eyebrow">Macroeventos</span>
+      <h2>Nuestros dos grandes eventos</h2>
       <div class="macros">
         {
           macro.map((m, i) => (
@@ -29,9 +38,9 @@ const otros = eventos.filter((e) => e.data.tipo === 'actividad');
               </div>
               <div class="macro__txt">
                 <span class="etiqueta etiqueta--salmon">Pilar: {m.data.pilar}</span>
-                <h2>
+                <h3>
                   {m.data.nombre} {m.data.sigla && <small>({m.data.sigla})</small>}
-                </h2>
+                </h3>
                 <p>{m.data.resumen}</p>
                 <span class="btn btn--primario">Conocer {m.data.sigla ?? m.data.nombre}</span>
               </div>
@@ -42,21 +51,44 @@ const otros = eventos.filter((e) => e.data.tipo === 'actividad');
     </div>
   </section>
 
-  <section class="seccion seccion--alt">
+  <section class="seccion seccion--azul">
     <div class="contenedor">
-      <span class="eyebrow">Otros eventos y actividades</span>
-      <h2>Más formas de participar</h2>
+      <span class="eyebrow">Eventos</span>
+      <h2>También tenemos</h2>
       <div class="grid grid--3">
         {
-          otros.map((o) => (
-            <a class="tarjeta actividad" href={`/eventos/${o.id}`}>
-              <h3>{o.data.nombre}</h3>
-              <p>{o.data.resumen}</p>
+          medianos.map((e) => (
+            <a class="tarjeta foto-tarjeta" href={`/eventos/${e.id}`}>
+              <div class="foto-tarjeta__img" style={e.data.portada ? fondo(e.data.portada, 640) : undefined}>
+                {!e.data.portada && <img src={ICONOS[e.id] ?? '/marca/sticker-2.webp'} alt="" width="80" height="80" loading="lazy" />}
+              </div>
+              <h3>{e.data.nombre}</h3>
+              <p>{e.data.resumen}</p>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion">
+    <div class="contenedor">
+      <span class="eyebrow">Durante el semestre</span>
+      <h2>Actividades</h2>
+      <div class="grid grid--3">
+        {
+          actividades.map((a, i) => (
+            <a class="tarjeta actividad" href={`/eventos/${a.id}`}>
+              {a.data.portada ? (
+                <img class="actividad__foto" src={cdn(a.data.portada, 160)} alt="" width="64" height="64" loading="lazy" />
+              ) : (
+                <img class="sticker" src={stickers[i % stickers.length]} alt="" width="64" height="64" loading="lazy" />
+              )}
+              <h3>{a.data.nombre}</h3>
+              <p>{a.data.resumen}</p>
               <dl>
                 <dt>Organiza</dt>
-                <dd>{o.data.organiza}</dd>
-                <dt>Para</dt>
-                <dd>{o.data.dirigidoA}</dd>
+                <dd>{a.data.organiza}</dd>
               </dl>
             </a>
           ))
@@ -70,27 +102,29 @@ const otros = eventos.filter((e) => e.data.tipo === 'actividad');
   .macros {
     display: grid;
     gap: 28px;
+    margin-top: 16px;
   }
   .macro {
     display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    background: #fff;
+    grid-template-columns: 1.15fr 1fr;
+    background: var(--superficie);
     border: 1px solid var(--borde);
     border-radius: var(--radio);
     overflow: hidden;
     box-shadow: var(--sombra);
     text-decoration: none;
     color: inherit;
-    transition: transform 0.18s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
   .macro:hover {
-    transform: translateY(-3px);
+    transform: translateY(-4px) rotate(-0.3deg);
+    box-shadow: var(--sombra-fuerte);
   }
   .macro--inv .macro__img {
     order: 2;
   }
   .macro__img {
-    min-height: 260px;
+    min-height: 300px;
     background: var(--degradado);
     background-size: cover;
     background-position: center;
@@ -106,7 +140,8 @@ const otros = eventos.filter((e) => e.data.tipo === 'actividad');
     padding: clamp(24px, 4vw, 40px);
     align-self: center;
   }
-  .macro__txt h2 {
+  .macro__txt h3 {
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
     margin-top: 12px;
   }
   .macro__txt small {
@@ -117,9 +152,43 @@ const otros = eventos.filter((e) => e.data.tipo === 'actividad');
   .macro__txt p {
     color: var(--tinta-suave);
   }
+  .foto-tarjeta {
+    padding: 0 0 22px;
+    overflow: hidden;
+  }
+  .foto-tarjeta > :not(.foto-tarjeta__img) {
+    margin-inline: 22px;
+  }
+  .foto-tarjeta__img {
+    aspect-ratio: 16 / 10;
+    background: var(--degradado);
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 16px;
+    display: grid;
+    place-items: center;
+  }
+  .foto-tarjeta__img img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgb(0 0 0 / 0.2));
+    transform: rotate(-6deg);
+  }
+  .foto-tarjeta p,
   .actividad p {
     color: var(--tinta-suave);
     font-size: 0.95rem;
+  }
+  .actividad__foto {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--salmon);
+  }
+  .actividad h3 {
+    margin-top: 12px;
   }
   .actividad dl {
     margin: 0;
@@ -143,7 +212,7 @@ const otros = eventos.filter((e) => e.data.tipo === 'actividad');
       order: 0;
     }
     .macro__img {
-      min-height: 200px;
+      min-height: 220px;
     }
   }
 </style>

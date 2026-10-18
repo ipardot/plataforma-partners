@@ -36,7 +36,6 @@ const comites = defineCollection({
     habilidades: z.array(z.string()).default([]),
     relaciones: z.string().optional(),
     canales: z.string().optional(),
-    ingreso: z.string().optional(),
     orden: z.number().default(99),
   }),
 });
@@ -46,7 +45,7 @@ const eventos = defineCollection({
   schema: z.object({
     nombre: z.string(),
     sigla: z.string().optional(),
-    tipo: z.enum(['macroevento', 'actividad']).default('actividad'),
+    tipo: z.enum(['macroevento', 'evento', 'actividad']).default('actividad'),
     resumen: z.string(),
     portada: z.string().optional(),
     pilar: z.string().optional(),
@@ -72,7 +71,7 @@ const agenda = defineCollection({
     lugar: z.string().optional(),
     modalidad: z.enum(['presencial', 'virtual', 'hibrida']).default('presencial'),
     comite: z.enum(COMITES).default('general'),
-    tipo: z.enum(['asamblea', 'comite', 'macroevento', 'voluntariado', 'integracion', 'formacion', 'convocatoria', 'red-internacional']),
+    tipo: z.enum(['asamblea', 'comite', 'macroevento', 'evento', 'voluntariado', 'integracion', 'formacion', 'convocatoria', 'red-internacional']),
     participacion: z.enum(['obligatoria', 'opcional', 'equipos']).default('opcional'),
     inscripcion: z.string().optional(),
   }),
@@ -82,13 +81,16 @@ const oportunidades = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/oportunidades' }),
   schema: z.object({
     titulo: z.string(),
-    categoria: z.enum(['comites', 'assessment', 'liderazgo', 'formacion', 'voluntariado', 'internacional', 'travel-grant', 'capitulos', 'reconocimiento']),
+    categoria: z.enum(['liderazgo', 'internacional', 'partners-americas']),
     quien: z.string(),
     requisitos: z.array(z.string()).default([]),
     abre: z.coerce.date().optional(),
     cierra: z.coerce.date().optional(),
     enlace: z.string().optional(),
+    evento: z.string().optional(),
+    imagen: z.string().optional(),
     activa: z.boolean().default(true),
+    orden: z.number().default(99),
   }),
 });
 

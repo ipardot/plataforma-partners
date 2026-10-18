@@ -16,7 +16,6 @@ eventos: [Voluntarios por un Día, Salidas a fundaciones, Proyecto especial]
 habilidades: [Empatía y trabajo comunitario, Diseño de actividades, Trabajo en equipo, Gestión de aliados]
 relaciones: Trabaja con RRPP para conseguir aliados y recursos, con Logística en la operación de las jornadas y con Mercadeo para comunicar los resultados.
 canales: Grupo de WhatsApp del comité. Dirección vigente en la sección Junta Directiva.
-ingreso: Es uno de los comités de entrada de los nuevos integrantes (junto con Internacional), por mínimo seis meses.
 orden: 2
 ---
 El comité Social da vida al pilar **Servir**: acerca a los Partners a otras realidades y construye, junto con las comunidades, experiencias de servicio con impacto real.

@@ -17,7 +17,6 @@ eventos: [Assessment, Integraciones, Mes GH, Premios]
 habilidades: [Gestión del talento, Facilitación de grupos, Escucha y acompañamiento, Organización]
 relaciones: Trabaja con la Vicepresidencia en el periodo de prueba y con todos los comités en el seguimiento de la tabla de permanencia.
 canales: Grupo de WhatsApp del comité.
-ingreso: Avisa a la dirección de Gestión Humana.
 orden: 6
 ---
 Gestión Humana cuida a las personas: que cada Partner se sienta parte, crezca y tenga claro cómo le va.

@@ -26,7 +26,7 @@ const datos = agenda.map((e) => ({
   <PageHero
     eyebrow="Calendario y agenda"
     title="Calendario Partners"
-    lead="Todas las actividades del grupo en un solo lugar. Las asambleas y actividades marcadas como obligatorias cuentan para la tabla de permanencia."
+    lead="Todas las actividades del año en un solo lugar, mes a mes. Las actividades marcadas como obligatorias cuentan para la tabla de permanencia."
     sticker="/marca/sticker-4.webp"
   />
 
@@ -57,6 +57,7 @@ const datos = agenda.map((e) => ({
         <div class="vistas" role="group" aria-label="Vista">
           <button type="button" class="vista activa" data-vista="lista" aria-pressed="true">Próximos</button>
           <button type="button" class="vista" data-vista="mes" aria-pressed="false">Mes</button>
+          <button type="button" class="vista" data-vista="anio" aria-pressed="false">Año</button>
           <button type="button" class="vista" data-vista="todos" aria-pressed="false">Todos</button>
         </div>
       </form>
@@ -74,6 +75,8 @@ const datos = agenda.map((e) => ({
         </div>
         <div class="mes" id="mes-grid"></div>
       </div>
+
+      <div id="vista-anio" class="anio" hidden></div>
 
       <div id="vista-lista" class="lista">
         {agenda.map((e) => <div class="item" data-fin={(e.data.fin ?? e.data.inicio).toISOString()} id={e.id}><EventoItem evento={e} /></div>)}
@@ -93,6 +96,7 @@ const datos = agenda.map((e) => ({
   const vacio = document.getElementById('vacio')!;
   const vistaLista = document.getElementById('vista-lista')!;
   const vistaMes = document.getElementById('vista-mes')!;
+  const vistaAnio = document.getElementById('vista-anio')!;
   const grid = document.getElementById('mes-grid')!;
   const titulo = document.getElementById('mes-titulo')!;
   const tz = 'America/Bogota';
@@ -165,6 +169,49 @@ const datos = agenda.map((e) => ({
     }
   }
 
+  function pintarAnio() {
+    const f = filtros();
+    const anio = cursor.getFullYear();
+    const fmtDia = new Intl.DateTimeFormat('es-CO', { timeZone: tz, day: 'numeric' });
+    vistaAnio.innerHTML = '';
+    for (let m = 0; m < 12; m++) {
+      const clave = `${anio}-${String(m + 1).padStart(2, '0')}`;
+      const delMes = datos.filter(
+        (e) => ymd(new Date(e.inicio)).slice(0, 7) === clave && coincide({ comite: e.comite, tipo: e.tipo, mes: f.mes ? clave : '' }),
+      );
+      const tarjeta = document.createElement('section');
+      tarjeta.className = 'anio__mes' + (anio === hoy.getFullYear() && m === hoy.getMonth() ? ' anio__mes--actual' : '');
+      const titulo = document.createElement('h3');
+      titulo.textContent = new Date(anio, m, 15).toLocaleDateString('es-CO', { month: 'long' });
+      tarjeta.append(titulo);
+      const lista = document.createElement('ul');
+      delMes.forEach((e) => {
+        const li = document.createElement('li');
+        li.className = 'anio__ev anio__ev--' + e.participacion;
+        const dia = document.createElement('span');
+        dia.textContent = fmtDia.format(new Date(e.inicio));
+        const a = document.createElement('a');
+        a.href = '#' + e.id;
+        a.textContent = e.titulo;
+        a.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          cambiarVista('todos');
+          document.getElementById(e.id)?.scrollIntoView({ behavior: 'smooth' });
+        });
+        li.append(dia, a);
+        lista.append(li);
+      });
+      if (!delMes.length) {
+        const vacio = document.createElement('li');
+        vacio.className = 'anio__vacio';
+        vacio.textContent = 'Sin actividades';
+        lista.append(vacio);
+      }
+      tarjeta.append(lista);
+      vistaAnio.append(tarjeta);
+    }
+  }
+
   function cambiarVista(v: string) {
     vista = v;
     document.querySelectorAll<HTMLButtonElement>('.vista').forEach((b) => {
@@ -173,12 +220,15 @@ const datos = agenda.map((e) => ({
       b.setAttribute('aria-pressed', String(activa));
     });
     vistaMes.hidden = v !== 'mes';
-    vistaLista.hidden = v === 'mes';
-    v === 'mes' ? pintarMes() : pintarLista();
+    vistaAnio.hidden = v !== 'anio';
+    vistaLista.hidden = v === 'mes' || v === 'anio';
+    if (v === 'mes') pintarMes();
+    else if (v === 'anio') pintarAnio();
+    else pintarLista();
   }
 
   document.querySelectorAll<HTMLButtonElement>('.vista').forEach((b) => b.addEventListener('click', () => cambiarVista(b.dataset.vista!)));
-  form.addEventListener('change', () => (vista === 'mes' ? pintarMes() : pintarLista()));
+  form.addEventListener('change', () => (vista === 'mes' ? pintarMes() : vista === 'anio' ? pintarAnio() : pintarLista()));
   document.getElementById('mes-ant')!.addEventListener('click', () => {
     (form.elements.namedItem('mes') as HTMLSelectElement).value = '';
     cursor = new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1);
@@ -207,8 +257,8 @@ const datos = agenda.map((e) => ({
   }
   .vistas {
     display: flex;
-    background: #fff;
-    border: 1px solid #c8d1de;
+    background: var(--superficie);
+    border: 1px solid var(--borde-fuerte);
     border-radius: 999px;
     padding: 4px;
   }
@@ -282,7 +332,7 @@ const datos = agenda.map((e) => ({
     display: flex;
     flex-direction: column;
     gap: 3px;
-    background: #fff;
+    background: var(--superficie);
     min-width: 0;
   }
   :global(.mes__celda--vacia) {
@@ -304,7 +354,7 @@ const datos = agenda.map((e) => ({
     border-radius: 5px;
     text-decoration: none;
     background: var(--inspiracion-claro);
-    color: var(--confianza-osc);
+    color: var(--enlace-hover);
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -316,8 +366,73 @@ const datos = agenda.map((e) => ({
     color: #fff;
   }
   :global(.mes__ev--equipos) {
-    background: #fff4d6;
-    color: #7a5600;
+    background: var(--amarillo-claro);
+    color: var(--amarillo-texto);
+  }
+  .anio {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
+    gap: 14px;
+  }
+  :global(.anio__mes) {
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  :global(.anio__mes--actual) {
+    border: 2px solid var(--salmon);
+  }
+  :global(.anio__mes h3) {
+    text-transform: capitalize;
+    font-size: 1.05rem;
+    margin: 0 0 8px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid transparent;
+    border-image: linear-gradient(90deg, var(--confianza), var(--salmon)) 1;
+  }
+  :global(.anio__mes ul) {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 6px;
+  }
+  :global(.anio__ev) {
+    display: flex;
+    gap: 8px;
+    font-size: 0.86rem;
+    line-height: 1.35;
+  }
+  :global(.anio__ev span) {
+    flex: 0 0 26px;
+    height: 26px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 0.78rem;
+    background: var(--inspiracion-claro);
+    color: var(--enlace-hover);
+  }
+  :global(.anio__ev--obligatoria span) {
+    background: var(--rojo);
+    color: #fff;
+  }
+  :global(.anio__ev--equipos span) {
+    background: var(--amarillo-claro);
+    color: var(--amarillo-texto);
+  }
+  :global(.anio__ev a) {
+    color: var(--tinta);
+    text-decoration: none;
+  }
+  :global(.anio__ev a:hover) {
+    text-decoration: underline;
+  }
+  :global(.anio__vacio) {
+    font-size: 0.85rem;
+    color: var(--tinta-suave);
   }
   @media (max-width: 860px) {
     .filtros {

@@ -34,6 +34,22 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 <html lang={lang}>
   <head>
     <meta charset="utf-8" />
+    <script is:inline>
+      // Aplica el tema antes de pintar para evitar parpadeos.
+      (() => {
+        const r = document.documentElement;
+        let t = null;
+        try {
+          t = localStorage.getItem('pce-tema');
+        } catch {}
+        if (t) r.dataset.theme = t;
+        const sistema = matchMedia('(prefers-color-scheme: dark)');
+        const aplicar = () => (r.dataset.temaActivo = (r.dataset.theme || (sistema.matches ? 'dark' : 'light')));
+        aplicar();
+        sistema.addEventListener('change', aplicar);
+        r.classList.add('js');
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{tituloCompleto}</title>
     <meta name="description" content={description} />
@@ -41,7 +57,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/icon-180.png" />
-    <meta name="theme-color" content="#4e689b" />
+    <meta name="theme-color" content="#4e689b" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f1626" media="(prefers-color-scheme: dark)" />
     <meta property="og:title" content={tituloCompleto} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={new URL(image, Astro.site)} />
@@ -56,6 +73,28 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       <slot />
     </main>
     <Footer />
+    <script>
+      // Aparición suave de tarjetas y bloques al hacer scroll.
+      const revelar = document.querySelectorAll('#contenido .tarjeta, #contenido .revelar, #contenido .evento, #contenido .macro');
+      if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const io = new IntersectionObserver(
+          (entradas) =>
+            entradas.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                io.unobserve(e.target);
+              }
+            }),
+          { rootMargin: '0px 0px -40px 0px' },
+        );
+        revelar.forEach((el) => {
+          if (el.getBoundingClientRect().top > innerHeight) {
+            el.classList.add('por-revelar');
+            io.observe(el);
+          }
+        });
+      }
+    </script>
     <script>
       // Solo en desarrollo (npm run dev): resalta los textos marcados como [PENDIENTE ...] o [EJEMPLO]
       // para que la Junta los complete. En la página publicada se muestran como texto normal.

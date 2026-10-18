@@ -7,10 +7,18 @@ portada: /uploads/eventos/lani-2026.jpg
 pilar: Conectar
 organiza: Dirección de LANI con los comités Internacional, Logística, Mercadeo, RRPP, Gestión Humana y Social
 dirigidoA: Comunidad universitaria de EAFIT, estudiantes de intercambio y público invitado
-comoParticipar: Únete a un equipo de trabajo en la convocatoria interna, asiste a las reuniones de planeación y apoya la ejecución el día del evento.
+comoParticipar: Postúlate a un rol de liderazgo de LANI, únete a un equipo de trabajo, asiste a las reuniones de planeación y apoya la ejecución el día del evento.
 galeria:
   - imagen: /uploads/eventos/lani-2026.jpg
     pie: "LANI 2026: Carnavales alrededor del mundo"
+  - imagen: /uploads/galeria/lani-2.jpg
+    pie: "Equipo organizador de LANI"
+  - imagen: /uploads/galeria/lani-1.jpg
+    pie: "Feria cultural de La Noche Internacional"
+  - imagen: /uploads/galeria/lani-3.jpg
+    pie: "Partners en La Noche Internacional"
+  - imagen: /uploads/galeria/lani-4.jpg
+    pie: "Equipo de LANI en la feria"
   - imagen: /uploads/eventos/lani-2025.jpg
     pie: "LANI 2025: Un mundo unido por historias"
 ediciones:

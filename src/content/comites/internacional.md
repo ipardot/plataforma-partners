@@ -17,7 +17,6 @@ eventos: [La Noche Internacional, Buddy Program, Encuentros con estudiantes inte
 habilidades: [Comunicación intercultural, Inglés y otros idiomas, Gestión de proyectos, Liderazgo de equipos]
 relaciones: Trabaja con Logística y Mercadeo en LANI, con RRPP en la relación con otros capítulos y con Gestión Humana en la integración de nuevos miembros.
 canales: Grupo de WhatsApp del comité. Dirección vigente en la sección Junta Directiva.
-ingreso: Es uno de los comités de entrada de los nuevos integrantes (junto con Social), por mínimo seis meses. Los demás miembros pueden unirse avisando a la dirección del comité.
 orden: 1
 ---
 El comité Internacional da vida al pilar **Conectar**: hace que EAFIT se sienta como casa para quienes llegan de otros países y que los estudiantes locales vivan una experiencia internacional sin salir del campus.

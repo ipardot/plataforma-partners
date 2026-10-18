@@ -1,28 +1,67 @@
 ---
-import { cdn, srcset } from '../lib/img';
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
 import rec from '../data/reconocimientos.json';
-import hitos from '../data/hitos.json';
+import { cdn, srcset } from '../lib/img';
 
-const eventos = await getCollection('eventos');
-const fotos = [
-  ...eventos.flatMap((e) => e.data.galeria.map((g) => ({ ...g, evento: e.data.nombre, id: e.id }))),
-  ...hitos.items.filter((h) => h.imagen).map((h) => ({ imagen: h.imagen, pie: h.titulo, evento: '', id: '' })),
-].filter((f, i, arr) => arr.findIndex((x) => x.imagen === f.imagen) === i);
+// Reúne las fotos de las galerías de cada evento (se editan desde el CMS).
+const eventos = (await getCollection('eventos')).sort((a, b) => a.data.orden - b.data.orden);
+const fotos = eventos
+  .flatMap((e) => [
+    ...(e.data.portada ? [{ imagen: e.data.portada, pie: e.data.nombre }] : []),
+    ...e.data.galeria.map((g) => ({ imagen: g.imagen, pie: g.pie ?? e.data.nombre })),
+  ].map((f) => ({ ...f, evento: e.data.nombre, id: e.id })))
+  .filter((f, i, arr) => arr.findIndex((x) => x.imagen === f.imagen) === i);
+// Fotos generales del grupo (no asociadas a un evento).
+fotos.unshift(
+  { imagen: '/uploads/galeria/grupo-1.jpg', pie: 'Partners Campus EAFIT', evento: 'Grupo', id: 'grupo' },
+  { imagen: '/uploads/galeria/grupo-2.jpg', pie: 'Partners Campus EAFIT', evento: 'Grupo', id: 'grupo' },
+);
+const filtros = [...new Map(fotos.map((f) => [f.id, f.evento])).entries()];
 ---
 
-<Layout title="Memoria e impacto" description="Galerías, cifras verificadas, testimonios y reconocimientos de Partners Campus EAFIT.">
+<Layout title="Galería y memoria" description="Galería de fotos, cifras, testimonios y reconocimientos de Partners Campus EAFIT.">
   <PageHero
     eyebrow="Memoria, impacto y reconocimientos"
-    title="Lo que hemos construido"
+    title="Así se vive Partners"
     lead="Conservamos la historia del grupo y visibilizamos el trabajo de sus integrantes. Solo publicamos cifras verificadas y contenido con autorización."
     sticker="/marca/sticker-7.webp"
     tono="salmon"
   />
 
   <section class="seccion">
+    <div class="contenedor">
+      <div class="chips" role="group" aria-label="Filtrar fotos por evento">
+        <button type="button" class="chip activa" data-filtro="" aria-pressed="true">Todas</button>
+        {filtros.map(([id, nombre]) => <button type="button" class="chip" data-filtro={id} aria-pressed="false">{nombre}</button>)}
+      </div>
+      <div class="galeria" id="galeria">
+        {
+          fotos.map((f, i) => (
+            <figure class="galeria__item" data-evento={f.id}>
+              <button type="button" class="galeria__boton" data-indice={i} aria-label={`Ampliar foto: ${f.pie}`}>
+                <img src={cdn(f.imagen, 600)} srcset={srcset(f.imagen, [400, 600, 900])} sizes="(min-width: 900px) 30vw, 50vw" alt={f.pie} loading="lazy" width="600" height="450" />
+              </button>
+              <figcaption>
+                {f.id === 'grupo' ? f.pie : f.pie === f.evento ? <a href={`/eventos/${f.id}`}>{f.evento}</a> : <>{f.pie} · <a href={`/eventos/${f.id}`}>{f.evento}</a></>}
+              </figcaption>
+            </figure>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <dialog class="visor" id="visor" aria-label="Foto ampliada">
+    <img id="visor-img" alt="" />
+    <p id="visor-pie"></p>
+    <button type="button" class="visor__cerrar" id="visor-cerrar" aria-label="Cerrar">×</button>
+    <button type="button" class="visor__nav visor__nav--ant" id="visor-ant" aria-label="Foto anterior">‹</button>
+    <button type="button" class="visor__nav visor__nav--sig" id="visor-sig" aria-label="Foto siguiente">›</button>
+  </dialog>
+
+  <section class="seccion seccion--azul">
     <div class="contenedor">
       <h2>Partners en cifras</h2>
       <div class="cifras">
@@ -33,29 +72,6 @@ const fotos = [
               <span>{c.etiqueta}</span>
               {!c.verificada && <small>Pendiente de verificación</small>}
             </div>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <section class="seccion seccion--alt">
-    <div class="contenedor">
-      <h2>Galería</h2>
-      <div class="galeria">
-        {
-          fotos.map((f) => (
-            <figure>
-              <img src={cdn(f.imagen, 600)} srcset={srcset(f.imagen, [400, 600, 900])} sizes="(min-width: 900px) 360px, 100vw" alt={f.pie ?? f.evento} loading="lazy" width="600" height="450" />
-              <figcaption>
-                {f.pie}
-                {f.id && (
-                  <>
-                    {' '}· <a href={`/eventos/${f.id}`}>{f.evento}</a>
-                  </>
-                )}
-              </figcaption>
-            </figure>
           ))
         }
       </div>
@@ -97,9 +113,157 @@ const fotos = [
       </div>
     </div>
   </section>
+  <script is:inline type="application/json" id="fotos-datos" set:html={JSON.stringify(fotos.map((f) => ({ src: cdn(f.imagen, 1600), pie: f.id === 'grupo' || f.pie === f.evento ? f.pie : `${f.pie} · ${f.evento}` })))} />
 </Layout>
 
+<script>
+  const datos: { src: string; pie: string }[] = JSON.parse(document.getElementById('fotos-datos')!.textContent || '[]');
+  const chips = document.querySelectorAll<HTMLButtonElement>('.chip');
+  const items = document.querySelectorAll<HTMLElement>('.galeria__item');
+  chips.forEach((c) =>
+    c.addEventListener('click', () => {
+      chips.forEach((o) => {
+        o.classList.toggle('activa', o === c);
+        o.setAttribute('aria-pressed', String(o === c));
+      });
+      items.forEach((it) => (it.hidden = !!c.dataset.filtro && it.dataset.evento !== c.dataset.filtro));
+    }),
+  );
+
+  const visor = document.getElementById('visor') as HTMLDialogElement;
+  const img = document.getElementById('visor-img') as HTMLImageElement;
+  const pie = document.getElementById('visor-pie')!;
+  let actual = 0;
+  const visibles = () => [...items].filter((it) => !it.hidden).map((it) => Number(it.querySelector<HTMLElement>('[data-indice]')!.dataset.indice));
+  function mostrar(i: number) {
+    actual = i;
+    img.src = datos[i].src;
+    img.alt = datos[i].pie;
+    pie.textContent = datos[i].pie;
+  }
+  function mover(paso: number) {
+    const v = visibles();
+    const pos = v.indexOf(actual);
+    mostrar(v[(pos + paso + v.length) % v.length]);
+  }
+  document.querySelectorAll<HTMLButtonElement>('[data-indice]').forEach((b) =>
+    b.addEventListener('click', () => {
+      mostrar(Number(b.dataset.indice));
+      visor.showModal();
+    }),
+  );
+  document.getElementById('visor-cerrar')!.addEventListener('click', () => visor.close());
+  document.getElementById('visor-ant')!.addEventListener('click', () => mover(-1));
+  document.getElementById('visor-sig')!.addEventListener('click', () => mover(1));
+  visor.addEventListener('click', (e) => e.target === visor && visor.close());
+  visor.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') mover(-1);
+    if (e.key === 'ArrowRight') mover(1);
+  });
+</script>
+
 <style>
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .chip {
+    font: inherit;
+    font-size: 0.88rem;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--borde);
+    background: var(--superficie);
+    cursor: pointer;
+    color: var(--tinta);
+  }
+  .chip.activa {
+    background: var(--confianza);
+    color: #fff;
+    border-color: var(--confianza);
+  }
+  .galeria {
+    columns: 3 280px;
+    column-gap: 14px;
+  }
+  .galeria__item {
+    break-inside: avoid;
+    margin: 0 0 14px;
+  }
+  .galeria__boton {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
+    border-radius: var(--radio-sm);
+    overflow: hidden;
+  }
+  .galeria__boton img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.4s ease;
+  }
+  .galeria__boton:hover img {
+    transform: scale(1.04);
+  }
+  .galeria figcaption {
+    font-size: 0.85rem;
+    color: var(--tinta-suave);
+    margin-top: 6px;
+  }
+  .visor {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    max-width: min(92vw, 1200px);
+    max-height: 92vh;
+    overflow: visible;
+  }
+  .visor::backdrop {
+    background: rgb(10 15 28 / 0.88);
+  }
+  .visor img {
+    max-width: 100%;
+    max-height: 82vh;
+    border-radius: var(--radio-sm);
+    margin: 0 auto;
+  }
+  .visor p {
+    color: #fff;
+    text-align: center;
+    margin: 10px 0 0;
+  }
+  .visor__cerrar,
+  .visor__nav {
+    position: fixed;
+    border: 0;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    background: rgb(255 255 255 / 0.15);
+    color: #fff;
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .visor__cerrar {
+    top: 16px;
+    right: 16px;
+  }
+  .visor__nav {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .visor__nav--ant {
+    left: 16px;
+  }
+  .visor__nav--sig {
+    right: 16px;
+  }
   .cifras {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
@@ -121,25 +285,6 @@ const fotos = [
   .cifra small {
     opacity: 0.85;
     font-size: 0.78rem;
-  }
-  .galeria {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
-    gap: 16px;
-  }
-  .galeria figure {
-    margin: 0;
-  }
-  .galeria img {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-radius: var(--radio-sm);
-  }
-  .galeria figcaption {
-    font-size: 0.85rem;
-    color: var(--tinta-suave);
-    margin-top: 6px;
   }
   .dos {
     display: grid;

@@ -11,8 +11,7 @@ const pillars = [
 
 const events = [
   { name: 'International Night (LANI)', text: 'Our signature cultural exchange: food fair, cultural show and activities that bring local and international students together. Live an international experience without leaving EAFIT.', img: '/uploads/eventos/lani-2026.jpg', href: '/eventos/la-noche-internacional' },
-  { name: 'Volunteers for a Day (VPUD)', text: 'A volunteering experience with partner foundations and their communities, from planning to evaluation.', img: '', href: '/eventos/voluntarios-por-un-dia' },
-  { name: 'Hono', text: 'Our university well-being event and fundraiser. “Hono” means “to connect” in Māori; funds go to specific communities.', img: '', href: '/eventos/hono' },
+  { name: 'Volunteers for a Day (VPUD)', text: 'A volunteering experience with partner foundations and their communities, from planning to evaluation.', img: '/uploads/galeria/vpud-4.jpg', href: '/eventos/voluntarios-por-un-dia' },
 ];
 ---
 
@@ -37,7 +36,7 @@ const events = [
         <span class="eyebrow">About us</span>
         <h2>Who we are</h2>
         <p>
-          Partners Campus EAFIT is a non-profit, non-political student group at Universidad EAFIT and a student chapter of
+          Partners Campus EAFIT is a non-profit, non-political student group at Universidad EAFIT and a student chapter of{" "}
           <a href={sitio.partnersAmericas} target="_blank" rel="noopener">Partners of the Americas</a>, an NGO headquartered in
           Washington, DC that promotes friendship, volunteering and understanding among the people of Latin America, the
           Caribbean and the United States.
@@ -53,7 +52,8 @@ const events = [
           <li><strong>General Assembly:</strong> all members, at least once a month.</li>
           <li><strong>Board of Directors:</strong> seven directors elected every year.</li>
           <li><strong>Committees:</strong> International, Social, Logistics, Marketing, Public Relations and Human Resources.</li>
-          <li><strong>Flagship events:</strong> LANI, Volunteers for a Day and Hono.</li>
+          <li><strong>Flagship events:</strong> International Night (LANI) and Volunteers for a Day.</li>
+          <li><strong>Other events:</strong> Friends Without Borders, CUPA (a trip with international students to discover a little piece of Antioquia) and our end-of-year Awards.</li>
         </ul>
       </div>
     </div>
@@ -126,7 +126,7 @@ const events = [
 <style>
   .hero {
     padding-block: clamp(48px, 8vw, 96px);
-    background: linear-gradient(180deg, var(--inspiracion-claro), #fff);
+    background: linear-gradient(180deg, var(--inspiracion-claro), var(--fondo));
   }
   .hero img {
     margin-bottom: 12px;
@@ -162,7 +162,7 @@ const events = [
     margin-bottom: 16px;
   }
   .mas {
-    color: var(--confianza);
+    color: var(--enlace);
     font-weight: 600;
     font-size: 0.9rem;
   }

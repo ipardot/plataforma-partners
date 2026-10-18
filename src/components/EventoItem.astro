@@ -26,7 +26,7 @@ const descripcion = evento.body?.trim();
       <span class="sr-only">{d.inicio.toLocaleDateString('es-CO', { ...tz, dateStyle: 'full' })}. </span>
       <span class="capital">{diaSemana}</span> · {hora(d.inicio)}{d.fin && ` – ${hora(d.fin)}`}
       {d.lugar && <> · {d.lugar}</>}
-      {d.modalidad !== 'presencial' && <> · {d.modalidad === 'virtual' ? 'Virtual' : 'Híbrida'}</>}
+      {d.modalidad !== 'presencial' && d.lugar?.toLowerCase() !== d.modalidad && <> · {d.modalidad === 'virtual' ? 'Virtual' : 'Híbrida'}</>}
     </p>
     <div class="evento__etiquetas">
       <span class:list={['etiqueta', `etiqueta--${d.participacion}`]}>{PARTICIPACION_LABEL[d.participacion]}</span>
@@ -48,7 +48,7 @@ const descripcion = evento.body?.trim();
   .evento {
     display: flex;
     gap: 16px;
-    background: #fff;
+    background: var(--superficie);
     border: 1px solid var(--borde);
     border-radius: 14px;
     padding: 16px;

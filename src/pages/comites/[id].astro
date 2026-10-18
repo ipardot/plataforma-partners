@@ -64,15 +64,6 @@ const bloques = [
             </div>
           )
         }
-        {
-          d.ingreso && (
-            <div class="tarjeta tarjeta--acento">
-              <h2 class="bloque__titulo">¿Cómo me uno?</h2>
-              <p>{d.ingreso}</p>
-              <a class="btn btn--primario" href="/oportunidades">Ver convocatorias</a>
-            </div>
-          )
-        }
       </aside>
     </div>
     <div class="contenedor">
@@ -111,10 +102,6 @@ const bloques = [
   .lateral p {
     color: var(--tinta-suave);
     font-size: 0.95rem;
-  }
-  .tarjeta--acento {
-    background: var(--salmon-claro);
-    border-color: transparent;
   }
   @media (max-width: 900px) {
     .ficha {

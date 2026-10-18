@@ -13,48 +13,80 @@ const NAV_EN = [
   ['/en#international', 'International students'],
   ['/en#contact', 'Contact'],
 ];
-const activo = (href: string) => actual === href || actual.startsWith(href + '/');
+const activo = (href: string) => (href === '/' ? actual === '/' : actual === href || actual.startsWith(href + '/'));
+const t = lang === 'en'
+  ? { menu: 'Open menu', tema: 'Switch light/dark mode', inicio: 'Home', ingresar: 'Members' }
+  : { menu: 'Abrir menú', tema: 'Cambiar modo claro/oscuro', inicio: 'Inicio', ingresar: 'Ingresar' };
 ---
 
 <header class="cabecera">
   <div class="contenedor cabecera__fila">
     <a href={lang === 'en' ? '/en' : '/'} class="cabecera__logo" aria-label="Partners Campus EAFIT, inicio">
-      <img src="/marca/logo-partners.webp" alt="Partners Campus" width="180" height="36" />
+      <img class="logo logo--claro" src="/marca/logo-partners.webp" alt="Partners Campus" width="168" height="34" />
+      <img class="logo logo--oscuro" src="/marca/logo-partners-blanco.webp" alt="" width="168" height="34" aria-hidden="true" />
     </a>
 
-    <button class="cabecera__menu" type="button" aria-expanded="false" aria-controls="nav-principal">
-      <span class="sr-only">{lang === 'en' ? 'Open menu' : 'Abrir menú'}</span>
-      <span aria-hidden="true" class="hamburguesa"><span></span></span>
-    </button>
+    <div class="cabecera__acciones-movil">
+      <button class="tema" type="button" data-tema aria-label={t.tema} title={t.tema}>
+        <svg class="tema__sol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2v2.5M12 19.5V22M4.2 4.2 6 6M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"></path></svg>
+        <svg class="tema__luna" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg>
+      </button>
+      <button class="cabecera__menu" type="button" aria-expanded="false" aria-controls="nav-principal">
+        <span class="sr-only">{t.menu}</span>
+        <span aria-hidden="true" class="hamburguesa"><span></span></span>
+      </button>
+    </div>
 
     <nav id="nav-principal" class="nav" aria-label={lang === 'en' ? 'Main' : 'Principal'}>
-      {lang === 'en' && NAV_EN.map(([href, label]) => <a href={href} class="nav__boton nav__directo">{label}</a>)}
+      {lang === 'en' && NAV_EN.map(([href, label]) => <a href={href} class="nav__boton">{label}</a>)}
       {
-        lang === 'es' && NAV.map((g) => (
-          <details class="nav__grupo">
-            <summary class:list={['nav__boton', { 'nav__boton--activo': g.links.some((l) => activo(l.href)) }]}>
-              {g.label}
-            </summary>
-            <ul class="nav__panel">
-              {g.links.map((l) => (
-                <li>
-                  <a href={l.href} aria-current={activo(l.href) ? 'page' : undefined}>
-                    <strong>{l.label}</strong>
-                    {l.desc && <span>{l.desc}</span>}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </details>
-        ))
+        lang === 'es' && (
+          <>
+            <a href="/" class:list={['nav__boton', { 'nav__boton--activo': activo('/') }]} aria-current={activo('/') ? 'page' : undefined}>
+              {t.inicio}
+            </a>
+            <a href="/ruta" class:list={['nav__ruta', { 'nav__ruta--activo': activo('/ruta') }]} aria-current={activo('/ruta') ? 'page' : undefined}>
+              <img src="/marca/sticker-5.webp" alt="" width="22" height="18" />
+              Ruta del nuevo Partner
+            </a>
+          </>
+        )
       }
-      {lang === 'es' && <a href="/contacto" class:list={['nav__boton', 'nav__directo', { 'nav__boton--activo': activo('/contacto') }]}>Contacto</a>}
-      <a href={lang === 'en' ? '/' : '/en'} class="nav__boton nav__directo nav__idioma" lang={lang === 'en' ? 'es' : 'en'}>
-        {lang === 'en' ? 'ES' : 'EN'}
-      </a>
-      <a href="/miembros" class="btn btn--primario nav__cta">{lang === 'en' ? 'Members' : 'Ingresar'}</a>
+      {
+        lang === 'es' &&
+          NAV.map((g) => (
+            <details class="nav__grupo">
+              <summary class:list={['nav__boton', { 'nav__boton--activo': g.links.some((l) => activo(l.href)) }]}>{g.label}</summary>
+              <ul class="nav__panel">
+                {g.links.map((l) => (
+                  <li>
+                    <a href={l.href} aria-current={activo(l.href) ? 'page' : undefined}>
+                      {l.icono && <img src={l.icono} alt="" width="36" height="36" loading="lazy" />}
+                      <span class="nav__texto">
+                        <strong>{l.label}</strong>
+                        {l.desc && <span>{l.desc}</span>}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          ))
+      }
+      {lang === 'es' && <a href="/contacto" class:list={['nav__boton', { 'nav__boton--activo': activo('/contacto') }]}>Contacto</a>}
+      <div class="nav__extra">
+        <a href={lang === 'en' ? '/' : '/en'} class="nav__boton nav__idioma" lang={lang === 'en' ? 'es' : 'en'}>
+          {lang === 'en' ? 'ES' : 'EN'}
+        </a>
+        <button class="tema tema--escritorio" type="button" data-tema aria-label={t.tema} title={t.tema}>
+          <svg class="tema__sol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2v2.5M12 19.5V22M4.2 4.2 6 6M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"></path></svg>
+          <svg class="tema__luna" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg>
+        </button>
+        <a href="/miembros" class="btn btn--primario nav__cta">{t.ingresar}</a>
+      </div>
     </nav>
   </div>
+  <div class="cabecera__franja" aria-hidden="true"></div>
 </header>
 
 <style>
@@ -62,9 +94,12 @@ const activo = (href: string) => actual === href || actual.startsWith(href + '/'
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgb(255 255 255 / 0.94);
-    backdrop-filter: saturate(1.4) blur(10px);
-    border-bottom: 1px solid var(--borde);
+    background: var(--cabecera);
+    backdrop-filter: saturate(1.4) blur(12px);
+  }
+  .cabecera__franja {
+    height: 3px;
+    background: linear-gradient(90deg, var(--confianza), var(--inspiracion), var(--salmon), var(--rojo));
   }
   .cabecera__fila {
     display: flex;
@@ -73,12 +108,29 @@ const activo = (href: string) => actual === href || actual.startsWith(href + '/'
     min-height: 68px;
     gap: 16px;
   }
-  .cabecera__logo img {
-    width: 168px;
+  .cabecera__logo {
+    flex-shrink: 0;
+  }
+  .logo {
+    width: 150px;
     height: auto;
   }
-  .cabecera__menu {
+  .logo--oscuro {
     display: none;
+  }
+  :global([data-tema-activo='dark']) .logo--claro {
+    display: none;
+  }
+  :global([data-tema-activo='dark']) .logo--oscuro {
+    display: block;
+  }
+
+  .cabecera__acciones-movil {
+    display: none;
+    align-items: center;
+    gap: 4px;
+  }
+  .cabecera__menu {
     background: none;
     border: 0;
     padding: 10px;
@@ -122,10 +174,46 @@ const activo = (href: string) => actual === href || actual.startsWith(href + '/'
     transform: translateY(-7px) rotate(-45deg);
   }
 
+  .tema {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1px solid var(--borde);
+    background: var(--superficie);
+    color: var(--tinta);
+    cursor: pointer;
+  }
+  .tema:hover {
+    border-color: var(--salmon);
+  }
+  .tema svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .tema__luna {
+    display: none;
+  }
+  :global([data-tema-activo='dark']) .tema__sol {
+    display: none;
+  }
+  :global([data-tema-activo='dark']) .tema__luna {
+    display: block;
+  }
+
   .nav {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
+  }
+  .nav > * {
+    flex-shrink: 0;
   }
   .nav__grupo {
     position: relative;
@@ -133,16 +221,17 @@ const activo = (href: string) => actual === href || actual.startsWith(href + '/'
   .nav__boton {
     list-style: none;
     cursor: pointer;
-    padding: 8px 12px;
+    padding: 8px 9px;
     border-radius: 999px;
     font-weight: 500;
-    font-size: 0.93rem;
+    font-size: 0.9rem;
     color: var(--tinta);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 6px;
     white-space: nowrap;
+    position: relative;
   }
   .nav__boton::-webkit-details-marker {
     display: none;
@@ -155,6 +244,10 @@ const activo = (href: string) => actual === href || actual.startsWith(href + '/'
     border-bottom: 2px solid currentColor;
     transform: translateY(-2px) rotate(45deg);
     opacity: 0.6;
+    transition: transform 0.2s ease;
+  }
+  details[open] > summary.nav__boton::after {
+    transform: translateY(1px) rotate(-135deg);
   }
   .nav__boton:hover,
   details[open] > .nav__boton {
@@ -162,28 +255,86 @@ const activo = (href: string) => actual === href || actual.startsWith(href + '/'
     color: var(--tinta);
   }
   .nav__boton--activo {
-    color: var(--confianza);
     font-weight: 600;
+  }
+  .nav__boton--activo::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 2px;
+    height: 3px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--confianza), var(--salmon));
+  }
+  .nav__ruta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    margin: 0 4px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    white-space: nowrap;
+    color: var(--profundo);
+    background: var(--salmon);
+    box-shadow: 0 4px 14px rgb(253 124 94 / 0.35);
+    transition: transform 0.15s ease;
+  }
+  .nav__ruta:hover {
+    transform: translateY(-1px) rotate(-1deg);
+    color: var(--profundo);
+  }
+  .nav__ruta img {
+    width: 22px;
+    height: auto;
+  }
+  .nav__ruta--activo {
+    outline: 2px solid var(--profundo);
+    outline-offset: 2px;
   }
   .nav__panel {
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 10px);
     left: 0;
-    min-width: 290px;
+    min-width: 320px;
     list-style: none;
     margin: 0;
     padding: 8px;
-    background: #fff;
+    background: var(--superficie);
     border: 1px solid var(--borde);
-    border-radius: 14px;
-    box-shadow: var(--sombra);
+    border-radius: 16px;
+    box-shadow: var(--sombra-fuerte);
+    animation: aparecer 0.16s ease-out;
+  }
+  @keyframes aparecer {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
   }
   .nav__panel a {
-    display: grid;
+    display: flex;
+    align-items: center;
+    gap: 12px;
     padding: 10px 12px;
-    border-radius: 10px;
+    border-radius: 12px;
     text-decoration: none;
     color: var(--tinta);
+  }
+  .nav__panel img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+  }
+  .nav__panel a:hover img {
+    transform: rotate(-8deg) scale(1.1);
+  }
+  .nav__texto {
+    display: grid;
   }
   .nav__panel a:hover,
   .nav__panel a[aria-current='page'] {
@@ -193,9 +344,15 @@ const activo = (href: string) => actual === href || actual.startsWith(href + '/'
     font-weight: 600;
     font-size: 0.95rem;
   }
-  .nav__panel span {
+  .nav__texto span {
     font-size: 0.82rem;
     color: var(--tinta-suave);
+  }
+  .nav__extra {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 4px;
   }
   .nav__idioma {
     font-size: 0.8rem;
@@ -203,13 +360,15 @@ const activo = (href: string) => actual === href || actual.startsWith(href + '/'
     color: var(--tinta-suave);
   }
   .nav__cta {
-    margin-left: 8px;
     padding: 0.6em 1.2em;
   }
 
-  @media (max-width: 1020px) {
-    .cabecera__menu {
-      display: block;
+  @media (max-width: 1180px) {
+    .cabecera__acciones-movil {
+      display: flex;
+    }
+    .tema--escritorio {
+      display: none;
     }
     .nav {
       display: none;
@@ -220,15 +379,21 @@ const activo = (href: string) => actual === href || actual.startsWith(href + '/'
       flex-direction: column;
       align-items: stretch;
       gap: 0;
-      padding: 8px var(--gutter) 20px;
-      background: #fff;
+      padding: 12px var(--gutter) 24px;
+      background: var(--fondo);
       border-bottom: 1px solid var(--borde);
-      box-shadow: 0 16px 24px rgb(22 33 58 / 0.1);
-      max-height: calc(100dvh - 68px);
+      box-shadow: 0 16px 24px rgb(0 0 0 / 0.12);
+      max-height: calc(100dvh - 71px);
       overflow-y: auto;
     }
     .nav.abierto {
       display: flex;
+    }
+    .nav__ruta {
+      justify-content: center;
+      margin: 4px 0 8px;
+      padding: 12px;
+      font-size: 1rem;
     }
     .nav__boton {
       justify-content: space-between;
@@ -236,6 +401,9 @@ const activo = (href: string) => actual === href || actual.startsWith(href + '/'
       border-radius: 0;
       border-bottom: 1px solid var(--borde);
       font-size: 1rem;
+    }
+    .nav__boton--activo::before {
+      display: none;
     }
     .nav__boton:hover,
     details[open] > .nav__boton {
@@ -247,9 +415,15 @@ const activo = (href: string) => actual === href || actual.startsWith(href + '/'
       border: 0;
       padding: 4px 0 8px;
       min-width: 0;
+      background: transparent;
+      animation: none;
+    }
+    .nav__extra {
+      margin: 16px 0 0;
+      justify-content: space-between;
     }
     .nav__cta {
-      margin: 16px 0 0;
+      flex: 1;
       justify-content: center;
     }
   }
@@ -259,7 +433,7 @@ const activo = (href: string) => actual === href || actual.startsWith(href + '/'
   const boton = document.querySelector<HTMLButtonElement>('.cabecera__menu');
   const nav = document.getElementById('nav-principal');
   const grupos = document.querySelectorAll<HTMLDetailsElement>('.nav__grupo');
-  const escritorio = window.matchMedia('(min-width: 1021px)');
+  const escritorio = window.matchMedia('(min-width: 1181px)');
 
   boton?.addEventListener('click', () => {
     const abierto = boton.getAttribute('aria-expanded') === 'true';
@@ -280,4 +454,17 @@ const activo = (href: string) => actual === href || actual.startsWith(href + '/'
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') grupos.forEach((g) => (g.open = false));
   });
+
+  // Modo claro / oscuro
+  const raiz = document.documentElement;
+  document.querySelectorAll<HTMLButtonElement>('[data-tema]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const nuevo = raiz.dataset.temaActivo === 'dark' ? 'light' : 'dark';
+      raiz.dataset.theme = nuevo;
+      raiz.dataset.temaActivo = nuevo;
+      try {
+        localStorage.setItem('pce-tema', nuevo);
+      } catch {}
+    }),
+  );
 </script>

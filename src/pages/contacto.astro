@@ -235,8 +235,8 @@ const convocatorias = (await getCollection('oportunidades', (o) => o.data.activa
     white-space: nowrap;
   }
   .pestanas button[aria-selected='true'] {
-    background: #fff;
-    color: var(--confianza);
+    background: var(--superficie);
+    color: var(--enlace);
   }
   .panel {
     border-top-left-radius: 0;
@@ -257,7 +257,7 @@ const convocatorias = (await getCollection('oportunidades', (o) => o.data.activa
   }
   .check input,
   .escala input {
-    accent-color: var(--confianza);
+    accent-color: var(--enlace);
     width: 18px;
     height: 18px;
   }

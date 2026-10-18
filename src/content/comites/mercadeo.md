@@ -16,7 +16,6 @@ eventos: [Campañas de todos los macroeventos, Convocatorias, Reclutamiento]
 habilidades: [Diseño gráfico, Creación de contenido, Fotografía y video, Estrategia digital]
 relaciones: Trabaja de forma transversal con todos los comités y con RRPP en la visibilidad de patrocinadores.
 canales: Grupo de WhatsApp del comité.
-ingreso: Avisa a la dirección de Mercadeo. Para liderar una red social se puede pedir portafolio.
 orden: 4
 ---
 Mercadeo cuenta lo que hace Partners: es la voz y la imagen del grupo dentro y fuera de EAFIT.

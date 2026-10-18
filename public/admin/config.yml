@@ -52,6 +52,7 @@ collections:
           - { label: Asamblea, value: asamblea }
           - { label: Reunión de comité, value: comite }
           - { label: Macroevento, value: macroevento }
+          - { label: Evento, value: evento }
           - { label: Voluntariado, value: voluntariado }
           - { label: Integración, value: integracion }
           - { label: Formación, value: formacion }
@@ -122,7 +123,6 @@ collections:
       - { label: Habilidades que se desarrollan, name: habilidades, widget: list, required: false }
       - { label: Relación con otros comités, name: relaciones, widget: text, required: false }
       - { label: Canales de comunicación, name: canales, widget: text, required: false }
-      - { label: Proceso de ingreso y requisitos, name: ingreso, widget: text, required: false }
       - { label: Orden, name: orden, widget: number, value_type: int, default: 99 }
       - { label: Introducción, name: body, widget: markdown }
 
@@ -141,7 +141,7 @@ collections:
         name: tipo
         widget: select
         default: actividad
-        options: [{ label: Macroevento, value: macroevento }, { label: Otra actividad, value: actividad }]
+        options: [{ label: Macroevento, value: macroevento }, { label: Evento, value: evento }, { label: Actividad, value: actividad }]
       - { label: Resumen, name: resumen, widget: text }
       - { label: Foto de portada, name: portada, widget: image, required: false }
       - { label: Pilar, name: pilar, widget: string, required: false }
@@ -181,21 +181,18 @@ collections:
         name: categoria
         widget: select
         options:
-          - { label: Ingreso a comités, value: comites }
-          - { label: Selección y Assessment, value: assessment }
           - { label: Liderazgo, value: liderazgo }
-          - { label: Formación, value: formacion }
-          - { label: Voluntariado, value: voluntariado }
           - { label: Internacional, value: internacional }
-          - { label: Travel Grants, value: travel-grant }
-          - { label: Red de capítulos, value: capitulos }
-          - { label: Reconocimientos, value: reconocimiento }
+          - { label: Partners of the Americas, value: partners-americas }
       - { label: '¿Quién puede participar?', name: quien, widget: string }
       - { label: Requisitos, name: requisitos, widget: list, required: false }
       - { label: Abre, name: abre, widget: datetime, time_format: false, format: 'YYYY-MM-DD', required: false }
       - { label: Cierra, name: cierra, widget: datetime, time_format: false, format: 'YYYY-MM-DD', required: false }
       - { label: Enlace a la convocatoria, name: enlace, widget: string, required: false }
+      - { label: Evento relacionado (id de la página del evento), name: evento, widget: string, required: false, hint: 'Ej.: la-noche-internacional' }
+      - { label: Imagen, name: imagen, widget: image, required: false }
       - { label: Convocatoria abierta, name: activa, widget: boolean, default: true }
+      - { label: Orden, name: orden, widget: number, value_type: int, default: 99 }
       - { label: Descripción, name: body, widget: markdown }
 
   # ───────────── Datos generales ─────────────
@@ -263,20 +260,6 @@ collections:
               - { label: Versión, name: version, widget: string }
               - { label: Vigente, name: vigente, widget: boolean, default: true }
               - { label: Público, name: publico, widget: boolean, default: false }
-
-      - label: Historia (línea de tiempo)
-        name: hitos
-        file: src/data/hitos.json
-        fields:
-          - label: Hitos
-            name: items
-            widget: list
-            summary: '{{anio}} · {{titulo}}'
-            fields:
-              - { label: Año, name: anio, widget: string }
-              - { label: Título, name: titulo, widget: string }
-              - { label: Descripción, name: descripcion, widget: text }
-              - { label: Imagen, name: imagen, widget: image, required: false }
 
       - label: Red de capítulos
         name: capitulos

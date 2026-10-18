@@ -12,11 +12,10 @@ responsabilidades:
   - Asistir a las reuniones de planeación.
   - Apoyar el montaje y la operación de los eventos.
   - Hacer seguimiento a listas de chequeo y proveedores.
-eventos: [La Noche Internacional, Hono, Voluntarios por un Día, Asambleas]
+eventos: [La Noche Internacional, Voluntarios por un Día, CUPA, Asambleas]
 habilidades: [Planeación, Resolución de problemas, Coordinación de equipos, Manejo de proveedores]
 relaciones: Es el soporte operativo de todos los comités, especialmente en los macroeventos.
 canales: Grupo de WhatsApp del comité.
-ingreso: "[PENDIENTE: definir proceso de ingreso]"
 orden: 3
 ---
 Logística convierte las ideas en eventos que funcionan: que haya espacio, materiales, horarios claros y cada persona sepa qué hacer.

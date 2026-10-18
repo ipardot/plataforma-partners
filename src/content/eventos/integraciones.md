@@ -1,10 +1,18 @@
 ---
-nombre: "Integraciones, Mes GH y Premios"
-tipo: actividad
-resumen: "Encuentros para conocernos, celebrar y fortalecer la cultura Partners."
+nombre: "Integraciones"
+tipo: "actividad"
+resumen: "Una integración por semestre para unir más al grupo."
 organiza: "Comité de Gestión Humana"
-dirigidoA: "Todos los miembros"
-comoParticipar: "Revisa el calendario y confirma tu asistencia cuando GH abra la inscripción."
-orden: 12
+dirigidoA: "Todos los integrantes"
+comoParticipar: "Confirma tu asistencia cuando Gestión Humana abra la inscripción."
+portada: "/uploads/galeria/integracion-3.jpg"
+galeria:
+  - imagen: "/uploads/galeria/integracion-1.jpg"
+    pie: "Integración Partners"
+  - imagen: "/uploads/galeria/integracion-2.jpg"
+    pie: "Integración Partners"
+  - imagen: "/uploads/galeria/integracion-3.jpg"
+    pie: "Integración Partners"
+orden: 11
 ---
-Gestión Humana organiza integraciones a lo largo del semestre, el Mes GH dedicado al bienestar del equipo y los Premios que reconocen a miembros y equipos destacados.
+Hacemos **una integración cada semestre** para unir más al grupo: conocernos fuera de las reuniones, compartir entre comités y darle la bienvenida a quienes acaban de llegar.

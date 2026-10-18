@@ -1,332 +1,703 @@
 ---
+import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import PageHero from '../components/PageHero.astro';
+import { cdn } from '../lib/img';
+
+const junta = (await getCollection('junta')).sort((a, b) => a.data.orden - b.data.orden);
+const comites = (await getCollection('comites')).sort((a, b) => a.data.orden - b.data.orden);
 
 const etapas = [
-  {
-    titulo: 'Bienvenido a Partners',
-    sticker: '/marca/sticker-1.webp',
-    texto: 'Conoce quiénes somos: nuestra identidad, propósito, valores, pilares y la red internacional a la que perteneces.',
-    enlaces: [
-      ['/conoce#que-es', '¿Qué es Partners?'],
-      ['/conoce#red', 'Partners of the Americas'],
-      ['/conoce#valores', 'Conectar, servir y cambiar vidas'],
-    ],
-    pasos: ['Leí qué es Partners y cuál es nuestra misión', 'Entiendo qué es Partners of the Americas', 'Conozco nuestros pilares y valores'],
-  },
-  {
-    titulo: 'Entiende cómo funcionamos',
-    sticker: '/marca/sticker-3.webp',
-    texto: 'La estructura del grupo, la Junta Directiva, los comités, las asambleas, los canales de comunicación y las dinámicas internas.',
-    enlaces: [
-      ['/conoce#como-funciona', 'Estructura organizacional'],
-      ['/junta', 'Junta Directiva'],
-      ['/vida-interna#asambleas', 'Asambleas y reuniones'],
-      ['/vida-interna#canales', 'Canales oficiales'],
-    ],
-    pasos: ['Sé quién es la Junta y a quién acudir', 'Entiendo cómo funcionan las asambleas', 'Estoy en los canales oficiales del grupo y de mi comité'],
-  },
-  {
-    titulo: 'Conoce nuestros eventos',
-    sticker: '/marca/sticker-7.webp',
-    texto: 'La Noche Internacional, Voluntarios por un Día, Hono y las demás actividades: sus objetivos y el papel de cada equipo.',
-    enlaces: [
-      ['/eventos/la-noche-internacional', 'La Noche Internacional'],
-      ['/eventos/voluntarios-por-un-dia', 'Voluntarios por un Día'],
-      ['/eventos/hono', 'Hono'],
-      ['/calendario', 'Calendario'],
-    ],
-    pasos: ['Conozco los tres macroeventos', 'Sé cómo funciona mi participación en Hono (Hono groups)', 'Revisé el calendario del semestre'],
-  },
-  {
-    titulo: 'Encuentra tu lugar',
-    sticker: '/marca/sticker-4.webp',
-    texto: 'Los comités, las responsabilidades de sus integrantes, las oportunidades de aprendizaje y cómo participar en proyectos.',
-    enlaces: [
-      ['/comites', 'Comités'],
-      ['/comites/internacional', 'Comité Internacional'],
-      ['/comites/social', 'Comité Social'],
-    ],
-    pasos: ['Me uní a Internacional y/o Social (mínimo seis meses)', 'Conozco a la dirección de mi comité', 'Asistí a mi primera reunión de comité'],
-  },
-  {
-    titulo: 'Conoce tus compromisos',
-    sticker: '/marca/sticker-2.webp',
-    texto: 'Un resumen de los Estatutos, el Reglamento Interno, la permanencia y la participación en actividades.',
-    enlaces: [
-      ['/vida-interna#permanencia', 'Permanencia y participación'],
-      ['/vida-interna#documentos', 'Documentos oficiales'],
-      ['/documentos/estatutos-2026.pdf', 'Estatutos 2026 (PDF)'],
-    ],
-    pasos: [
-      'Entiendo la tabla de permanencia y cómo se evalúa',
-      'Sé cómo presentar una excusa válida a tiempo',
-      'Conozco mi periodo de prueba y el Proyecto de nuevos',
-    ],
-  },
-  {
-    titulo: 'Explora tus oportunidades',
-    sticker: '/marca/sticker-5.webp',
-    texto: 'Liderazgo, voluntariado, formación, intercambios culturales, proyectos y participación en la red internacional.',
-    enlaces: [
-      ['/oportunidades', 'Oportunidades'],
-      ['/capitulos', 'Red de capítulos'],
-      ['/contacto', 'Proponer una idea'],
-    ],
-    pasos: ['Revisé las convocatorias abiertas', 'Identifiqué un rol que me gustaría asumir', 'Conozco cómo proponer una idea a la Junta'],
-  },
+  { id: 'bienvenido', titulo: 'Bienvenido a Partners', sticker: '/marca/sticker-1.webp' },
+  { id: 'como-funcionamos', titulo: 'Entiende cómo funcionamos', sticker: '/marca/sticker-3.webp' },
+  { id: 'eventos', titulo: 'Conoce nuestros eventos', sticker: '/marca/sticker-7.webp' },
+  { id: 'tu-lugar', titulo: 'Encuentra tu lugar', sticker: '/marca/sticker-4.webp' },
+  { id: 'compromisos', titulo: 'Conoce tus compromisos', sticker: '/marca/sticker-2.webp' },
+  { id: 'oportunidades', titulo: 'Explora tus oportunidades', sticker: '/marca/sticker-5.webp' },
 ];
-const total = etapas.reduce((n, e) => n + e.pasos.length, 0);
 ---
 
-<Layout title="Ruta del nuevo Partner" description="Tu guía de integración a Partners Campus EAFIT en seis etapas.">
-  <PageHero
-    eyebrow="Ruta del nuevo Partner"
-    title="Tus primeras semanas en Partners"
-    lead="Avanza a tu ritmo por estas seis etapas. Marca cada paso cuando lo completes: tu progreso se guarda en este dispositivo."
-    sticker="/marca/sticker-5.webp"
-  >
-    <div class="progreso" aria-live="polite">
-      <div class="progreso__barra"><span id="barra" style="width:0%"></span></div>
-      <span id="progreso-texto">0 de {total} pasos completados</span>
+<Layout title="Ruta del nuevo Partner" description="La guía de lectura para los nuevos integrantes de Partners Campus EAFIT, en seis etapas.">
+  <section class="portada-ruta">
+    <img class="portada-ruta__foto" src={cdn('/uploads/galeria/grupo-2.jpg', 1400)} alt="" width="1400" height="900" fetchpriority="high" />
+    <div class="contenedor portada-ruta__texto">
+      <span class="eyebrow">Ruta del nuevo Partner</span>
+      <h1>Bienvenido a la familia Partners</h1>
+      <p>
+        Esta ruta es para leer con calma. En seis etapas vas a conocer quiénes somos, cómo funcionamos, nuestros eventos,
+        tus compromisos y todo lo que puedes vivir aquí. A medida que leas, cada etapa se irá marcando.
+      </p>
+      <a class="btn btn--acento" href="#bienvenido">Empezar a leer</a>
     </div>
-  </PageHero>
+  </section>
 
-  <section class="seccion">
-    <div class="contenedor">
-      <ol class="ruta">
+  <div class="contenedor ruta">
+    <aside class="ruta__indice" aria-label="Etapas de la ruta">
+      <div class="progreso">
+        <div class="progreso__barra"><span id="barra"></span></div>
+        <p id="progreso-texto" aria-live="polite">0 de 6 etapas leídas</p>
+      </div>
+      <ol>
         {
           etapas.map((e, i) => (
-            <li class="etapa" data-etapa={i}>
-              <div class="etapa__marca">
-                <span class="etapa__num">{i + 1}</span>
-              </div>
-              <div class="tarjeta etapa__tarjeta">
-                <div class="etapa__cabeza">
-                  <div>
-                    <span class="eyebrow">Etapa {i + 1}</span>
-                    <h2>{e.titulo}</h2>
-                  </div>
-                  <img class="sticker" src={e.sticker} alt="" width="64" height="64" loading="lazy" />
-                </div>
-                <p>{e.texto}</p>
-                <div class="etapa__enlaces">
-                  {e.enlaces.map(([href, t]) => (
-                    <a href={href}>{t} →</a>
-                  ))}
-                </div>
-                <fieldset class="pasos">
-                  <legend>Lista de pasos</legend>
-                  {e.pasos.map((p, j) => (
-                    <label class="paso">
-                      <input type="checkbox" data-paso={`${i}-${j}`} />
-                      <span>{p}</span>
-                    </label>
-                  ))}
-                </fieldset>
-              </div>
+            <li>
+              <a href={`#${e.id}`} data-indice={e.id}>
+                <span class="ruta__check" aria-hidden="true">{i + 1}</span>
+                <span>{e.titulo}</span>
+              </a>
             </li>
           ))
         }
       </ol>
-      <div class="final tarjeta">
-        <img src="/marca/isotipo.webp" alt="" width="60" height="72" />
-        <div>
-          <h2>¿Te quedó alguna duda?</h2>
-          <p>Habla con la dirección de tu comité o con Gestión Humana, o revisa las preguntas frecuentes.</p>
+    </aside>
+
+    <div class="ruta__lectura">
+      <!-- 1 -->
+      <article class="etapa" id="bienvenido" data-etapa>
+        <header class="etapa__cabeza">
+          <img src={etapas[0].sticker} alt="" width="72" height="56" />
+          <div><span class="eyebrow">Etapa 1</span><h2>{etapas[0].titulo}</h2></div>
+        </header>
+        <p>
+          <strong>Partners Campus EAFIT</strong> es un grupo estudiantil sin ánimo de lucro de la Universidad EAFIT y un{" "}
+          <strong>capítulo estudiantil de Partners of the Americas</strong>, una organización no gubernamental con oficina en
+          Washington, DC, que promueve la amistad, el voluntariado y el entendimiento entre la gente de América Latina, el
+          Caribe y los Estados Unidos.
+        </p>
+        <blockquote class="cita">
+          Nuestra misión es promover las relaciones internacionales y el voluntariado por medio de iniciativas y proyectos
+          propios, para que, a través del trabajo en equipo, el compromiso y el liderazgo, se fomente el bienestar social y
+          la internacionalización.
+        </blockquote>
+        <h3>Nuestros pilares: Conectar, Servir y Cambiar vidas</h3>
+        <div class="trio">
+          <div><img src="/marca/sticker-8.webp" alt="" width="48" height="48" loading="lazy" /><strong>Conectar</strong><span>Alianzas con capítulos de la red y acompañamiento a estudiantes de intercambio.</span></div>
+          <div><img src="/marca/sticker-6.webp" alt="" width="48" height="48" loading="lazy" /><strong>Servir</strong><span>Iniciativas sociales que transforman comunidades desde la empatía y el trabajo conjunto.</span></div>
+          <div><img src="/marca/sticker-2.webp" alt="" width="48" height="48" loading="lazy" /><strong>Cambiar vidas</strong><span>Formación en liderazgo y habilidades para la vida personal y profesional.</span></div>
         </div>
-        <a class="btn btn--primario" href="/vida-interna#faq">Preguntas frecuentes</a>
-        <button type="button" class="btn btn--borde" id="reiniciar">Reiniciar mi progreso</button>
-      </div>
+        <p>
+          Trabajamos en dos grandes ejes: <strong>Voluntariado</strong> e <strong>Internacional</strong>. Y como somos parte de
+          una red, puedes conectar con capítulos de todo el continente. <a href="/conoce#red">Mira el mapa de capítulos</a>.
+        </p>
+      </article>
+
+      <!-- 2 -->
+      <article class="etapa" id="como-funcionamos" data-etapa>
+        <header class="etapa__cabeza">
+          <img src={etapas[1].sticker} alt="" width="72" height="45" />
+          <div><span class="eyebrow">Etapa 2</span><h2>{etapas[1].titulo}</h2></div>
+        </header>
+        <h3>La Junta Directiva</h3>
+        <p>Siete directores elegidos por los miembros para un año calendario. Ellos coordinan el grupo y son a quienes puedes acudir:</p>
+        <ul class="chips">
+          {junta.map((j) => <li><a href={`/junta#${j.id}`}>{j.data.cargo}</a></li>)}
+        </ul>
+        <h3>Los comités</h3>
+        <p>
+          El trabajo del día a día pasa en los comités. Cada uno tiene su director, sus reuniones y su grupo de comunicación.
+          Las reuniones por comité comienzan la primera semana de cada semestre.
+        </p>
+        <h3>Las asambleas</h3>
+        <p>
+          Hay <strong>mínimo una Asamblea General al mes</strong> y la asistencia es obligatoria. Ahí la Junta informa, se
+          debaten propuestas y se vota. Para tomar decisiones se necesita un tercio de los miembros activos. Una vez al año se
+          elige la nueva Junta Directiva.
+        </p>
+        <h3>Los canales</h3>
+        <p>
+          Las comunicaciones formales van al correo oficial; el día a día, al grupo general y a los grupos de cada comité. El
+          calendario y los documentos vigentes siempre están en esta página. <a href="/vida-interna#canales">Ver canales oficiales</a>.
+        </p>
+      </article>
+
+      <!-- 3 -->
+      <article class="etapa" id="eventos" data-etapa>
+        <header class="etapa__cabeza">
+          <img src={etapas[2].sticker} alt="" width="72" height="54" />
+          <div><span class="eyebrow">Etapa 3</span><h2>{etapas[2].titulo}</h2></div>
+        </header>
+        <h3>Nuestros macroeventos</h3>
+        <div class="macros">
+          <a class="macro" href="/eventos/voluntarios-por-un-dia">
+            <img src={cdn('/uploads/galeria/vpud-3.jpg', 640)} alt="Voluntarios por un Día" loading="lazy" width="640" height="420" />
+            <strong>Voluntarios por un Día</strong>
+            <span>Nuestro macroevento de voluntariado con fundaciones aliadas. Se hace en abril y sus líderes se eligen en febrero.</span>
+          </a>
+          <a class="macro" href="/eventos/la-noche-internacional">
+            <img src={cdn('/uploads/galeria/lani-4.jpg', 640)} alt="La Noche Internacional" loading="lazy" width="640" height="420" />
+            <strong>La Noche Internacional</strong>
+            <span>Nuestro macroevento de intercambio cultural: una experiencia internacional sin salir de EAFIT.</span>
+          </a>
+        </div>
+        <h3>También tenemos</h3>
+        <ul class="lista-eventos">
+          <li><a href="/eventos/friends-without-borders"><strong>Friends Without Borders</strong></a>, en el primer semestre.</li>
+          <li><a href="/eventos/cupa"><strong>CUPA</strong></a>, con los estudiantes extranjeros, conociendo un pedacito de Antioquia, en los dos semestres del año.</li>
+          <li><a href="/eventos/premios"><strong>Premios</strong></a>, al final del año.</li>
+        </ul>
+        <h3>Y actividades durante el semestre</h3>
+        <ul class="chips">
+          <li><a href="/eventos/parchaditos">Parchaditos</a></li>
+          <li><a href="/eventos/mes-gh">Mes GH</a></li>
+          <li><a href="/eventos/buddy-program">Buddy Program</a></li>
+          <li><a href="/eventos/integraciones">Integraciones (una por semestre)</a></li>
+          <li><a href="/eventos/assessment">Assessment</a></li>
+        </ul>
+        <p><a href="/calendario">Mira las fechas en el calendario del año →</a></p>
+      </article>
+
+      <!-- 4 -->
+      <article class="etapa" id="tu-lugar" data-etapa>
+        <header class="etapa__cabeza">
+          <img src={etapas[3].sticker} alt="" width="56" height="72" />
+          <div><span class="eyebrow">Etapa 4</span><h2>{etapas[3].titulo}</h2></div>
+        </header>
+        <p>
+          Durante tu <strong>semestre de nuevo en periodo de prueba</strong> estás en el comité <strong>Internacional</strong>{" "}
+          o en el comité <strong>Social</strong>, y también puedes sumarte a los demás. Después, eliges libremente los comités
+          en los que quieres estar; siempre debes pertenecer al menos a uno al que puedas asistir.
+        </p>
+        <div class="comites">
+          {
+            comites.map((c) => (
+              <a href={`/comites/${c.id}`} class="comite">
+                <img src={c.data.icono} alt="" width="40" height="40" loading="lazy" />
+                <span>
+                  <strong>{c.data.nombre}</strong>
+                  <small>{c.data.proposito}</small>
+                </span>
+              </a>
+            ))
+          }
+        </div>
+      </article>
+
+      <!-- 5 -->
+      <article class="etapa" id="compromisos" data-etapa>
+        <header class="etapa__cabeza">
+          <img src={etapas[4].sticker} alt="" width="60" height="68" />
+          <div><span class="eyebrow">Etapa 5</span><h2>{etapas[4].titulo}</h2></div>
+        </header>
+        <h3>La tabla de permanencia</h3>
+        <p>
+          Según los Estatutos (Capítulo V), cada semestre se lleva una <strong>tabla de permanencia</strong> para hacer
+          seguimiento a los miembros activos, nuevos, en periodo de prueba y honorarios que pertenezcan a algún comité. Mide
+          tu desempeño en las actividades de los comités y tu asistencia a asambleas, reuniones semanales y demás espacios.
+        </p>
+        <div class="reglas">
+          <div><span class="regla regla--mas">+</span><strong>Participar suma</strong><span>Sumas puntos al participar en tus comités, asistir a eventos, asambleas y demás actividades.</span></div>
+          <div><span class="regla">=</span><strong>Excusa válida, ni suma ni resta</strong><span>Si no puedes participar por una de las razones válidas del Reglamento Interno, tu participación es pasiva.</span></div>
+          <div><span class="regla regla--menos">−</span><strong>Sin excusa, resta</strong><span>Si no presentas una razón válida a tiempo, restas puntos (puede haber puntajes negativos) y se procede según el Reglamento Interno.</span></div>
+        </div>
+        <p>
+          La cantidad de puntos de cada comité, actividad y asistencia la fija la Junta Directiva de turno, de acuerdo con los
+          estándares de Desarrollo Estudiantil. Si no cumples con la tabla, puedes recibir llamados de atención, avisos
+          internos, faltas o volver a periodo de prueba.
+        </p>
+        <h3>Los porcentajes que debes conocer</h3>
+        <ul class="porcentajes">
+          <li><strong>70%</strong> de la tabla del semestre anterior para ser miembro activo.</li>
+          <li><strong>80%</strong> si el semestre anterior estuviste en periodo de prueba.</li>
+          <li><strong>Entre 65% y 79%</strong>: si eres nuevo, la Junta puede considerar extender tu periodo de prueba un semestre.</li>
+          <li><strong>Menos del 40%</strong>: si eres miembro activo, tu continuidad queda a consideración de la Junta.</li>
+        </ul>
+        <h3>Tu periodo de prueba</h3>
+        <p>
+          Tu primer semestre eres <strong>miembro nuevo en periodo de prueba</strong>: cumples los parámetros que anuncie la
+          Junta y realizas el <strong>Proyecto de nuevos</strong>. Al final tienes una entrevista con la Junta, que decide
+          quiénes pasan a ser miembros activos.
+        </p>
+        <h3>Cuándo se pierde la membresía</h3>
+        <p>
+          Al dejar de ser estudiante activo de pregrado, por renuncia escrita, al acumular tres faltas graves por
+          inasistencias sin justificación, por problemas de convivencia reiterados, si un miembro nuevo o en periodo de prueba
+          no alcanza los parámetros, o si al terminar una licencia, práctica o intercambio no se pide el reintegro.
+        </p>
+        <p class="fuente">
+          Fuente: <a href="/documentos/estatutos-2026.pdf" target="_blank" rel="noopener">Estatutos 2026</a>, Capítulos IV y V.
+          El Reglamento Interno detalla las faltas leves y graves.
+        </p>
+      </article>
+
+      <!-- 6 -->
+      <article class="etapa" id="oportunidades" data-etapa>
+        <header class="etapa__cabeza">
+          <img src={etapas[5].sticker} alt="" width="72" height="60" />
+          <div><span class="eyebrow">Etapa 6</span><h2>{etapas[5].titulo}</h2></div>
+        </header>
+        <p>Desde tu primer semestre puedes crecer en Partners. Estos son algunos caminos:</p>
+        <ul class="chips">
+          <li><a href="/oportunidades#liderazgo-lani">Roles de liderazgo en LANI</a></li>
+          <li><a href="/oportunidades#liderazgo-vpud">Roles de liderazgo en VPUD</a></li>
+          <li><a href="/oportunidades#directores-parchaditos">Directores de Parchaditos</a></li>
+          <li><a href="/oportunidades#directores-friends-without-borders">Directores de Friends Without Borders</a></li>
+          <li><a href="/oportunidades#buddy-program">Buddy Program</a></li>
+          <li><a href="/oportunidades#programas-partners-americas">Programas de Partners of the Americas</a></li>
+        </ul>
+        <p>
+          Y cuando lleves al menos seis meses como miembro activo, podrás postularte a la <strong>Junta Directiva</strong>.
+          Cada cargo tiene requisitos propios en los Estatutos.
+        </p>
+        <div class="final">
+          <img src="/marca/isotipo.webp" alt="" width="56" height="68" />
+          <div>
+            <h3>¡Terminaste la ruta!</h3>
+            <p>Si te quedó alguna duda, habla con la dirección de tu comité o con Gestión Humana, o revisa las preguntas frecuentes.</p>
+          </div>
+          <a class="btn btn--primario" href="/vida-interna#faq">Preguntas frecuentes</a>
+        </div>
+      </article>
     </div>
-  </section>
+  </div>
 </Layout>
 
 <script>
-  const CLAVE = 'pce-ruta-v1';
-  const cajas = [...document.querySelectorAll<HTMLInputElement>('[data-paso]')];
+  const CLAVE = 'pce-ruta-leida-v2';
+  const etapas = [...document.querySelectorAll<HTMLElement>('[data-etapa]')];
+  const enlaces = document.querySelectorAll<HTMLAnchorElement>('[data-indice]');
   const barra = document.getElementById('barra')!;
   const texto = document.getElementById('progreso-texto')!;
-
-  let estado: Record<string, boolean> = {};
+  let leidas = new Set<string>();
   try {
-    estado = JSON.parse(localStorage.getItem(CLAVE) || '{}');
+    leidas = new Set(JSON.parse(localStorage.getItem(CLAVE) || '[]'));
   } catch {}
+  let actualId = etapas[0].id;
 
-  function actualizar() {
-    const hechos = cajas.filter((c) => c.checked).length;
-    barra.style.width = `${Math.round((hechos / cajas.length) * 100)}%`;
-    texto.textContent = `${hechos} de ${cajas.length} pasos completados`;
-    document.querySelectorAll<HTMLElement>('.etapa').forEach((et) => {
-      const propias = [...et.querySelectorAll<HTMLInputElement>('[data-paso]')];
-      et.classList.toggle('etapa--completa', propias.every((c) => c.checked));
+  function pintar() {
+    enlaces.forEach((a) => {
+      const id = a.dataset.indice!;
+      a.classList.toggle('leida', leidas.has(id));
+      a.classList.toggle('actual', id === actualId);
+      if (id === actualId) a.setAttribute('aria-current', 'step');
+      else a.removeAttribute('aria-current');
     });
+    barra.style.width = `${Math.round((leidas.size / etapas.length) * 100)}%`;
+    texto.textContent = `${leidas.size} de ${etapas.length} etapas leídas`;
   }
 
-  cajas.forEach((c) => {
-    c.checked = !!estado[c.dataset.paso!];
-    c.addEventListener('change', () => {
-      estado[c.dataset.paso!] = c.checked;
+  // Una etapa queda "leída" cuando su final pasa por la pantalla.
+  const finales = new IntersectionObserver((entradas) =>
+    entradas.forEach((e) => {
+      if (!e.isIntersecting) return;
+      leidas.add((e.target as HTMLElement).dataset.fin!);
       try {
-        localStorage.setItem(CLAVE, JSON.stringify(estado));
+        localStorage.setItem(CLAVE, JSON.stringify([...leidas]));
       } catch {}
-      actualizar();
-    });
+      pintar();
+    }),
+  );
+  etapas.forEach((et) => {
+    const marca = document.createElement('div');
+    marca.dataset.fin = et.id;
+    marca.className = 'etapa__fin';
+    et.append(marca);
+    finales.observe(marca);
   });
-  document.getElementById('reiniciar')!.addEventListener('click', () => {
-    estado = {};
-    cajas.forEach((c) => (c.checked = false));
-    try {
-      localStorage.removeItem(CLAVE);
-    } catch {}
-    actualizar();
-  });
-  actualizar();
+
+  // La etapa que se está leyendo se resalta en el índice.
+  const actuales = new IntersectionObserver(
+    (entradas) =>
+      entradas.forEach((e) => {
+        if (e.isIntersecting) {
+          actualId = e.target.id;
+          pintar();
+        }
+      }),
+    { rootMargin: '-40% 0px -55% 0px' },
+  );
+  etapas.forEach((et) => actuales.observe(et));
+  pintar();
 </script>
 
 <style>
-  .progreso {
-    margin-top: 20px;
-    max-width: 480px;
-    font-size: 0.9rem;
+  .portada-ruta {
+    position: relative;
+    color: #fff;
+    overflow: hidden;
+  }
+  .portada-ruta__foto {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+  }
+  .portada-ruta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(100deg, rgb(22 33 58 / 0.92) 10%, rgb(78 104 155 / 0.72) 55%, rgb(253 124 94 / 0.4));
+  }
+  .portada-ruta__texto {
+    position: relative;
+    z-index: 2;
+    padding-block: clamp(56px, 9vw, 104px);
+  }
+  .portada-ruta__texto > * {
+    max-width: 720px;
+  }
+  .portada-ruta .eyebrow {
+    color: var(--salmon);
+  }
+  .portada-ruta h1 {
+    color: #fff;
+  }
+  .portada-ruta p {
+    font-size: 1.1rem;
+    color: #e6ecf6;
+  }
+
+  .ruta {
+    display: grid;
+    grid-template-columns: 270px 1fr;
+    gap: clamp(24px, 4vw, 56px);
+    padding-block: clamp(32px, 6vw, 64px);
+    align-items: start;
+  }
+  .ruta__indice {
+    position: sticky;
+    top: 96px;
+  }
+  .ruta__indice ol {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0 0;
+    display: grid;
+    gap: 4px;
+  }
+  .ruta__indice a {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 12px;
+    text-decoration: none;
     color: var(--tinta-suave);
+    font-weight: 500;
+    font-size: 0.93rem;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+  }
+  .ruta__indice a:hover {
+    background: var(--inspiracion-claro);
+  }
+  .ruta__indice a.actual {
+    background: var(--inspiracion-claro);
+    color: var(--tinta);
+    font-weight: 600;
+  }
+  .ruta__check {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border: 2px solid var(--borde-fuerte);
+    background: var(--superficie);
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  .ruta__indice a.leida .ruta__check {
+    border-color: var(--confianza);
+    background: var(--confianza);
+    color: transparent;
+  }
+  .ruta__indice a.leida .ruta__check::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 12px;
+    border-right: 3px solid #fff;
+    border-bottom: 3px solid #fff;
+    transform: translateY(-2px) rotate(45deg);
+  }
+  .progreso {
+    font-size: 0.88rem;
+    color: var(--tinta-suave);
+  }
+  .progreso p {
+    margin: 6px 0 0;
   }
   .progreso__barra {
     height: 10px;
-    background: #fff;
+    background: var(--fondo-alt);
     border: 1px solid var(--borde);
     border-radius: 999px;
     overflow: hidden;
-    margin-bottom: 6px;
   }
   .progreso__barra span {
     display: block;
     height: 100%;
+    width: 0;
     background: linear-gradient(90deg, var(--confianza), var(--salmon));
-    transition: width 0.3s ease;
+    transition: width 0.5s ease;
   }
-  .ruta {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 40px;
+
+  .ruta__lectura {
+    min-width: 0;
+    display: grid;
+    gap: clamp(28px, 4vw, 40px);
   }
   .etapa {
-    display: grid;
-    grid-template-columns: 56px 1fr;
-    gap: 16px;
     position: relative;
-    padding-bottom: 24px;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    padding: clamp(22px, 4vw, 40px);
+    box-shadow: var(--sombra);
+    scroll-margin-top: 96px;
   }
-  .etapa::before {
-    content: '';
-    position: absolute;
-    left: 27px;
-    top: 56px;
-    bottom: 0;
-    width: 2px;
-    background: var(--borde);
+  .etapa > p,
+  .etapa li {
+    color: var(--tinta-suave);
   }
-  .etapa:last-child::before {
-    display: none;
+  .etapa h3 {
+    margin-top: 1.6em;
+    font-size: 1.1rem;
   }
-  .etapa__num {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    font-weight: 800;
-    font-size: 1.3rem;
-    background: var(--inspiracion-claro);
-    color: var(--confianza);
-    border: 2px solid var(--inspiracion);
-  }
-  .etapa--completa .etapa__num {
-    background: var(--confianza);
-    color: #fff;
-    border-color: var(--confianza);
+  :global(.etapa__fin) {
+    height: 1px;
   }
   .etapa__cabeza {
     display: flex;
-    justify-content: space-between;
     gap: 16px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .etapa__cabeza img {
+    width: 64px;
+    height: auto;
+    transform: rotate(-6deg);
+    filter: drop-shadow(0 3px 5px rgb(0 0 0 / 0.15));
+  }
+  .etapa__cabeza h2 {
+    margin: 0;
   }
   .etapa__cabeza .eyebrow {
-    margin-bottom: 0;
+    margin: 0;
   }
-  .etapa__tarjeta > p {
+  .cita {
+    margin: 16px 0;
+    padding: 20px 24px;
+    border-radius: var(--radio-sm);
+    background: var(--degradado);
+    color: #fff;
+    font-weight: 500;
+  }
+  .trio {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+    gap: 12px;
+    margin: 12px 0 20px;
+  }
+  .trio div {
+    display: grid;
+    gap: 4px;
+    padding: 16px;
+    border-radius: var(--radio-sm);
+    background: var(--fondo-alt);
+  }
+  .trio div {
+    align-content: start;
+  }
+  .trio img {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+  }
+  .trio span {
+    font-size: 0.9rem;
     color: var(--tinta-suave);
   }
-  .etapa__enlaces {
+  .chips {
+    list-style: none;
+    padding: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 20px;
-    margin-bottom: 16px;
-    font-weight: 500;
-    font-size: 0.93rem;
-  }
-  .pasos {
-    border: 0;
-    margin: 0;
-    padding: 14px 16px;
-    background: var(--fondo-alt);
-    border-radius: var(--radio-sm);
-    display: grid;
     gap: 8px;
   }
-  .pasos legend {
-    font-weight: 600;
-    font-size: 0.85rem;
-    padding: 0;
-    float: left;
-    margin-bottom: 4px;
+  .chips a {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--inspiracion-claro);
+    color: var(--tinta);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
   }
-  .paso {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    cursor: pointer;
-    clear: both;
+  .chips a:hover {
+    background: var(--salmon-claro);
   }
-  .paso input {
-    width: 20px;
-    height: 20px;
-    margin-top: 2px;
-    accent-color: var(--confianza);
-    flex-shrink: 0;
+  .macros {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
   }
-  .paso input:checked + span {
+  .macro {
+    display: grid;
+    gap: 6px;
+    text-decoration: none;
+    color: var(--tinta);
+    border-radius: var(--radio-sm);
+    overflow: hidden;
+    background: var(--fondo-alt);
+    padding-bottom: 14px;
+  }
+  .macro img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  .macro:hover img {
+    transform: scale(1.04);
+  }
+  .macro strong,
+  .macro span {
+    padding-inline: 14px;
+  }
+  .macro span {
+    font-size: 0.9rem;
     color: var(--tinta-suave);
-    text-decoration: line-through;
+  }
+  .lista-eventos li {
+    margin-bottom: 6px;
+  }
+  .comites {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    gap: 10px;
+  }
+  .comite {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px;
+    border-radius: var(--radio-sm);
+    background: var(--fondo-alt);
+    text-decoration: none;
+    color: var(--tinta);
+  }
+  .comite img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+  }
+  .comite span {
+    display: grid;
+  }
+  .comite small {
+    color: var(--tinta-suave);
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+  .reglas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .reglas > div {
+    display: grid;
+    gap: 6px;
+    align-content: start;
+    padding: 16px;
+    border-radius: var(--radio-sm);
+    background: var(--fondo-alt);
+  }
+  .reglas span:not(.regla) {
+    font-size: 0.88rem;
+    color: var(--tinta-suave);
+  }
+  .regla {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    background: var(--inspiracion);
+    color: var(--profundo);
+  }
+  .regla--mas {
+    background: var(--confianza);
+    color: #fff;
+  }
+  .regla--menos {
+    background: var(--rojo);
+    color: #fff;
+  }
+  .porcentajes {
+    padding-left: 1.2em;
+  }
+  .porcentajes strong {
+    color: var(--tinta);
+  }
+  .fuente {
+    font-size: 0.85rem;
+    border-top: 1px solid var(--borde);
+    padding-top: 12px;
+    margin-top: 20px;
   }
   .final {
     display: flex;
     flex-wrap: wrap;
+    gap: 16px;
     align-items: center;
-    gap: 20px;
+    margin-top: 24px;
+    padding: 20px;
+    border-radius: var(--radio-sm);
+    background: var(--salmon-claro);
   }
   .final > div {
-    flex: 1 1 280px;
+    flex: 1 1 260px;
   }
-  .final h2 {
-    font-size: 1.3rem;
+  .final h3 {
     margin: 0;
   }
   .final p {
     margin: 0;
     color: var(--tinta-suave);
   }
-  @media (max-width: 560px) {
-    .etapa {
+
+  @media (max-width: 900px) {
+    .ruta {
       grid-template-columns: 1fr;
     }
-    .etapa::before,
-    .etapa__marca {
+    .ruta__indice {
+      top: 71px;
+      z-index: 10;
+      margin-inline: calc(-1 * var(--gutter));
+      padding: 10px var(--gutter);
+      background: var(--cabecera);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--borde);
+    }
+    .ruta__indice ol {
+      display: flex;
+      overflow-x: auto;
+      margin-top: 8px;
+      scrollbar-width: none;
+    }
+    .ruta__indice a {
+      padding: 4px;
+      gap: 0;
+    }
+    .ruta__indice a span:not(.ruta__check) {
       display: none;
     }
-    .etapa__cabeza .sticker {
-      width: 48px;
-      height: 48px;
+    .macros {
+      grid-template-columns: 1fr;
+    }
+    .etapa {
+      scroll-margin-top: 170px;
     }
   }
 </style>

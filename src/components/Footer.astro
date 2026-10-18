@@ -45,13 +45,16 @@ import { NAV } from '../lib/nav';
   </div>
   <div class="contenedor pie__legal">
     <span>© {new Date().getFullYear()} Partners Campus EAFIT · Capítulo estudiantil de Partners of the Americas</span>
-    <a href="/admin/">Administrar contenido</a>
+    <span class="pie__enlaces">
+      <a href="/admin/">Administrar contenido</a>
+      <span class="pie__nova">Powered by <strong>NOVA</strong></span>
+    </span>
   </div>
 </footer>
 
 <style>
   .pie {
-    background: var(--tinta);
+    background: var(--profundo);
     color: #c9d2e3;
     padding-top: 56px;
     margin-top: 0;
@@ -100,6 +103,23 @@ import { NAV } from '../lib/nav';
   }
   .pie__legal a {
     color: #c9d2e3;
+  }
+  .pie__enlaces {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    align-items: center;
+  }
+  .pie__nova {
+    letter-spacing: 0.04em;
+  }
+  .pie__nova strong {
+    color: #fff;
+    letter-spacing: 0.14em;
+    background: linear-gradient(90deg, var(--inspiracion), var(--salmon));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   @media (max-width: 900px) {
     .pie__grid {

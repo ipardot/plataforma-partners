@@ -42,7 +42,7 @@ src/
     eventos/         ← macroeventos y otras actividades
     agenda/          ← actividades del calendario
     oportunidades/   ← convocatorias
-  data/              ← datos generales (JSON): sitio, FAQ, canales, documentos, historia, capítulos, memoria
+  data/              ← datos generales (JSON): sitio, FAQ, canales, documentos, capítulos, memoria
   pages/             ← una página por ruta (/conoce, /junta, /calendario…)
     miembros/        ← área privada (Supabase)
     en/              ← contenido en inglés
